@@ -42,21 +42,15 @@
                 </div>
             </div>
 
-            <!-- Selecionar Corte para Produção -->
+            <!-- Gerar OP agora é feito na Entrada de Corte -->
             <div class="estoque-formulario">
-                <h2 class="titulo-producao">Gerar Ordem de Produção (OP)</h2>
-                
-                <form id="form-producao" class="formulario-padrao">
-                    <label for="corte-select">Selecione o Corte do Estoque *</label>
-                    <select id="corte-select" required>
-                        <option value="" disabled selected>Carregando cortes...</option>
-                    </select>
-
-                    <label for="encarregado">Encarregado Responsável *</label>
-                    <input type="text" id="encarregado" placeholder="Nome do encarregado" required>
-
-                    <button type="submit" class="btn-primario btn-producao">Gerar OP e Enviar para Produção</button>
-                </form>
+                <h2 class="titulo-producao">ℹ️ Como gerar uma Ordem de Produção</h2>
+                <p class="ajuda-form">
+                    As OPs são criadas automaticamente ao registrar uma
+                    <strong>Entrada de Corte</strong>. Use o botão abaixo para ir até lá.
+                </p>
+                <a href="entrada-corte.html" class="btn-primario btn-producao"
+                   style="display: inline-block; text-decoration: none;">📥 Ir para Entrada de Corte</a>
             </div>
 
             <!-- Lista de OPs Ativas e Finalizadas -->

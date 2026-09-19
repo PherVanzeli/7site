@@ -7,5 +7,8 @@
       "**/node_modules/**",
       "docs/**"
     ]
+  },
+  "firestore": {
+    "rules": "firestore.rules"
   }
 }

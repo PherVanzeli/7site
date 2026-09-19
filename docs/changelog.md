@@ -15,6 +15,20 @@ Tipos de mudança:
 
 ## [Setembro/2026]
 
+### [13/09/2026] — Segurança e Sincronização v9.0
+
+**Adicionado**
+- `firestore.rules` versionado (regras de segurança por coleção).
+- Documentação (`docs/`) sincronizada com a versão 9.0 do sistema.
+
+**Modificado**
+- Firestore Rules: `delete` habilitado para usuários autenticados (elimina inconsistência com os botões de exclusão do sistema).
+
+**Pendente**
+- Evoluir o RBAC para Custom Claims (validação por setor no próprio Firestore).
+
+---
+
 ### [12/09/2026] — Documentação e Refinamento de Operações
 
 **Adicionado**

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autorizar Saída | 7Site - Expedição</title>
+    <meta name="robots" content="noindex">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="pagina-erp">
+
+    <div id="sidebar-include"></div>
+
+    <main class="estoque-container">
+        <div class="container">
+
+            <!-- Cabeçalho -->
+            <div class="painel-cabecalho">
+                <div>
+                    <h1>Autorizar <strong class="texto-producao">Saída</strong> 🚚</h1>
+                    <p>Confira e despache o produto final das Ordens de Produção finalizadas.</p>
+                </div>
+                <button class="btn-sair" onclick="sairDoSistema()">Sair do Portal</button>
+            </div>
+
+            <!-- Sobre o módulo -->
+            <div class="estoque-formulario">
+                <h2 class="titulo-producao">📌 Sobre este módulo</h2>
+                <p class="ajuda-form">
+                    Esta área centralizará a conferência e o despacho do produto final.
+                    Quando uma OP é finalizada no CDF, ela aparece aqui aguardando a
+                    conferência de quantidades (finalizadas, refugadas e sobras) e a
+                    autorização de saída.
+                </p>
+                <div class="aviso-rh">
+                    <strong>🚧 Em desenvolvimento:</strong>
+                    a conferência e a baixa automática de estoque serão liberadas na próxima atualização.
+                </div>
+            </div>
+
+            <!-- Indicadores -->
+            <div class="estoque-indicadores">
+                <div class="card-indicador card-indicador-producao">
+                    <span>📦</span>
+                    <h3 id="exp-total-prontas">0</h3>
+                    <p>Aguardando Expedição</p>
+                </div>
+                <div class="card-indicador card-indicador-producao">
+                    <span>✅</span>
+                    <h3 id="exp-total-despachadas">0</h3>
+                    <p>Despachadas</p>
+                </div>
+            </div>
+
+            <!-- OPs prontas para expedição -->
+            <div class="estoque-tabela">
+                <h2 class="titulo-producao">Ordens Prontas para Expedição</h2>
+                <div id="lista-expedicao">
+                    <p class="texto-placeholder">Nenhuma OP pronta para expedição no momento.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div id="footer-include"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+    <script src="js/firebase.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>

@@ -156,4 +156,4 @@ Automatizar a coleta de dados de produção com tecnologia IoT:
 
 ---
 
-*Última atualização: Setembro/2026*
+*Última atualização: Setembro/2026 — Versão 9.0*

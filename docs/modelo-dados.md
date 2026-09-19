@@ -1,11 +1,4 @@
-Perfeito! Aqui está o `MODELO-DADOS.md` completo em um único bloco, pronto para copiar e colar.
-
----
-
-**Crie o arquivo `docs/MODELO-DADOS.md` e cole o conteúdo abaixo:**
-
-```markdown
-# MODELO DE DADOS — 7Site ERP
+# MODELO DE DADOS — 7Site ERP (v9.0)
 
 > Estrutura das coleções do Firestore (banco de dados NoSQL).
 
@@ -112,26 +105,24 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 
 ### 3. `estoque`
 
-**Função:** Cadastro de itens do estoque (interno e externo) e registro de entradas de corte.
+**Função:** Cadastro unificado de itens do estoque (interno e externo).
 
-> **Nota:** A coleção `estoque` acumula duas responsabilidades hoje. Na próxima fase será dividida em `estoque_itens` (biblioteca) e `entradas_corte` (movimentações).
-
-**Documento (item de estoque):** ID automático do Firestore.
+**Documento:** ID automático do Firestore.
 
 ```json
 {
-  "codigo": "EST-001",
-  "nome": "LINHA 40 BRANCA",
+  "codigo": "EST-483920",
   "categoria": "interno",
+  "nome": "LINHA 40 BRANCA",
   "material": "POLIÉSTER",
   "cor": "BRANCA",
   "tamanho": "40",
+  "unidade": "ROLO",
+  "observacoes": "",
   "quantidade_atual": 20,
   "quantidade_minima": 5,
-  "unidade": "ROLO",
   "preco_custo_atual": 8.50,
   "fornecedor_habitual": "AVIAMENTOS SILVA",
-  "observacoes": "",
   "data_cadastro": "timestamp",
   "data_atualizacao": "timestamp"
 }
@@ -141,26 +132,94 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 
 | Campo | Tipo | Descrição |
 | :--- | :--- | :--- |
-| `codigo` | string | Código gerado automaticamente |
-| `nome` | string | Nome do item (maiúsculo) |
+| `codigo` | string | Código gerado automaticamente (`EST-` + timestamp) |
 | `categoria` | string | `interno` ou `externo` |
-| `material` | string | Material (maiúsculo) |
-| `cor` | string | Cor (maiúsculo) |
-| `tamanho` | string | Tamanho/dimensão |
-| `quantidade_atual` | number | Saldo em estoque |
-| `quantidade_minima` | number | Alerta de reposição (só interno) |
-| `unidade` | string | ROLO, CAIXA, UNIDADE, METRO |
-| `preco_custo_atual` | number | Último preço pago (só interno) |
-| `fornecedor_habitual` | string | Fornecedor padrão |
+| `nome` | string | Nome do item (maiúsculo) |
+| `material` | string | Material (maiúsculo) — `N/A` se vazio |
+| `cor` | string | Cor (maiúsculo) — `N/A` se vazio |
+| `tamanho` | string | Tamanho/dimensão (maiúsculo) — `N/A` se vazio |
+| `unidade` | string | UNIDADE, ROLO, CAIXA, METRO, KG, DÚZIA |
 | `observacoes` | string | Campo livre |
+| `quantidade_atual` | number | Saldo em estoque (só interno) |
+| `quantidade_minima` | number | Alerta de reposição (só interno) |
+| `preco_custo_atual` | number | Último preço pago (só interno) |
+| `fornecedor_habitual` | string | Fornecedor padrão (só interno) |
 | `data_cadastro` | timestamp | Criação |
 | `data_atualizacao` | timestamp | Última edição |
+
+> **Nota:** Itens externos **não têm** `quantidade_atual`, `quantidade_minima`, `preco_custo_atual` nem `fornecedor_habitual`.
 
 **Índice recomendado:** `categoria` + `nome`.
 
 ---
 
-### 4. `operacoes`
+### 4. `entradas_corte`
+
+**Função:** Registro da entrada de NF/Ordem de Corte. Cada entrada gera uma OP automaticamente.
+
+**Documento:** ID automático do Firestore.
+
+```json
+{
+  "numero_nf": "12345",
+  "serie_nf": "1",
+  "data_emissao_nf": "2026-09-13",
+  "valor_nf": 5000.00,
+  "chave_acesso_nf": "3579...",
+  "fornecedor_id": "docId",
+  "fornecedor_nome": "TECIDOS MARTINS LTDA",
+  "fornecedor_documento": "12345678000190",
+  "numero_ordem_corte": "OC-2026-001",
+  "modelo": "RL-9001",
+  "descricao_peca": "CALÇA MASCULINA SARJA CHINO",
+  "quantidade_total": 400,
+  "recortes": [
+    { "nome": "BOLSO RELÓGIO", "qtd_por_peca": 2 }
+  ],
+  "aviamentos_externos": [
+    {
+      "item_id": "docIdEstoque",
+      "nome": "ZÍPER METAL PRETO 15CM",
+      "material": "METAL",
+      "cor": "PRETO",
+      "tamanho": "15CM",
+      "quantidade": 400,
+      "unidade": "UN"
+    }
+  ],
+  "status": "recebido",
+  "registrado_por_cpf": "12345678900",
+  "op_id": "docIdProducao",
+  "data_entrada": "timestamp"
+}
+```
+
+**Campos principais:**
+
+| Campo | Tipo | Descrição |
+| :--- | :--- | :--- |
+| `numero_nf` | string | Número da Nota Fiscal |
+| `serie_nf` | string | Série da NF |
+| `data_emissao_nf` | string | Data de emissão (YYYY-MM-DD) |
+| `valor_nf` | number | Valor total da NF |
+| `chave_acesso_nf` | string | Chave de 44 dígitos (opcional) |
+| `fornecedor_id` | string | ID do documento em `pessoas` |
+| `fornecedor_nome` | string | Razão Social do fornecedor |
+| `fornecedor_documento` | string | CNPJ do fornecedor |
+| `numero_ordem_corte` | string | Número da OC (vira o lote da OP) |
+| `modelo` | string | Código do modelo/fornecedor |
+| `descricao_peca` | string | Descrição da peça |
+| `quantidade_total` | number | Total de peças |
+| `recortes` | array | Lista de recortes (nome + qtd/peça) |
+| `aviamentos_externos` | array | Lista de aviamentos que vieram com o corte |
+| `status` | string | `recebido` |
+| `registrado_por_cpf` | string/null | CPF de quem registrou |
+| `op_id` | string | ID da OP gerada |
+| `data_entrada` | timestamp | Data/hora do registro |
+
+---
+
+### 5. `operacoes`
 
 **Função:** Biblioteca técnica de operações (ações atômicas executadas na produção).
 
@@ -333,7 +392,8 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 
 ---
 
-### 10. `financeiro`
+
+### 11. `financeiro`
 
 **Função:** Lançamentos de contas a pagar e a receber.
 
@@ -368,7 +428,6 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 **Índice recomendado:** `status` + `data_vencimento`.
 
 ---
-
 ### 11. `configuracoes`
 
 **Função:** Dados da empresa e preferências do sistema. Usa dois documentos fixos.
@@ -434,25 +493,14 @@ service cloud.firestore {
       allow read: if request.auth != null;
       allow create: if request.auth != null;
       allow update: if request.auth != null;
-      allow delete: if false;  // Exclusão só via console (auditoria)
+      allow delete: if autenticado();
     }
   }
 }
 ```
 
-**Nota:** `delete` desabilitado para preservar histórico. Exclusões são feitas manualmente no console do Firebase ou via função administrativa (futuro).
+**Nota:** `delete` habilitado para usuários autenticados (consistente com os botões de exclusão do sistema).
 
 ---
 
 *Última atualização: Setembro/2026*
-```
-
----
-
-## Depois de salvar
-
-1. Verifique se a pasta `docs` agora tem **3 arquivos**: `ESCOPO.md`, `ARQUITETURA.md` e `MODELO-DADOS.md`.
-2. Abra o preview do `MODELO-DADOS.md` (Ctrl + Shift + V) e confira se as tabelas aparecem formatadas.
-
----
-

@@ -1,12 +1,3 @@
-Perfeito! Vou montar o `ARQUITETURA.md` com **detalhes suficientes para orientar** quem retomar o projeto no futuro (você ou um desenvolvedor contratado), mas **sem virar um manual técnico chato**.
-
-A linguagem será **clara, direta e prática**.
-
----
-
-## 📄 Arquivo 2: `ARQUITETURA.md` (para você validar)
-
-```markdown
 # ARQUITETURA — 7Site ERP
 
 > Como o sistema está organizado por dentro.
@@ -52,16 +43,18 @@ A linguagem será **clara, direta e prática**.
 ├── painel.html              → Painel pessoal do funcionário
 ├── dashboard.html           → Painel inicial do ERP (por setor)
 │
+
+
+
+
+
+
+
+
 ├── admin.html               → Sala do RH
 ├── estoque.html             → Estoque (cadastro de itens)
-├── entrada-corte.html       → Entrada de corte (futuro)
+├── entrada-corte.html       → Entrada de corte (gera OP automaticamente)
 ├── operacoes.html           → Biblioteca de operações
-├── fluxogramas.html         → Montagem de fluxogramas (futuro)
-├── producao.html            → Geração e listagem de OPs
-├── op.html                  → Documento impresso da OP
-├── expedicao.html           → Autorizar saída (futuro)
-├── financeiro.html          → Gestão financeira
-├── pessoas.html             → Cadastro de pessoas físicas/jurídicas
 ├── configuracoes.html       → Configurações do sistema
 │
 ├── /docs
@@ -231,6 +224,3 @@ firebase deploy
 ---
 
 *Última atualização: Setembro/2026*
-```
-
----

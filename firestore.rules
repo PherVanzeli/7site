@@ -1,0 +1,154 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ==========================================
+    // 7Site ERP — Regras de Segurança do Firestore
+    // Versão 9.0
+    //
+    // IMPORTANTE (limitação técnica):
+    // O RBAC por setor é aplicado na camada de frontend
+    // (js/script.js) pois o CPF do usuário (ID do documento)
+    // deriva do e-mail de login. A extração de substring do
+    // e-mail não é suportada pela linguagem de regras.
+    //
+    // Para proteção futura: migrar para Custom Claims
+    // (setor + tipo_usuario) via Admin SDK e validar aqui
+    // com request.auth.token.setor.
+    // ==========================================
+
+    function dominioValido() {
+      return request.auth != null
+        && request.auth.token.email.matches('.*@7site\\.com\\.br');
+    }
+
+    function autenticado() {
+      return request.auth != null;
+    }
+
+    // ==========================================
+    // COLEÇÃO usuários
+    // ==========================================
+    match /usuarios/{cpf} {
+      allow read: if autenticado();
+      allow create: if autenticado()
+        && request.resource.data.cpf == cpf
+        && request.resource.data.nome is string
+        && request.resource.data.tipo_usuario in ['funcionario', 'subordinado', 'superior'];
+      allow update: if autenticado()
+        && request.resource.data.cpf == cpf;
+      allow delete: if autenticado();
+    }
+
+    // ==========================================
+    // COLEÇÃO produção (OPs)
+    // ==========================================
+    match /producao/{docId} {
+      allow read: if autenticado();
+      allow create, update: if autenticado();
+      allow delete: if autenticado();
+    }
+
+    // ==========================================
+    // COLEÇÕES DO ESTOQUE E EXPEDIÇÃO
+    // ==========================================
+    match /estoque/{docId} {
+      allow read: if autenticado();
+      allow create, update: if autenticado();
+      allow delete: if autenticado();
+    }
+
+    match /entradas_corte/{docId} {
+      allow read: if autenticado();
+      allow create, update: if autenticado();
+      allow delete: if autenticado();
+    }
+
+    // ==========================================
+    // COLEÇÕES DO CDF
+    // ==========================================
+    match /operacoes/{docId} {
+      allow read: if autenticado();
+      allow create, update: if autenticado();
+      allow delete: if autenticado();
+    }
+
+    match /modulos/{docId} {
+      allow read: if autenticado();
+      allow create, update: if autenticado();
+      allow delete: if autenticado();
+    }
+
+    match /fluxogramas/{docId} {
+      allow read: if autenticado();
+      allow create, update: if autenticado();
+      allow delete: if autenticado();
+    }
+
+    match /recortes/{docId} {
+      allow read: if autenticado();
+      allow create, update: if autenticado();
+      allow delete: if autenticado();
+    }
+
+    match /maquinas/{docId} {
+      allow read: if autenticado();
+      allow create, update: if autenticado();
+      allow delete: if autenticado();
+    }
+
+    match /equipamentos/{docId} {
+      allow read: if autenticado();
+      allow create, update: if autenticado();
+      allow delete: if autenticado();
+    }
+
+    match /modos_execucao/{docId} {
+      allow read: if autenticado();
+      allow create, update: if autenticado();
+      allow delete: if autenticado();
+    }
+
+    match /setores_execucao/{docId} {
+      allow read: if autenticado();
+      allow create, update: if autenticado();
+      allow delete: if autenticado();
+    }
+
+    // ==========================================
+    // COLEÇÃO FINANCEIRA
+    // ==========================================
+    match /financeiro/{docId} {
+      allow read: if autenticado();
+      allow create, update: if autenticado();
+      allow delete: if autenticado();
+    }
+
+    // ==========================================
+    // PESSOAS (FÍSICAS/JURÍDICAS)
+    // ==========================================
+    match /pessoas/{docId} {
+      allow read: if autenticado();
+      allow create, update: if autenticado();
+      allow delete: if autenticado();
+    }
+
+    // ==========================================
+    // CONFIGURAÇÕES
+    // ==========================================
+    match /configuracoes/{docId} {
+      allow read: if autenticado();
+      allow create, update: if autenticado();
+      allow delete: if autenticado();
+    }
+
+    // ==========================================
+    // REGRA FALLBACK (qualquer outra coleção)
+    // ==========================================
+    match /{document=**} {
+      allow read: if autenticado();
+      allow create, update: if autenticado();
+      allow delete: if autenticado();
+    }
+  }
+}
