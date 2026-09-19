@@ -1,28 +1,10 @@
-// script.js - 7Site (Versão 9.0 - Consolidada com Jornada)
-
+// ==========================================
+// MÓDULO - op.js
+// Documento da OP, edição de material, execução e fluxograma
+// Depende de: firebase.js (auth, db), core/utils.js (maiusculo, formatarTempo)
+// ==========================================
 document.addEventListener('DOMContentLoaded', function() {
-
-
-    // ==========================================
-    // REFERÊNCIAS GLOBAIS DO DOM
-    // ==========================================
     const opDocumento = document.getElementById('op-documento');
-
-
-
-
-
-
-
-
-
-
-
-
-
-       // ==========================================
-    // 19. DOCUMENTO DA OP + EDIÇÃO DE MATERIAL
-    // ==========================================
     
     let opAtual = null;
     
@@ -928,6 +910,4 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     }
-
-    console.log('Script 7Site (Versão 9.0 - Consolidada com Jornada) carregado com sucesso!');
 });
