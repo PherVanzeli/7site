@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contato | 7Site - Confecção &amp; Tecnologia</title>
+    <meta name="description" content="Fale com a nossa confecção. Endereço, telefone, horário de funcionamento e mapa georreferenciado.">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- O JavaScript vai injetar o Cabeçalho aqui -->
+    <div id="header-include"></div>
+
+    <!-- ========================================== -->
+    <!-- CONTEÚDO PRINCIPAL DA PÁGINA DE CONTATO  -->
+    <!-- ========================================== -->
+    <main>
+        <section class="pagina-cabecalho">
+            <div class="container">
+                <h1>Fale com a <strong>7Site</strong></h1>
+                <p>Canais oficiais para orçamentos, parcerias, fornecedores e dúvidas do processo seletivo.</p>
+            </div>
+        </section>
+
+        <section class="contato-grid">
+            <div class="container">
+                <div class="grid-duplo">
+                    
+                    <!-- COLUNA DA ESQUERDA (AGORA É O FORMULÁRIO - PRIORIDADE) -->
+                    <div class="coluna-formulario">
+                        <h2>Envie uma mensagem</h2>
+                        <p>Preencha o formulário abaixo. O retorno é feito em até 1 dia útil.</p>
+
+                        <form id="form-contato" class="formulario-padrao">
+                            <label for="nome">Seu Nome *</label>
+                            <input type="text" id="nome" name="nome" placeholder="Digite seu nome" required>
+
+                            <label for="email">Seu E-mail *</label>
+                            <input type="email" id="email" name="email" placeholder="voce@email.com" required>
+
+                            <label for="assunto">Assunto *</label>
+                            <select id="assunto" name="assunto" required>
+                                <option value="" disabled selected>Selecione uma opção...</option>
+                                <option value="orcamento">Quero fazer um orçamento</option>
+                                <option value="fornecedor">Sou fornecedor de tecidos/aviamentos</option>
+                                <option value="rh">Quero me candidatar a uma vaga</option>
+                                <option value="outros">Outros assuntos</option>
+                            </select>
+
+                            <label for="mensagem">Mensagem *</label>
+                            <textarea id="mensagem" name="mensagem" rows="4" placeholder="Escreva aqui o que você precisa..." required></textarea>
+
+                            <button type="submit" class="btn-primario btn-enviar">Enviar Mensagem</button>
+                        </form>
+                    </div>
+
+                    <!-- COLUNA DA DIREITA (AGORA É A INFORMAÇÃO E O MAPA) -->
+                    <div class="coluna-info">
+                        <h2>Onde estamos</h2>
+                        <p>
+                            Rua das Máquinas, 123 - Galpão 4<br>
+                            Bairro Industrial - São Paulo/SP<br>
+                            CEP: 00000-000
+                        </p>
+
+                        <h2>Canais de Atendimento</h2>
+                        <ul class="lista-contatos">
+                            <li><strong>Comercial:</strong> (11) 99999-0000 (WhatsApp)</li>
+                            <li><strong>RH:</strong> rh@7site.com.br</li>
+                            <li><strong>Fornecedores:</strong> compras@7site.com.br</li>
+                        </ul>
+
+                        <h2>Horário de Funcionamento</h2>
+                        <p>
+                            Segunda a Sexta: 07h às 17h<br>
+                            Sábado: 07h às 11h (Produção)
+                        </p>
+
+                        <!-- MAPA COMPACTO (GEORREFERENCIADO) -->
+                        <h2>Mapa</h2>
+                        <!-- 
+                            IFRAME DO GOOGLE MAPS:
+                            Quando você tiver o endereço real, 
+                            vá ao Google Maps -> Compartilhar -> Incorporar mapa 
+                            e cole o link aqui dentro do 'src'.
+                        -->
+                        <div class="mapa-container">
+                            <iframe 
+                                src="https://www.google.com/maps?q=S%C3%A3o%20Paulo%2C%20SP&output=embed" 
+                                width="100%" 
+                                height="250" 
+                                style="border:0;" 
+                                allowfullscreen="" 
+                                loading="lazy" 
+                                referrerpolicy="no-referrer-when-downgrade">
+                            </iframe>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- O JavaScript vai injetar o Rodapé aqui -->
+    <div id="footer-include"></div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal 7Site | Notícias da Confecção e Comunidade</title>
+    <meta name="description" content="Notícias da indústria, bastidores da fábrica e o que acontece na comunidade. Portal 7Site.">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div id="header-include"></div>
+
+    <!-- ========================================== -->
+    <!-- BANNER PUBLICITÁRIO (TOPO DO PORTAL)      -->
+    <!-- ========================================== -->
+    <section class="banner-portal">
+        <div class="container">
+            <div class="placeholder-banner-topo">
+                [ ESPAÇO PARA BANNER 728x90 ]
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- BLOCO DE MANCHETE PRINCIPAL (ESTILO G1)    -->
+    <!-- ========================================== -->
+    <main>
+           <!-- ========================================== -->
+    <!-- CARROSSEL DE NOTÍCIAS (DESTAQUES)          -->
+    <!-- ========================================== -->
+    <section class="carrossel-noticias">
+        <div class="container">
+            <div class="carrossel-box" id="carrossel">
+
+                <!-- Slide 1 -->
+                <div class="carrossel-slide ativo">
+                    <img src="https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=1200&auto=format&fit=crop&q=80" alt="Tecidos">
+                    <div class="carrossel-texto">
+                        <span class="editoria">Economia &amp; Negócios</span>
+                        <h2>Tecidos Martins revela tendências para o verão e como a indústria têxtil está se reinventando</h2>
+                        <a href="artigo-exemplo.html" class="btn-primario">Ler reportagem completa</a>
+                    </div>
+                </div>
+
+                <!-- Slide 2 -->
+                <div class="carrossel-slide">
+                    <img src="https://images.unsplash.com/photo-1517649763962-0c623066013b?w=1200&auto=format&fit=crop&q=80" alt="Esporte">
+                    <div class="carrossel-texto">
+                        <span class="editoria">Quatiguá em Destaque</span>
+                        <h2>Time de futebol do bairro vence campeonato regional e emociona a comunidade</h2>
+                        <a href="#" class="btn-primario">Ver reportagem</a>
+                    </div>
+                </div>
+
+                <!-- Slide 3 -->
+                <div class="carrossel-slide">
+                    <img src="https://images.unsplash.com/photo-1604176354204-9268737828e4?w=1200&auto=format&fit=crop&q=80" alt="Ação Social">
+                    <div class="carrossel-texto">
+                        <span class="editoria">Responsabilidade Social</span>
+                        <h2>Ação do Agasalho 2024: confecção doa 200 peças para instituições</h2>
+                        <a href="#" class="btn-primario">Ler sobre a ação</a>
+                    </div>
+                </div>
+
+                <!-- Controles do Carrossel -->
+                <button class="carrossel-btn anterior" onclick="mudarSlide(-1)">&#10094;</button>
+                <button class="carrossel-btn proximo" onclick="mudarSlide(1)">&#10095;</button>
+
+                <!-- Indicadores (Bolinhas) -->
+                <div class="carrossel-indicadores">
+                    <span class="bolinha ativa" onclick="irParaSlide(0)"></span>
+                    <span class="bolinha" onclick="irParaSlide(1)"></span>
+                    <span class="bolinha" onclick="irParaSlide(2)"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+        <!-- ========================================== -->
+        <!-- LISTA DE NOTÍCIAS EM TEXTO (ESTILO UOL)    -->
+        <!-- ========================================== -->
+        <section class="noticias-lista">
+            <div class="container">
+                <div class="noticias-layout">
+                    
+                                        <!-- COLUNA ESQUERDA (PRINCIPAL) -->
+                    <div class="coluna-esquerda">
+                        
+                        <div class="editoria-titulo">
+                            <h2>Últimas do Setor</h2>
+                        </div>
+
+                        <!-- GRID DE NOTÍCIAS COMPACTAS (LADO A LADO) -->
+                        <div class="grid-noticias-compactas">
+                            
+                            <!-- Notícia 1 -->
+                            <article class="noticia-item-compacta">
+                                <img src="https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=400&auto=format&fit=crop&q=60" alt="Tecidos">
+                                <div class="noticia-conteudo-compacta">
+                                    <h3><a href="#">Preço do algodão dispara e pode encarecer a produção</a></h3>
+                                    <p>Mercado internacional afeta confecções.</p>
+                                    <span class="fonte">Há 2 horas</span>
+                                </div>
+                            </article>
+
+                            <!-- Notícia 2 -->
+                            <article class="noticia-item-compacta">
+                                <img src="https://images.unsplash.com/photo-1604176354204-9268737828e4?w=400&auto=format&fit=crop&q=60" alt="Equipe">
+                                <div class="noticia-conteudo-compacta">
+                                    <h3><a href="#">Ação do Agasalho 2024: confecção doa 200 peças</a></h3>
+                                    <p>Funcionários se uniram para ajudar.</p>
+                                    <span class="fonte">Há 5 horas</span>
+                                </div>
+                            </article>
+
+                            <!-- Notícia 3 -->
+                            <article class="noticia-item-compacta">
+                                <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400&auto=format&fit=crop&q=60" alt="Comunidade">
+                                <div class="noticia-conteudo-compacta">
+                                    <h3><a href="#">Feira de Artesanato do Bairro acontece neste sábado</a></h3>
+                                    <p>Moda autoral e gastronomia local.</p>
+                                    <span class="fonte">Há 8 horas</span>
+                                </div>
+                            </article>
+
+                            <!-- Notícia 4 (Extra para preencher o quadrado) -->
+                            <article class="noticia-item-compacta">
+                                <img src="https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=400&auto=format&fit=crop&q=60" alt="Linhas e agulhas">
+                                <div class="noticia-conteudo-compacta">
+                                    <h3><a href="#">Dicas de manutenção: como aumentar a vida útil da sua máquina</a></h3>
+                                    <p>Confira o guia rápido do setor técnico.</p>
+                                    <span class="fonte">Há 12 horas</span>
+                                </div>
+                            </article>
+
+                        </div>
+
+                        
+                        <!-- ========================================== -->
+                        <!-- EDITORIA LOCAL (COMUNIDADE E CHÃO DE FÁBRICA)-->
+                        <!-- ========================================== -->
+                        <div class="editoria-titulo editoria-local">
+                            <h2>Quatiguá em Destaque</h2>
+                        </div>
+
+                        <p class="descricao-editoria">
+                            Esportes, ações comunitárias e histórias de quem constrói o nosso chão de fábrica.
+                        </p>
+
+                        <div class="grid-noticias-compactas">
+                            
+                            <!-- Notícia Esporte -->
+                            <article class="noticia-item-compacta">
+                                <span class="tag-categoria">Esporte</span>
+                                <img src="https://images.unsplash.com/photo-1517649763962-0c623066013b?w=400&auto=format&fit=crop&q=60" alt="Esporte">
+                                <div class="noticia-conteudo-compacta">
+                                    <h3><a href="#">Time de futebol do bairro vence campeonato regional</a></h3>
+                                    <p>Com garra e união, atletas da comunidade levantam a taça.</p>
+                                    <span class="fonte">Há 1 dia</span>
+                                </div>
+                            </article>
+
+                            <!-- Notícia Comunidade -->
+                            <article class="noticia-item-compacta">
+                                <span class="tag-categoria">Comunidade</span>
+                                <img src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=400&auto=format&fit=crop&q=60" alt="Comunidade">
+                                <div class="noticia-conteudo-compacta">
+                                    <h3><a href="#">Mutirão de limpeza mobiliza moradores do bairro</a></h3>
+                                    <p>Voluntários se reuniram para cuidar de espaços públicos.</p>
+                                    <span class="fonte">Há 2 dias</span>
+                                </div>
+                            </article>
+
+                            <!-- Notícia Chão de Fábrica -->
+                            <article class="noticia-item-compacta">
+                                <span class="tag-categoria">Fábrica</span>
+                                <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&auto=format&fit=crop&q=60" alt="Fábrica">
+                                <div class="noticia-conteudo-compacta">
+                                    <h3><a href="#">Colaboradora da 7Site celebra 15 anos de dedicação</a></h3>
+                                    <p>Conheça a história de quem veste a camisa todos os dias.</p>
+                                    <span class="fonte">Há 3 dias</span>
+                                </div>
+                            </article>
+
+                            <!-- Notícia Esporte/Lazer -->
+                            <article class="noticia-item-compacta">
+                                <span class="tag-categoria">Evento</span>
+                                <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&auto=format&fit=crop&q=60" alt="Evento">
+                                <div class="noticia-conteudo-compacta">
+                                    <h3><a href="#">Festa junina da comunidade terá barracas e quadrilha</a></h3>
+                                    <p>Evento promete aquecer o bairro no próximo fim de semana.</p>
+                                    <span class="fonte">Há 4 dias</span>
+                                </div>
+                            </article>
+
+                        </div>
+
+                    </div>
+
+                    <!-- SIDEBAR DIREITA -->
+                    <aside class="sidebar-direita">
+                        
+                        <div class="widget-titulo">
+                            <h3>Mais Lidas</h3>
+                        </div>
+                        <ul class="lista-lidas">
+                            <li><a href="#">Vagas abertas na confecção: estamos contratando costureiras</a></li>
+                            <li><a href="#">Entrevista: como escolher o melhor tecido para o inverno</a></li>
+                            <li><a href="#">Nota de falecimento: luto na comunidade</a></li>
+                            <li><a href="#">Confira o calendário de feriados 2026</a></li>
+                        </ul>
+
+                        <div class="placeholder-banner-box">
+                            [ ESPAÇO PARA ANÚNCIO 300x250 ]
+                        </div>
+
+                        <div class="widget-titulo">
+                            <h3>Envie sua Notícia</h3>
+                        </div>
+                        <p class="widget-texto">Tem uma sugestão de pauta ou uma notícia da sua comunidade? Envie para a nossa redação.</p>
+                        <a href="#" class="btn-secundario">Enviar Notícia</a>
+
+                    </aside>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="footer-include"></div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

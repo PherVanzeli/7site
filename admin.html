@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sala do RH | 7Site</title>
+    <meta name="robots" content="noindex">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="pagina-erp">
+
+    <div id="sidebar-include"></div>
+
+    <main class="estoque-container">
+        <div class="container">
+            
+            <!-- Cabeçalho -->
+            <div class="painel-cabecalho">
+                <div>
+                    <h1>Sala do <strong class="texto-producao">RH</strong> 🔐</h1>
+                    <p>Gerencie os usuários e permissões do sistema.</p>
+                </div>
+            </div>
+
+            <!-- Formulário de Cadastro -->
+            <div class="estoque-formulario">
+                <h2 class="titulo-producao">Novo Usuário</h2>
+                
+                <form id="form-cadastro" class="formulario-padrao">
+                    
+                    <label for="nome-funcionario">Nome Completo *</label>
+                    <input type="text" id="nome-funcionario" placeholder="Ex: Maria de Fátima" required>
+
+                    <label for="cpf-funcionario">CPF (somente números) *</label>
+                    <input type="text" id="cpf-funcionario" placeholder="Ex: 12345678900" maxlength="11" required>
+
+                    <label for="senha-funcionario">Senha Provisória *</label>
+                    <input type="text" id="senha-funcionario" placeholder="Mínimo 6 caracteres" required>
+
+                    <label for="cargo-funcionario">Cargo na Empresa *</label>
+                    <input type="text" id="cargo-funcionario" placeholder="Ex: Costureira, Analista de RH..." required>
+
+                    <label for="tipo-usuario">Tipo de Usuário *</label>
+                    <select id="tipo-usuario" required>
+                        <option value="" disabled selected>Selecione...</option>
+                        <option value="funcionario">Funcionário (apenas painel pessoal)</option>
+                        <option value="subordinado">Subordinado Setorial (executa no ERP)</option>
+                        <option value="superior">Superior / Chefe de Setor (aprova e gerencia)</option>
+                    </select>
+
+                    <div id="campo-setor" style="display: none;">
+                        <label for="setor-funcionario">Setor *</label>
+                        <select id="setor-funcionario">
+                            <option value="" disabled selected>Selecione...</option>
+                            <option value="CDF">CDF - Chão de Fábrica</option>
+                            <option value="Administrativo">Administrativo</option>
+                            <option value="Financeiro">Financeiro</option>
+                            <option value="RH">RH</option>
+                            <option value="Manutencao">Manutenção</option>
+                            <option value="TI">TI</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn-primario btn-producao">Criar Acesso</button>
+                </form>
+            </div>
+
+            <!-- Listagem de Usuários -->
+            <div class="estoque-tabela">
+                <h2 class="titulo-producao">Usuários Cadastrados</h2>
+                
+                <div class="filtros-financeiro">
+                    <select id="filtro-setor-lista" onchange="listarFuncionarios()">
+                        <option value="todos">Todos os Setores</option>
+                        <option value="CDF">CDF</option>
+                        <option value="Administrativo">Administrativo</option>
+                        <option value="Financeiro">Financeiro</option>
+                        <option value="RH">RH</option>
+                        <option value="Manutencao">Manutenção</option>
+                        <option value="TI">TI</option>
+                    </select>
+                    <select id="filtro-tipo-lista" onchange="listarFuncionarios()">
+                        <option value="todos">Todos os Tipos</option>
+                        <option value="funcionario">Funcionários</option>
+                        <option value="subordinado">Subordinados</option>
+                        <option value="superior">Superiores</option>
+                    </select>
+                </div>
+
+                <div id="lista-funcionarios">
+                    <p class="texto-placeholder">Nenhum usuário cadastrado ainda.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div id="footer-include"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <script src="js/firebase.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>

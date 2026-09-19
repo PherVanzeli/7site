@@ -1,0 +1,53 @@
+<!-- ========================================== -->
+<!-- CABEÇALHO MODULAR (components/header.html) -->
+<!-- ========================================== -->
+<header class="cabecalho">
+    <div class="container cabecalho-flex">
+        
+        <!-- Placeholder da Logo -->
+        <div class="logo-area">
+            <a href="index.html" class="logo-texto">
+                &lt;7<span>Site</span>/&gt;
+            </a>
+        </div>
+
+        <!-- Botão Hambúrguer (Aparece só no Celular) -->
+        <button class="menu-hamburguer" id="btn-menu" aria-label="Abrir menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <!-- Menu de Navegação -->
+        <nav class="menu-principal" id="menu">
+            <ul>
+                <!-- Itens Públicos -->
+                <li><a href="index.html">Início</a></li>
+                <li><a href="noticias.html">Notícias</a></li>
+                <li><a href="loja.html">Loja</a></li>
+                <li><a href="vagas.html">Trabalhe Conosco</a></li>
+                <li><a href="contato.html">Contato</a></li>
+                
+                <!-- Área Restrita: CDF (Com Submenu) -->
+                                <li class="item-restrito menu-cdf" style="display: none;">
+                    <a href="#" class="menu-cdf-link">🏭 CDF ▾</a>
+                    <ul class="submenu-cdf" style="display: none;">
+                        <li class="submenu-titulo">Estoque</li>
+                        <li><a href="estoque.html">📦 Entrada de Estoque</a></li>
+                        <li><a href="itens.html">🧷 Biblioteca de Itens</a></li>
+                        <li class="submenu-titulo">Produção</li>
+                        <li><a href="producao.html">⚙️ Gerar OP</a></li>
+                        <li><a href="producao.html#ops">📄 Ordens de Produção</a></li>
+                    </ul>
+                </li>
+                
+                <!-- Área Restrita: RH -->
+                <li class="item-restrito" style="display: none;"><a href="admin.html">🔐 RH</a></li>
+                
+                <!-- Link de Login/Logout dinâmico -->
+                <li class="item-login" id="menu-login"><a href="login.html" class="btn-login">Área do Funcionário</a></li>
+            </ul>
+        </nav>
+
+    </div>
+</header>

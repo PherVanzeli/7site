@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluxograma de Produção | 7Site</title>
+    <meta name="robots" content="noindex">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="pagina-erp pagina-fluxo">
+
+    <div id="sidebar-include"></div>
+
+    <main class="estoque-container">
+        <div class="container">
+            
+            <!-- Cabeçalho -->
+            <div class="painel-cabecalho">
+                <div>
+                    <h1>Fluxograma de <strong class="texto-producao">Produção</strong> 🧩</h1>
+                    <p>Monte o roteiro técnico arrastando módulos e operações.</p>
+                </div>
+                <button class="btn-sair" onclick="sairDoSistema()">Sair do Portal</button>
+            </div>
+
+            <!-- Dados do Modelo -->
+            <div class="estoque-formulario">
+                <h2 class="titulo-producao">Identificação do Modelo</h2>
+                
+                                <div class="fluxo-dados-grid">
+                    <div>
+                        <label for="fluxo-nome">Nome do Modelo *</label>
+                        <input type="text" id="fluxo-nome" placeholder="Ex: MACACÃO NR10">
+                    </div>
+                    <div>
+                        <label for="fluxo-categoria">Categoria</label>
+                        <input type="text" id="fluxo-categoria" placeholder="Ex: EPI / VESTUÁRIO PROFISSIONAL">
+                    </div>
+                    <div>
+                        <label for="fluxo-variacao">Variação</label>
+                        <input type="text" id="fluxo-variacao" placeholder="Ex: PADRÃO, SLIM, PLUS">
+                    </div>
+                </div>
+
+                <div class="fluxo-resumo">
+                    <div class="fluxo-resumo-item">
+                        <span>⏱️ Tempo Total Estimado</span>
+                        <strong id="fluxo-tempo-total">0s</strong>
+                    </div>
+                    <div class="fluxo-resumo-item">
+                        <span>🧩 Módulos</span>
+                        <strong id="fluxo-total-modulos">0</strong>
+                    </div>
+                    <div class="fluxo-resumo-item">
+                        <span>⚙️ Operações</span>
+                        <strong id="fluxo-total-operacoes">0</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ZONA DE MONTAGEM -->
+            <div class="fluxo-montagem">
+                <div class="fluxo-montagem-cabecalho">
+                    <h2 class="titulo-producao">🛠️ Zona de Montagem</h2>
+                    <p class="ajuda-form">Arraste os módulos da biblioteca para cá. Clique em um módulo para expandir e editar as etapas.</p>
+                </div>
+                
+                <div id="zona-montagem" class="fluxo-zona-montagem">
+                    <p class="fluxo-zona-placeholder">Nenhum módulo adicionado ainda. Arraste um módulo da biblioteca.</p>
+                </div>
+            </div>
+
+            <!-- BIBLIOTECA DE MÓDULOS -->
+            <div class="fluxo-biblioteca">
+                <div class="fluxo-biblioteca-cabecalho">
+                    <h2 class="titulo-producao">📚 Biblioteca de Módulos</h2>
+                    <input type="text" id="fluxo-busca-modulo" placeholder="🔍 Buscar módulo..." class="fluxo-busca">
+                </div>
+
+                <div id="fluxo-lista-modulos" class="fluxo-biblioteca-lista">
+                    <p class="texto-placeholder">Nenhum módulo cadastrado ainda.</p>
+                </div>
+
+                <div class="fluxo-biblioteca-acoes">
+                    <button type="button" class="btn-secundario btn-compacto" onclick="abrirModalNovoModulo()">+ Novo Módulo</button>
+                    <button type="button" class="btn-secundario btn-compacto" onclick="abrirModalNovaOperacao()">+ Nova Operação</button>
+                    <button type="button" class="btn-secundario btn-compacto" onclick="abrirModalNovaMaquina()">+ Nova Máquina</button>
+                </div>
+            </div>
+
+            <!-- Lista de Fluxogramas Salvos -->
+            <div class="fluxo-lista-salvos">
+                <div class="fluxo-biblioteca-cabecalho">
+                    <h2 class="titulo-producao">📁 Fluxogramas Salvos</h2>
+                    <input type="text" id="fluxo-busca-salvos" placeholder="🔍 Buscar fluxograma..." class="fluxo-busca">
+                </div>
+                <div id="lista-fluxogramas-salvos" class="fluxo-lista-salvos-conteudo">
+                    <p class="texto-placeholder">Nenhum fluxograma salvo ainda.</p>
+                </div>
+            </div>
+
+            <!-- AÇÕES FINAIS -->
+            <div class="fluxo-acoes-finais">
+                <button type="button" class="btn-secundario" onclick="limparFluxograma()">🗑️ Limpar Tudo</button>
+                <button type="button" class="btn-primario btn-producao" onclick="salvarFluxograma()">💾 Salvar Fluxograma</button>
+            </div>
+
+        </div>
+
+                    <!-- Modal: Novo Módulo -->
+            <div id="modal-novo-modulo" class="modal-overlay" style="display: none;">
+                <div class="modal-caixa">
+                    <h3>Novo Módulo</h3>
+                    <p class="ajuda-form">Um módulo é um bloco de montagem reutilizável (ex: Manga, Gola, Acabamento).</p>
+
+                    <label for="mod-nome">Nome do Módulo *</label>
+                    <input type="text" id="mod-nome" placeholder="Ex: MANGA" maxlength="50">
+
+                    <label for="mod-descricao">Descrição (opcional)</label>
+                    <input type="text" id="mod-descricao" placeholder="Ex: Módulo de manga com punho">
+
+                    <div class="modal-botoes">
+                        <button type="button" class="btn-secundario" onclick="fecharModalNovoModulo()">Cancelar</button>
+                        <button type="button" class="btn-primario btn-producao" onclick="salvarNovoModulo()">Criar Módulo</button>
+                    </div>
+                </div>
+            </div>
+
+                        <!-- Modal: Nova Etapa -->
+            <div id="modal-nova-etapa" class="modal-overlay" style="display: none;">
+                <div class="modal-caixa modal-caixa-larga">
+                    <h3>Adicionar Etapa ao Módulo</h3>
+                    <p id="modal-etapa-modulo-nome" class="ajuda-form"></p>
+
+                                        <label for="etapa-nome">Nome da Etapa *</label>
+                    <input type="text" id="etapa-nome" placeholder="Ex: FECHAR ZÍPER DIANTEIRO, APLICAR FAIXA NA MANGA" required>
+                    <p class="ajuda-form" style="margin-top: -5px; margin-bottom: 10px;">Nome curto usado no chão de fábrica.</p>
+
+                    <label for="etapa-recorte">Recorte *</label>
+                    <input type="text" id="etapa-recorte" list="lista-recortes-etapa" placeholder="Ex: DIANTEIRO" required>
+                    <datalist id="lista-recortes-etapa"></datalist>
+
+                    <label for="etapa-operacao">Operação *</label>
+                    <input type="text" id="etapa-operacao" list="lista-operacoes-etapa" placeholder="Ex: FECHAR ZÍPER" required>
+                    <datalist id="lista-operacoes-etapa"></datalist>
+
+                                        <!-- Bloco de Insumo (opcional) -->
+                    <div style="background: #F8F5FF; padding: 15px; border-radius: 6px; margin: 15px 0; border-left: 4px solid #5E35B1;">
+                        <h4 style="margin: 0 0 10px; font-size: 14px; color: #4527A0;">📎 Insumo (opcional)</h4>
+
+                        <label for="etapa-insumo-tipo">Tipo de Insumo</label>
+                        <select id="etapa-insumo-tipo">
+                            <option value="">Nenhum</option>
+                            <option value="recorte">RECORTE</option>
+                            <option value="aviamento">AVIAMENTO</option>
+                        </select>
+
+                        <label for="etapa-insumo-nome">Nome do Insumo</label>
+                        <input type="text" id="etapa-insumo-nome" list="lista-insumos-etapa" placeholder="Ex: FAIXA REFLEXIVA 5CM">
+                        <datalist id="lista-insumos-etapa"></datalist>
+
+                        <div style="display: flex; gap: 10px; align-items: flex-end; margin-top: 10px;">
+                            <div style="flex: 2;">
+                                <label for="etapa-insumo-qtd">Quantidade por Peça</label>
+                                <input type="number" id="etapa-insumo-qtd" placeholder="Ex: 0.20" step="0.01" min="0">
+                            </div>
+                            <div style="flex: 1;">
+                                <label for="etapa-insumo-unidade">Unidade</label>
+                                <select id="etapa-insumo-unidade">
+                                    <option value="UN">UN</option>
+                                    <option value="MT">MT</option>
+                                    <option value="KG">KG</option>
+                                    <option value="ROLO">ROLO</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <label for="etapa-maquina">Máquina *</label>
+                    <input type="text" id="etapa-maquina" list="lista-maquinas-etapa" placeholder="Ex: RETA" required>
+                    <datalist id="lista-maquinas-etapa"></datalist>
+
+                    <label for="etapa-equipamento">Equipamento (opcional)</label>
+                    <input type="text" id="etapa-equipamento" list="lista-equipamentos-etapa" placeholder="Ex: APARELHO DE VIÉS">
+                    <datalist id="lista-equipamentos-etapa"></datalist>
+
+                    <label for="etapa-tempo">Tempo Estimado (segundos) *</label>
+                    <input type="number" id="etapa-tempo" placeholder="Ex: 30" min="1" value="30" required>
+
+                    <label for="etapa-observacoes">Observações</label>
+                    <input type="text" id="etapa-observacoes" placeholder="Ex: usar linha 40 na cor do tecido">
+
+                    <div class="modal-botoes">
+                        <button type="button" class="btn-secundario" onclick="fecharModalNovaEtapa()">Cancelar</button>
+                        <button type="button" class="btn-primario btn-producao" onclick="salvarNovaEtapa()">Adicionar Etapa</button>
+                    </div>
+                </div>
+            </div>
+
+                        <!-- Modal: Nova Máquina -->
+            <div id="modal-nova-maquina" class="modal-overlay" style="display: none;">
+                <div class="modal-caixa">
+                    <h3>Cadastrar Nova Máquina</h3>
+                    <p class="ajuda-form">A máquina ficará disponível para todas as etapas do fluxograma.</p>
+
+                    <label for="maquina-nome">Nome da Máquina *</label>
+                    <input type="text" id="maquina-nome" placeholder="Ex: RETA, OVERLOQUE, GALONEIRA" maxlength="40">
+
+                    <div class="modal-botoes">
+                        <button type="button" class="btn-secundario" onclick="fecharModalNovaMaquina()">Cancelar</button>
+                        <button type="button" class="btn-primario btn-producao" onclick="salvarNovaMaquina()">Cadastrar Máquina</button>
+                    </div>
+                </div>
+            </div>
+
+                        <!-- Modal: Salvar Fluxograma -->
+            <div id="modal-salvar-fluxograma" class="modal-overlay" style="display: none;">
+                <div class="modal-caixa">
+                    <h3 id="modal-salvar-titulo">Salvar Fluxograma</h3>
+                    <p class="ajuda-form">Confirme os dados do modelo antes de salvar.</p>
+
+                    <label for="salvar-nome">Nome do Modelo *</label>
+                    <input type="text" id="salvar-nome" placeholder="Ex: MACACÃO NR10" maxlength="80">
+
+                    <label for="salvar-categoria">Categoria</label>
+                    <input type="text" id="salvar-categoria" placeholder="Ex: EPI, VESTUÁRIO PROFISSIONAL" maxlength="50">
+
+                    <label for="salvar-variacao">Variação</label>
+                    <input type="text" id="salvar-variacao" placeholder="Ex: PADRÃO, SLIM, PLUS" maxlength="30">
+
+                    <div class="modal-botoes">
+                        <button type="button" class="btn-secundario" onclick="fecharModalSalvarFluxograma()">Cancelar</button>
+                        <button type="button" class="btn-primario btn-producao" onclick="confirmarSalvarFluxograma()">💾 Salvar</button>
+                    </div>
+                </div>
+            </div>
+    </main>
+
+    <div id="footer-include"></div>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <!-- SortableJS (drag and drop) -->
+    <script src="js/lib/sortable.min.js"></script>
+    
+    <!-- Nossos Scripts -->
+    <script src="js/firebase.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/drag-fluxograma.js"></script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ordem de Produção | 7Site</title>
+    <meta name="robots" content="noindex">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="pagina-erp">
+
+    <div id="sidebar-include"></div>
+
+    <main class="estoque-container">
+        <div class="container">
+            
+            <!-- Cabeçalho do Documento -->
+            <div class="painel-cabecalho">
+                <div>
+                    <h1>Ordem de <strong class="texto-producao">Produção</strong> 📄</h1>
+                    <p>Documento gerado automaticamente pelo sistema 7Site.</p>
+                </div>
+                <button class="btn-sair" onclick="sairDoSistema()">Voltar</button>
+            </div>
+
+            <!-- Botão de Edição (aparece apenas se status permitir) -->
+            <div id="op-acoes-edicao" style="display: none; margin-bottom: 20px; text-align: center;">
+                <button class="btn-primario btn-producao" onclick="abrirEdicaoMaterial()">✏️ Editar Material da OP</button>
+            </div>
+
+            <!-- Corpo da OP -->
+            <div class="op-documento" id="op-documento">
+                <!-- O JavaScript vai preencher os dados aqui -->
+                <p class="texto-placeholder">Carregando dados da OP...</p>
+            </div>
+
+            <!-- Botão de Impressão -->
+            <div class="op-acoes">
+                <button class="btn-primario btn-producao" onclick="window.print()">🖨️ Imprimir OP</button>
+                <button class="btn-secundario" onclick="history.back()">Voltar para Produção</button>
+            </div>
+
+        </div>
+
+                    <!-- Modal de Edição de Material -->
+            <div id="modal-editar-material" class="modal-overlay" style="display: none;">
+                <div class="modal-caixa modal-caixa-larga">
+                    <h3>✏️ Editar Material da OP</h3>
+                    
+                    <div class="abas-modal">
+                        <button class="aba ativa" onclick="trocarAbaEdicao('aviamentos', this)">Aviamentos</button>
+                        <button class="aba" onclick="trocarAbaEdicao('recortes', this)">Recortes</button>
+                    </div>
+
+                    <!-- Aba: Aviamentos -->
+                    <div id="aba-aviamentos" class="aba-conteudo ativa">
+                        <div id="lista-aviamentos-edicao" class="lista-itens-secao">
+                            <p class="texto-placeholder">Carregando...</p>
+                        </div>
+
+                        <div class="controles-aviamento controles-aviamento-largo">
+                            <input type="text" id="edit-av-nome" list="lista-av-sugestoes" placeholder="Nome" class="input-medio">
+                            <datalist id="lista-av-sugestoes"></datalist>
+                            <input type="text" id="edit-av-material" placeholder="Material" class="input-curto">
+                            <input type="text" id="edit-av-cor" placeholder="Cor" class="input-curto">
+                            <input type="text" id="edit-av-tamanho" placeholder="Tam." class="input-curto">
+                            <input type="number" id="edit-av-qtd" placeholder="Qtd" min="1" class="input-pequeno">
+                            <select id="edit-av-unidade" class="input-pequeno">
+                                <option value="UN">UN</option>
+                                <option value="MT">MT</option>
+                            </select>
+                            <button type="button" class="btn-producao btn-compacto" onclick="edicaoAdicionarAviamento()">+ Adicionar</button>
+                        </div>
+                    </div>
+
+                    <!-- Aba: Recortes -->
+                    <div id="aba-recortes" class="aba-conteudo">
+                        <div id="lista-recortes-edicao" class="lista-itens-secao">
+                            <p class="texto-placeholder">Carregando...</p>
+                        </div>
+
+                        <div class="controles-aviamento">
+                            <input type="text" id="edit-rec-nome" list="lista-rec-sugestoes" placeholder="Nome do recorte" class="select-aviamento">
+                            <datalist id="lista-rec-sugestoes"></datalist>
+                            <input type="number" id="edit-rec-qtd" placeholder="Qtd/peça" min="1" value="1" class="input-aviamento">
+                            <button type="button" class="btn-producao btn-compacto" onclick="edicaoAdicionarRecorte()">+ Adicionar</button>
+                        </div>
+                    </div>
+
+                    <div class="modal-botoes">
+                        <button type="button" class="btn-secundario" onclick="fecharModalEdicao()">Cancelar</button>
+                        <button type="button" class="btn-primario btn-producao" onclick="salvarEdicaoMaterial()">Salvar Alterações</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal de Motivo de Remoção -->
+            <div id="modal-motivo-remocao" class="modal-overlay" style="display: none;">
+                <div class="modal-caixa">
+                    <h3>Remover Item</h3>
+                    <p id="motivo-item-info" class="ajuda-form"></p>
+
+                    <label>Tipo de Remoção *</label>
+                    <div class="radio-opcoes">
+                        <label class="radio-opcao">
+                            <input type="radio" name="motivo-remocao" value="devolucao" checked>
+                            <span>
+                                <strong>Devolução ao Estoque</strong>
+                                <small>Não será usado nesta OP, mas fica disponível. Saldo não muda.</small>
+                            </span>
+                        </label>
+                        <label class="radio-opcao">
+                            <input type="radio" name="motivo-remocao" value="erro">
+                            <span>
+                                <strong>Exclusão por Erro</strong>
+                                <small>Nunca esteve no corte ou foi cadastrado errado. Requer aprovação do superior.</small>
+                            </span>
+                        </label>
+                    </div>
+
+                    <label for="motivo-observacao">Observação (opcional)</label>
+                    <input type="text" id="motivo-observacao" placeholder="Ex: veio com defeito">
+
+                    <div class="modal-botoes">
+                        <button type="button" class="btn-secundario" onclick="fecharModalMotivo()">Cancelar</button>
+                        <button type="button" class="btn-primario btn-producao" onclick="confirmarRemocao()">Confirmar Remoção</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal de Autorização do Superior -->
+            <div id="modal-autorizacao" class="modal-overlay" style="display: none;">
+                <div class="modal-caixa">
+                    <h3>🔐 Autorização Necessária</h3>
+                    <p class="ajuda-form">Esta ação requer aprovação do superior (CDF ou Administrativo).</p>
+
+                    <label for="aut-cpf">CPF do Superior *</label>
+                    <input type="text" id="aut-cpf" placeholder="000.000.000-00" maxlength="14">
+
+                    <label for="aut-senha">Senha *</label>
+                    <input type="password" id="aut-senha" placeholder="Digite a senha do superior">
+
+                    <p id="aut-erro" class="mensagem-erro" style="display: none;"></p>
+
+                    <div class="modal-botoes">
+                        <button type="button" class="btn-secundario" onclick="fecharModalAutorizacao()">Cancelar</button>
+                        <button type="button" class="btn-primario btn-producao" onclick="validarAutorizacao()">Autorizar</button>
+                    </div>
+                </div>
+            </div>
+                    <!-- Modal: Escolher Fluxograma -->
+            <div id="modal-escolher-fluxograma" class="modal-overlay" style="display: none;">
+                <div class="modal-caixa modal-caixa-larga">
+                    <h3>📋 Escolher Fluxograma</h3>
+                    <p class="ajuda-form">Selecione o roteiro de produção para esta OP. Depois de vinculado, o status muda para <strong>Em Produção</strong>.</p>
+
+                    <input type="text" id="busca-fluxograma-op" placeholder="🔍 Buscar fluxograma..." class="fluxo-busca" style="width: 100%; margin-bottom: 15px;">
+
+                    <div id="lista-fluxogramas-op" class="lista-fluxogramas-op">
+                        <p class="texto-placeholder">Carregando...</p>
+                    </div>
+
+                    <div class="modal-botoes">
+                        <button type="button" class="btn-secundario" onclick="fecharModalEscolherFluxograma()">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+    </main>
+
+    <div id="footer-include"></div>
+
+    <!-- Firebase (Backend) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <!-- Nossos Scripts -->
+    <script src="js/firebase.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>

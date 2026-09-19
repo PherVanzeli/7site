@@ -1,0 +1,4151 @@
+/* ========================================== */
+/* CSS - 7SITE (VERSÃO 6.0 - CONSOLIDADA)    */
+/* Módulos: Fundação, RH, Notícias, Loja,     */
+/* Estoque, Produção, OP e Submenu CDF        */
+/* ========================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@600;800&display=swap');
+
+:root {
+    --cor-primaria: #0B0C10;
+    --cor-secundaria: #1F2833;
+    --cor-destaque: #FF6B35;
+    --cor-texto: #333333;
+    --cor-fundo: #FFFFFF;
+    --cor-cinza-claro: #F4F4F4;
+    --cor-verde-producao: #2E7D32;
+    --fonte-titulos: 'Montserrat', 'Segoe UI', sans-serif;
+    --fonte-textos: 'Inter', 'Segoe UI', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--fonte-textos);
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto);
+    line-height: 1.6;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ========================================== */
+/* 1. CABEÇALHO                                */
+/* ========================================== */
+.cabecalho {
+    background-color: var(--cor-primaria);
+    padding: 15px 0;
+    border-bottom: 3px solid var(--cor-destaque);
+}
+
+.cabecalho-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.logo-texto {
+    font-family: var(--fonte-titulos);
+    font-weight: 800;
+    font-size: 24px;
+    color: #FFFFFF;
+    text-decoration: none;
+    letter-spacing: 1px;
+}
+
+.logo-texto span {
+    color: var(--cor-destaque);
+}
+
+/* ========================================== */
+/* 2. MENU HAMBÚRGUER E MENU PRINCIPAL        */
+/* ========================================== */
+.menu-hamburguer {
+    display: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+}
+
+.menu-hamburguer span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: #FFFFFF;
+    margin: 5px 0;
+    transition: 0.3s;
+}
+
+.menu-principal ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.menu-principal a {
+    color: #FFFFFF;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: color 0.3s ease;
+}
+
+.menu-principal a:hover {
+    color: var(--cor-destaque);
+}
+
+.menu-principal .btn-login {
+    background-color: transparent;
+    border: 1px solid #FFFFFF;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 700;
+}
+
+.menu-principal .btn-login:hover {
+    background-color: #FFFFFF;
+    color: var(--cor-primaria);
+}
+
+/* Itens restritos (aparecem somente após login) */
+.item-restrito {
+    display: none;
+}
+
+/* ========================================== */
+/* 3. SUBMENU DO CDF (DROPDOWN)               */
+/* ========================================== */
+.menu-cdf {
+    position: relative;
+}
+
+.menu-cdf-link {
+    cursor: pointer;
+}
+
+.submenu-cdf {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: var(--cor-primaria);
+    border: 1px solid var(--cor-verde-producao);
+    border-radius: 4px;
+    min-width: 220px;
+    z-index: 9999;
+    padding: 10px 0;
+    margin: 0;
+    list-style: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.submenu-cdf li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.submenu-cdf li a {
+    display: block;
+    padding: 10px 20px;
+    color: #FFFFFF;
+    font-size: 14px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.submenu-cdf li a:hover {
+    background-color: var(--cor-verde-producao);
+    color: #FFFFFF;
+}
+
+/* ========================================== */
+/* 4. HERO (BANNER PRINCIPAL)                 */
+/* ========================================== */
+.hero {
+    background-color: var(--cor-cinza-claro);
+    padding: 60px 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.hero .container {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.hero-conteudo {
+    flex: 1;
+}
+
+.badge {
+    background-color: var(--cor-secundaria);
+    color: #FFFFFF;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.hero h1 {
+    font-family: var(--fonte-titulos);
+    font-size: 42px;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-top: 20px;
+    color: var(--cor-primaria);
+}
+
+.hero h1 strong {
+    color: var(--cor-destaque);
+}
+
+.hero p {
+    margin-top: 20px;
+    font-size: 18px;
+    max-width: 90%;
+}
+
+.hero-botoes {
+    margin-top: 30px;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.hero-imagem {
+    flex: 1;
+}
+
+.placeholder-banner {
+    background-color: #e9ecef;
+    border: 2px dashed #adb5bd;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: var(--fonte-titulos);
+    color: #868e96;
+    font-weight: 700;
+    letter-spacing: 2px;
+    border-radius: 8px;
+}
+
+/* ========================================== */
+/* 5. BOTÕES GERAIS                           */
+/* ========================================== */
+.btn-primario {
+    background-color: var(--cor-destaque);
+    color: #FFFFFF;
+    padding: 14px 28px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 700;
+    text-align: center;
+    transition: background-color 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primario:hover {
+    background-color: #e05a2b;
+}
+
+.btn-secundario {
+    background-color: transparent;
+    color: var(--cor-primaria);
+    padding: 14px 28px;
+    border: 2px solid var(--cor-primaria);
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 700;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-secundario:hover {
+    background-color: var(--cor-primaria);
+    color: #FFFFFF;
+}
+
+/* ========================================== */
+/* 6. RODAPÉ                                  */
+/* ========================================== */
+.rodape {
+    background-color: var(--cor-primaria);
+    color: #adb5bd;
+    padding: 30px 0;
+    text-align: center;
+    font-size: 14px;
+}
+
+.rodape .aviso {
+    margin-top: 10px;
+    font-style: italic;
+    color: #6c757d;
+}
+
+.placeholder-anuncio {
+    background-color: #1F2833;
+    color: #6c757d;
+    border: 2px dashed #495057;
+    padding: 20px;
+    margin-top: 15px;
+    border-radius: 8px;
+    font-family: var(--fonte-titulos);
+    font-size: 12px;
+    letter-spacing: 2px;
+}
+
+/* ========================================== */
+/* 7. PÁGINA DE CONTATO                       */
+/* ========================================== */
+.pagina-cabecalho {
+    background-color: var(--cor-secundaria);
+    color: #FFFFFF;
+    padding: 50px 0;
+    text-align: center;
+    border-bottom: 3px solid var(--cor-destaque);
+}
+
+.pagina-cabecalho h1 {
+    font-family: var(--fonte-titulos);
+    font-size: 36px;
+    margin-bottom: 10px;
+}
+
+.pagina-cabecalho h1 strong {
+    color: var(--cor-destaque);
+}
+
+.pagina-cabecalho p {
+    font-size: 18px;
+    opacity: 0.8;
+}
+
+.contato-grid {
+    padding: 40px 0;
+}
+
+.grid-duplo {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.coluna-formulario {
+    flex: 1.2;
+    min-width: 320px;
+}
+
+.coluna-info {
+    flex: 1;
+    min-width: 280px;
+}
+
+.coluna-info h2,
+.coluna-formulario h2 {
+    font-family: var(--fonte-titulos);
+    color: var(--cor-primaria);
+    margin-bottom: 10px;
+    font-size: 20px;
+}
+
+.coluna-info p {
+    margin-bottom: 15px;
+    color: var(--cor-texto);
+    font-size: 15px;
+}
+
+.lista-contatos {
+    list-style: none;
+    margin-bottom: 20px;
+}
+
+.lista-contatos li {
+    background-color: var(--cor-cinza-claro);
+    padding: 10px;
+    border-left: 4px solid var(--cor-destaque);
+    margin-bottom: 8px;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.mapa-container {
+    margin-top: 10px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* ========================================== */
+/* 8. FORMULÁRIOS PADRÃO                      */
+/* ========================================== */
+.formulario-padrao {
+    background-color: var(--cor-cinza-claro);
+    padding: 25px;
+    border-radius: 8px;
+}
+
+.formulario-padrao label {
+    display: block;
+    font-weight: 600;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.formulario-padrao input,
+.formulario-padrao select,
+.formulario-padrao textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-family: var(--fonte-textos);
+    font-size: 15px;
+    background-color: #FFFFFF;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.formulario-padrao input:focus,
+.formulario-padrao select:focus,
+.formulario-padrao textarea:focus {
+    outline: none;
+    border-color: var(--cor-destaque);
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.btn-enviar {
+    width: 100%;
+    margin-top: 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* ========================================== */
+/* 9. PÁGINA DE VAGAS                         */
+/* ========================================== */
+.beneficios-vagas {
+    padding: 40px 0;
+    background-color: var(--cor-cinza-claro);
+}
+
+.grid-beneficios {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.card-beneficio {
+    background-color: #FFFFFF;
+    flex: 1;
+    min-width: 200px;
+    padding: 25px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border-bottom: 3px solid var(--cor-destaque);
+}
+
+.card-beneficio .icone {
+    font-size: 36px;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.card-beneficio h3 {
+    font-family: var(--fonte-titulos);
+    font-size: 16px;
+    color: var(--cor-primaria);
+    margin-bottom: 8px;
+}
+
+.card-beneficio p {
+    font-size: 14px;
+    color: #6c757d;
+}
+
+.formulario-vagas {
+    padding: 40px 0;
+}
+
+.formulario-vagas-box {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.formulario-vagas-box h2 {
+    font-family: var(--fonte-titulos);
+    text-align: center;
+    margin-bottom: 10px;
+    color: var(--cor-primaria);
+}
+
+.formulario-vagas-box p {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #6c757d;
+}
+
+.etapa-form {
+    display: none;
+}
+
+.etapa-form.ativa {
+    display: block;
+}
+
+.etapa-form h3 {
+    font-family: var(--fonte-titulos);
+    color: var(--cor-destaque);
+    margin-bottom: 15px;
+    font-size: 18px;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 10px;
+}
+
+.botoes-navegacao {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.botoes-navegacao .btn-primario,
+.botoes-navegacao .btn-secundario {
+    flex: 1;
+    text-align: center;
+}
+
+/* ========================================== */
+/* 10. LOGIN E PAINEL DO FUNCIONÁRIO          */
+/* ========================================== */
+.pagina-login {
+    background-color: var(--cor-cinza-claro);
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 70vh;
+    padding: 40px 0;
+}
+
+.login-box {
+    background-color: #FFFFFF;
+    max-width: 500px;
+    width: 100%;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.login-texto h1 {
+    font-family: var(--fonte-titulos);
+    font-size: 28px;
+    margin: 15px 0;
+    color: var(--cor-primaria);
+}
+
+.login-texto h1 strong {
+    color: var(--cor-destaque);
+}
+
+.login-texto p {
+    color: #6c757d;
+    margin-bottom: 25px;
+    font-size: 14px;
+}
+
+.formulario-login {
+    text-align: left;
+}
+
+.formulario-login label {
+    display: block;
+    font-weight: 600;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.formulario-login input {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.formulario-login input:focus {
+    outline: none;
+    border-color: var(--cor-destaque);
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.mensagem-erro {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 15px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.login-dica {
+    background-color: #e7f3ff;
+    color: #004085;
+    padding: 15px;
+    border-radius: 4px;
+    margin-top: 20px;
+    font-size: 12px;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.login-senha-esquecida {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    color: #6c757d;
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.login-senha-esquecida:hover {
+    text-decoration: underline;
+}
+
+.painel-container {
+    padding: 40px 0;
+}
+
+.painel-cabecalho {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.painel-cabecalho h1 {
+    font-family: var(--fonte-titulos);
+    font-size: 32px;
+    color: var(--cor-primaria);
+}
+
+.painel-cabecalho h1 strong {
+    color: var(--cor-destaque);
+}
+
+.painel-cabecalho p {
+    color: #6c757d;
+    margin-top: 5px;
+}
+
+.aviso-rh {
+    background-color: #fff3cd;
+    border-left: 4px solid #ffc107;
+    color: #856404;
+    padding: 15px;
+    border-radius: 4px;
+    margin: 20px 0;
+    font-size: 14px;
+}
+
+.painel-acoes {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin: 30px 0;
+}
+
+.card-acao {
+    background-color: #FFFFFF;
+    border-radius: 8px;
+    padding: 25px;
+    flex: 1;
+    min-width: 220px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border-top: 4px solid var(--cor-destaque);
+}
+
+.icone-acao {
+    font-size: 40px;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.card-acao h3 {
+    font-family: var(--fonte-titulos);
+    color: var(--cor-primaria);
+    margin-bottom: 8px;
+}
+
+.card-acao p {
+    font-size: 13px;
+    color: #6c757d;
+    margin-bottom: 15px;
+}
+
+.card-acao .btn-primario {
+    font-size: 13px;
+    padding: 10px 20px;
+}
+
+.area-dinamica {
+    background-color: var(--cor-cinza-claro);
+    border-radius: 8px;
+    padding: 30px;
+    margin-top: 20px;
+    min-height: 150px;
+}
+
+.texto-placeholder {
+    text-align: center;
+    color: #adb5bd;
+    font-style: italic;
+}
+
+.btn-sair {
+    background-color: transparent;
+    border: 2px solid #dc3545;
+    color: #dc3545;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-family: var(--fonte-textos);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.btn-sair:hover {
+    background-color: #dc3545;
+    color: #FFFFFF;
+}
+
+/* ========================================== */
+/* 11. SALA DO RH (ADMIN)                     */
+/* ========================================== */
+.admin-container {
+    padding: 40px 0;
+}
+
+.admin-container .grid-duplo {
+    margin-top: 20px;
+}
+
+.lista-funcionarios {
+    background-color: var(--cor-cinza-claro);
+    padding: 20px;
+    border-radius: 8px;
+    min-height: 200px;
+}
+
+/* ========================================== */
+/* 12. PORTAL DE NOTÍCIAS                     */
+/* ========================================== */
+.banner-portal {
+    padding: 15px 0;
+    background-color: #fff;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.placeholder-banner-topo {
+    background-color: #f1f3f5;
+    border: 1px solid #dee2e6;
+    height: 90px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: var(--fonte-titulos);
+    color: #868e96;
+    font-weight: 700;
+    letter-spacing: 2px;
+    font-size: 14px;
+}
+
+.manchete-principal {
+    padding: 25px 0;
+    background-color: #fff;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.manchete-box {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.manchete-texto {
+    flex: 1;
+    min-width: 280px;
+}
+
+.editoria {
+    font-family: var(--fonte-titulos);
+    font-weight: 800;
+    color: var(--cor-destaque);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 14px;
+}
+
+.manchete-texto h1 {
+    font-family: var(--fonte-titulos);
+    font-size: 32px;
+    line-height: 1.2;
+    color: var(--cor-primaria);
+    margin: 10px 0;
+}
+
+.manchete-texto .olho {
+    font-size: 16px;
+    color: #495057;
+    margin-bottom: 20px;
+}
+
+.manchete-imagem {
+    flex: 1;
+    min-width: 280px;
+}
+
+.manchete-imagem img {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.noticias-lista {
+    padding: 30px 0;
+    background-color: #fff;
+}
+
+.noticias-layout {
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.coluna-esquerda {
+    flex: 2;
+    min-width: 300px;
+}
+
+.sidebar-direita {
+    flex: 1;
+    min-width: 260px;
+}
+
+.editoria-titulo {
+    border-bottom: 2px solid var(--cor-destaque);
+    margin-bottom: 20px;
+}
+
+.editoria-titulo h2 {
+    font-family: var(--fonte-titulos);
+    font-size: 20px;
+    color: var(--cor-primaria);
+    padding-bottom: 8px;
+}
+
+.grid-noticias-compactas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.noticia-item-compacta {
+    flex: 1 1 180px;
+    min-width: 160px;
+    background-color: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.3s;
+}
+
+.noticia-item-compacta:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.noticia-item-compacta img {
+    width: 100%;
+    height: 110px;
+    object-fit: cover;
+    display: block;
+}
+
+.noticia-conteudo-compacta {
+    padding: 10px;
+}
+
+.noticia-conteudo-compacta h3 {
+    font-family: var(--fonte-titulos);
+    font-size: 13px;
+    line-height: 1.4;
+    margin-bottom: 5px;
+}
+
+.noticia-conteudo-compacta h3 a {
+    color: var(--cor-primaria);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.noticia-conteudo-compacta h3 a:hover {
+    color: var(--cor-destaque);
+}
+
+.noticia-conteudo-compacta p {
+    font-size: 11px;
+    color: #6c757d;
+    margin-bottom: 5px;
+}
+
+.fonte {
+    font-size: 10px;
+    color: #adb5bd;
+    letter-spacing: 0.5px;
+}
+
+.tag-categoria {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: var(--cor-destaque);
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    z-index: 2;
+}
+
+.widget-titulo {
+    border-bottom: 2px solid var(--cor-primaria);
+    margin-bottom: 15px;
+}
+
+.widget-titulo h3 {
+    font-family: var(--fonte-titulos);
+    font-size: 16px;
+    color: var(--cor-primaria);
+    padding-bottom: 8px;
+}
+
+.lista-lidas {
+    list-style: none;
+    margin-bottom: 25px;
+}
+
+.lista-lidas li {
+    border-bottom: 1px solid #e9ecef;
+    padding: 10px 0;
+}
+
+.lista-lidas li:last-child {
+    border-bottom: none;
+}
+
+.lista-lidas a {
+    color: #495057;
+    text-decoration: none;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.lista-lidas a:hover {
+    color: var(--cor-destaque);
+}
+
+.widget-texto {
+    font-size: 13px;
+    color: #6c757d;
+    margin-bottom: 15px;
+}
+
+.placeholder-banner-box {
+    background-color: #f1f3f5;
+    border: 1px solid #dee2e6;
+    height: 250px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: var(--fonte-titulos);
+    color: #868e96;
+    font-weight: 700;
+    letter-spacing: 1px;
+    font-size: 13px;
+    margin-bottom: 25px;
+    border-radius: 4px;
+}
+
+.editoria-local {
+    border-bottom: 3px solid var(--cor-primaria);
+    margin-top: 40px;
+    margin-bottom: 15px;
+}
+
+.editoria-local h2 {
+    color: var(--cor-primaria);
+    font-size: 22px;
+    letter-spacing: 0.5px;
+}
+
+.descricao-editoria {
+    font-size: 14px;
+    color: #6c757d;
+    margin-bottom: 20px;
+    font-style: italic;
+    line-height: 1.6;
+}
+
+/* Carrossel de Notícias */
+.carrossel-noticias {
+    padding: 25px 0;
+    background-color: #fff;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.carrossel-box {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    overflow: hidden;
+    border-radius: 8px;
+    background-color: #000;
+}
+
+.carrossel-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
+    z-index: 1;
+}
+
+.carrossel-slide.ativo {
+    opacity: 1;
+    z-index: 2;
+}
+
+.carrossel-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.carrossel-slide::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.8));
+    z-index: 3;
+}
+
+.carrossel-texto {
+    position: absolute;
+    bottom: 40px;
+    left: 40px;
+    z-index: 4;
+    color: #fff;
+    max-width: 60%;
+}
+
+.carrossel-texto .editoria {
+    font-family: var(--fonte-titulos);
+    font-weight: 800;
+    color: var(--cor-destaque);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 14px;
+    background-color: rgba(0,0,0,0.5);
+    padding: 4px 10px;
+    display: inline-block;
+    border-radius: 4px;
+}
+
+.carrossel-texto h2 {
+    font-family: var(--fonte-titulos);
+    font-size: 28px;
+    line-height: 1.3;
+    margin: 10px 0 20px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+}
+
+.carrossel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0,0,0,0.5);
+    color: #fff;
+    border: none;
+    padding: 15px;
+    cursor: pointer;
+    z-index: 5;
+    font-size: 20px;
+    transition: background-color 0.3s;
+}
+
+.carrossel-btn:hover {
+    background-color: var(--cor-destaque);
+}
+
+.carrossel-btn.anterior {
+    left: 15px;
+    border-radius: 4px;
+}
+
+.carrossel-btn.proximo {
+    right: 15px;
+    border-radius: 4px;
+}
+
+.carrossel-indicadores {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+    display: flex;
+    gap: 8px;
+}
+
+.bolinha {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: rgba(255,255,255,0.5);
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.bolinha.ativa {
+    background-color: var(--cor-destaque);
+    transform: scale(1.3);
+}
+
+/* ========================================== */
+/* 13. ESTOQUE E PRODUÇÃO (CDF)               */
+/* ========================================== */
+.estoque-container {
+    padding: 40px 0;
+    background-color: var(--cor-cinza-claro);
+}
+
+.estoque-indicadores {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin: 30px 0;
+}
+
+.card-indicador {
+    flex: 1;
+    min-width: 150px;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border-top: 4px solid var(--cor-destaque);
+}
+
+.card-indicador span {
+    font-size: 30px;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.card-indicador h3 {
+    font-family: var(--fonte-titulos);
+    font-size: 28px;
+    color: var(--cor-primaria);
+}
+
+.card-indicador p {
+    font-size: 13px;
+    color: #6c757d;
+}
+
+.estoque-formulario,
+.estoque-tabela {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.estoque-formulario h2,
+.estoque-tabela h2 {
+    font-family: var(--fonte-titulos);
+    color: var(--cor-primaria);
+    margin-bottom: 15px;
+    font-size: 20px;
+}
+
+.tabela-estoque {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.tabela-estoque th {
+    background-color: var(--cor-verde-producao);
+    color: #fff;
+    padding: 10px;
+    text-align: left;
+    font-size: 13px;
+}
+
+.tabela-estoque td {
+    padding: 10px;
+    border-bottom: 1px solid #dee2e6;
+    font-size: 13px;
+    color: #495057;
+}
+
+.tabela-estoque tr:hover {
+    background-color: var(--cor-cinza-claro);
+}
+
+.texto-producao {
+    color: var(--cor-verde-producao);
+}
+
+.titulo-producao {
+    color: var(--cor-verde-producao);
+    font-family: var(--fonte-titulos);
+}
+
+.btn-producao {
+    background-color: var(--cor-verde-producao);
+    color: #fff;
+    transition: background-color 0.3s;
+}
+
+.btn-producao:hover {
+    background-color: #1B5E20;
+}
+
+.card-indicador-producao {
+    border-top: 4px solid var(--cor-verde-producao);
+}
+
+.estoque-formulario input:focus,
+.estoque-formulario select:focus,
+.estoque-formulario textarea:focus {
+    border-color: var(--cor-verde-producao);
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+}
+
+.lista-aviamentos-entrada {
+    background-color: var(--cor-cinza-claro);
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    min-height: 80px;
+}
+
+.item-aviamento-adicionado {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    border-left: 4px solid var(--cor-verde-producao);
+}
+
+.item-aviamento-adicionado span {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--cor-primaria);
+}
+
+.item-aviamento-adicionado button {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+/* Controles de Aviamento (Compactos) */
+.controles-aviamento {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.select-aviamento {
+    flex: 2;
+    min-width: 180px;
+    padding: 8px 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.input-aviamento {
+    flex: 0 0 100px;
+    padding: 8px 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.controles-aviamento .btn-primario,
+.controles-aviamento .btn-secundario {
+    padding: 8px 14px;
+    font-size: 13px;
+    height: 38px;
+    white-space: nowrap;
+}
+
+/* ========================================== */
+/* 14. DOCUMENTO DA OP                        */
+/* ========================================== */
+.op-documento {
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 30px;
+    margin: 30px 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.op-cabecalho-doc {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    border-bottom: 2px solid var(--cor-verde-producao);
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.op-cabecalho-doc h2 {
+    font-family: var(--fonte-titulos);
+    color: var(--cor-primaria);
+    font-size: 24px;
+}
+
+.status-op {
+    font-size: 14px;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 20px;
+}
+
+.status-em-producao {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-finalizado {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.op-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.op-info-item {
+    font-size: 14px;
+    color: #495057;
+}
+
+.op-info-item strong {
+    display: block;
+    color: var(--cor-primaria);
+    margin-bottom: 5px;
+}
+
+.op-subtitulo {
+    font-family: var(--fonte-titulos);
+    color: var(--cor-primaria);
+    font-size: 18px;
+    margin: 30px 0 15px;
+    border-bottom: 2px solid var(--cor-verde-producao);
+    padding-bottom: 8px;
+}
+
+.op-assinatura {
+    margin-top: 50px;
+    text-align: center;
+    font-size: 14px;
+    color: #6c757d;
+}
+
+.op-acoes {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.btn-acao-op {
+    color: var(--cor-verde-producao);
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.btn-acao-op:hover {
+    text-decoration: underline;
+}
+
+.btn-encerrar {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-left: 5px;
+    transition: background-color 0.3s;
+}
+
+.btn-encerrar:hover {
+    background-color: #c82333;
+}
+
+/* ========================================== */
+/* 15. RESPONSIVIDADE GLOBAL                  */
+/* ========================================== */
+@media (max-width: 1024px) {
+    .menu-hamburguer {
+        display: block;
+    }
+
+    .menu-principal {
+        display: none;
+        width: 100%;
+    }
+
+    .menu-principal.ativo {
+        display: block;
+    }
+
+    .menu-principal ul {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+        padding-top: 20px;
+        padding-bottom: 10px;
+    }
+
+    .item-login {
+        width: 100%;
+    }
+
+    .btn-login {
+        display: block;
+        text-align: center;
+        width: 100%;
+    }
+
+    .cabecalho-flex {
+        flex-wrap: nowrap;
+    }
+
+    .hero h1 {
+        font-size: 32px;
+    }
+
+    .hero p {
+        font-size: 16px;
+        max-width: 100%;
+    }
+
+    .placeholder-banner {
+        height: 200px;
+        font-size: 12px;
+    }
+
+    .grid-duplo {
+        flex-direction: column;
+    }
+
+    .coluna-formulario,
+    .coluna-info {
+        min-width: 100%;
+    }
+
+    .mapa-container iframe {
+        height: 200px;
+    }
+}
+
+@media (max-width: 768px) {
+    .painel-cabecalho {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .btn-sair {
+        width: 100%;
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .grid-beneficios,
+    .botoes-navegacao,
+    .painel-acoes,
+    .estoque-indicadores,
+    .grid-vagas-comunidade {
+        flex-direction: column;
+    }
+
+    .card-beneficio,
+    .noticia-item-compacta,
+    .card-produto {
+        min-width: 100%;
+    }
+
+    .manchete-box,
+    .noticias-layout,
+    .produto-detalhe-grid {
+        flex-direction: column;
+    }
+
+    .manchete-texto h1,
+    .carrossel-texto h2 {
+        font-size: 24px;
+    }
+
+    .carrossel-box {
+        height: 300px;
+    }
+
+    .carrossel-texto {
+        bottom: 30px;
+        left: 20px;
+        max-width: 85%;
+    }
+
+    .carrossel-btn {
+        padding: 10px;
+        font-size: 16px;
+    }
+
+    .submenu-cdf {
+        position: static;
+        display: none;
+        box-shadow: none;
+        border: none;
+        background-color: transparent;
+        padding-left: 15px;
+    }
+
+    .menu-cdf:hover .submenu-cdf {
+        display: none;
+    }
+
+    .menu-cdf.aberto .submenu-cdf {
+        display: block;
+    }
+
+    .menu-cdf-link {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    .controles-aviamento {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .tabela-estoque {
+        font-size: 12px;
+    }
+}
+
+/* ========================================== */
+/* 16. IMPRESSÃO (DOCUMENTO DA OP)            */
+/* ========================================== */
+@media print {
+    .cabecalho,
+    .op-acoes,
+    .rodape,
+    .btn-sair {
+        display: none !important;
+    }
+
+    .op-documento {
+        border: none;
+        box-shadow: none;
+        padding: 0;
+    }
+}
+
+/* ========================================== */
+/* CORREÇÃO FINAL - HOVER DO SUBMENU CDF      */
+/* ========================================== */
+
+/* Em telas de PC, esconde o submenu por padrão */
+@media (min-width: 769px) {
+    .menu-cdf .submenu-cdf {
+        display: none !important;
+    }
+
+    .menu-cdf:hover .submenu-cdf {
+        display: block !important;
+    }
+}
+
+/* Em telas de celular, usa clique */
+@media (max-width: 768px) {
+    .menu-cdf .submenu-cdf {
+        display: none !important;
+        position: static;
+        box-shadow: none;
+        border: none;
+        background-color: transparent;
+        padding-left: 15px;
+    }
+
+    .menu-cdf.aberto .submenu-cdf {
+        display: block !important;
+    }
+}
+
+/* ========================================== */
+/* MÓDULO 20: MÚLTIPLOS TELEFONES             */
+/* ========================================== */
+
+.telefone-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.input-telefone {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 15px;
+}
+
+.btn-add-telefone {
+    background-color: var(--cor-verde-producao);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    width: 40px;
+    height: 44px;
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-add-telefone:hover {
+    background-color: #1B5E20;
+}
+
+/* Responsividade dos telefones */
+@media (max-width: 600px) {
+    .telefone-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn-add-telefone {
+        width: 100%;
+    }
+}
+
+/* ========================================== */
+/* MÓDULO 21: CAMPOS COMPACTOS                */
+/* ========================================== */
+
+/* Reduz a altura e a fonte dos campos de formulário */
+.formulario-padrao input,
+.formulario-padrao select,
+.formulario-padrao textarea {
+    padding: 8px 10px;
+    font-size: 14px;
+}
+
+/* Limita a largura em telas grandes para não esticar demais */
+@media (min-width: 769px) {
+    .formulario-padrao input,
+    .formulario-padrao select,
+    .formulario-padrao textarea {
+        max-width: 450px;
+    }
+}
+
+/* Ajuste específico para os telefones */
+.input-telefone {
+    padding: 8px 10px;
+    font-size: 14px;
+}
+
+/* Botão de adicionar telefone menor e alinhado */
+.btn-add-telefone {
+    width: 34px;
+    height: 36px;
+    font-size: 18px;
+}
+
+/* Ajusta o campo de data para ficar igual aos outros */
+.formulario-padrao input[type="date"] {
+    padding: 8px 10px;
+    font-size: 14px;
+    color: var(--cor-texto);
+}
+
+/* Campo somente leitura (CEP) */
+.formulario-padrao input[readonly] {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+}
+
+/* Botão de Editar */
+.btn-editar {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.3s;
+}
+
+.btn-editar:hover {
+    background-color: #0056b3;
+}
+
+/* ========================================== */
+/* REGRA GLOBAL: MAIÚSCULO (SOMENTE INTERNO)  */
+/* ========================================== */
+
+/* Aplica apenas nas páginas do sistema interno */
+body.login-page input,
+body.painel-page input,
+body.estoque-container input,
+body.admin-container input,
+body.op-container input,
+body.cadastros-page input,
+body.pessoas-page input,
+body.producao-page input,
+body.itens-page input,
+body.login-page select,
+body.painel-page select,
+body.estoque-container select,
+body.admin-container select,
+body.op-container select,
+body.cadastros-page select,
+body.pessoas-page select,
+body.producao-page select,
+body.itens-page select,
+body.login-page textarea,
+body.painel-page textarea,
+body.estoque-container textarea,
+body.admin-container textarea,
+body.op-container textarea,
+body.cadastros-page textarea,
+body.pessoas-page textarea,
+body.producao-page textarea,
+body.itens-page textarea {
+    text-transform: uppercase;
+}
+
+/* Subtítulos dentro do submenu */
+.submenu-titulo {
+    padding: 10px 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--cor-destaque);
+    letter-spacing: 1px;
+    border-top: 1px solid #2E7D32;
+    margin-top: 5px;
+}
+
+.submenu-titulo:first-child {
+    border-top: none;
+    margin-top: 0;
+}
+
+/* Botão de Excluir */
+.btn-excluir {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-left: 5px;
+    transition: background-color 0.3s;
+}
+
+.btn-excluir:hover {
+    background-color: #c82333;
+}
+
+/* Botões compactos para economizar espaço vertical */
+.btn-compacto {
+    padding: 8px 14px !important;
+    font-size: 13px !important;
+    height: 38px;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.btn-compacto-largo {
+    padding: 10px 20px !important;
+    font-size: 14px !important;
+    height: 42px;
+    margin-top: 15px;
+}
+
+/* Responsividade: em telas pequenas, empilha */
+@media (max-width: 600px) {
+    .controles-aviamento {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .select-aviamento,
+    .input-aviamento {
+        flex: 1 1 100%;
+        min-width: 100%;
+    }
+
+    .btn-compacto {
+        width: 100%;
+    }
+}
+
+/* Grupo de botões lado a lado */
+.btn-group-aviamento {
+    display: flex;
+    gap: 5px;
+    flex-wrap: nowrap;
+}
+
+.btn-group-aviamento .btn-compacto {
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+    height: 38px;
+    white-space: nowrap;
+}
+
+/* Em telas muito pequenas (celular), empilha */
+@media (max-width: 500px) {
+    .btn-group-aviamento {
+        width: 100%;
+    }
+    
+    .btn-group-aviamento .btn-compacto {
+        flex: 1;
+    }
+}
+
+/* ========================================== */
+/* MÓDULO 23: SIDEBAR DO ERP (v4 - Definitiva) */
+/* ========================================== */
+
+/* CONTAINER PRINCIPAL DA SIDEBAR */
+.sidebar-erp {
+    width: 250px;
+    background-color: var(--cor-primaria);
+    color: #fff;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow: visible; /* Permite que o submenu saia da sidebar */
+    padding: 20px 0;
+    z-index: 999;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+}
+
+/* LOGO */
+.sidebar-logo {
+    padding: 0 20px 20px;
+    border-bottom: 1px solid #2E7D32;
+    margin-bottom: 15px;
+}
+
+.sidebar-logo a {
+    font-family: var(--fonte-titulos);
+    font-weight: 800;
+    font-size: 22px;
+    color: #fff;
+    text-decoration: none;
+}
+
+.sidebar-logo a span {
+    color: var(--cor-destaque);
+}
+
+.sidebar-logo p {
+    font-size: 11px;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 5px;
+}
+
+/* MENU */
+.sidebar-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* LINK DIRETO (Painel Inicial) */
+.sidebar-link-direto a {
+    display: block;
+    padding: 12px 20px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    border-left: 3px solid var(--cor-destaque);
+    background-color: #1F2833;
+    transition: background-color 0.3s;
+}
+
+.sidebar-link-direto a:hover {
+    background-color: #2E7D32;
+}
+
+/* SETOR (Categoria com submenu) */
+.sidebar-setor {
+    position: relative; /* Necessário para o submenu absoluto funcionar */
+}
+
+.sidebar-setor-link {
+    display: block;
+    padding: 12px 20px;
+    color: #adb5bd;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.3s, color 0.3s;
+    border-left: 3px solid transparent;
+    cursor: pointer;
+}
+
+.sidebar-setor-link:hover {
+    background-color: #1F2833;
+    color: #fff;
+    border-left-color: var(--cor-destaque);
+}
+
+/* SUBMENU (escondido por padrão, posicionado à direita) */
+.sidebar-submenu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    top: 0;
+    left: 100%;
+    min-width: 220px;
+    background-color: #1F2833;
+    border-left: 3px solid var(--cor-destaque);
+    box-shadow: 4px 0 12px rgba(0,0,0,0.3);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    z-index: 1000;
+    padding: 10px 0;
+}
+
+.sidebar-submenu li a {
+    display: block;
+    padding: 10px 20px;
+    color: #adb5bd;
+    text-decoration: none;
+    font-size: 13px;
+    white-space: nowrap;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebar-submenu li a:hover {
+    background-color: #2E7D32;
+    color: #fff;
+}
+
+/* LINK ATIVO (página atual) */
+.sidebar-submenu li a.ativo {
+    color: var(--cor-destaque);
+    font-weight: 700;
+    background-color: #2E7D32;
+}
+
+/* MOSTRAR SUBMENU NO HOVER (PC) */
+.sidebar-setor:hover .sidebar-submenu {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ÁREA DE CONTEÚDO */
+.pagina-erp {
+    margin-left: 250px;
+    padding: 20px;
+    min-height: 100vh;
+    background-color: var(--cor-cinza-claro);
+}
+
+/* CABEÇALHO E RODAPÉ OCULTOS NO ERP */
+.pagina-erp .cabecalho,
+.pagina-erp .rodape {
+    display: none;
+}
+
+/* ========================================== */
+/* RESPONSIVIDADE (MOBILE)                    */
+/* ========================================== */
+@media (max-width: 768px) {
+    .sidebar-erp {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        overflow-y: auto;
+    }
+
+    .sidebar-erp.ativo {
+        transform: translateX(0);
+    }
+
+    .pagina-erp {
+        margin-left: 0;
+        padding: 15px;
+    }
+
+    /* MOBILE: Submenu volta ao fluxo normal e abre empilhado */
+    .sidebar-submenu {
+        position: static;
+        left: auto;
+        opacity: 1;
+        visibility: visible;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+        box-shadow: none;
+        border-left: none;
+        background-color: #050608;
+        padding: 0;
+    }
+
+    .sidebar-setor.aberto .sidebar-submenu {
+        max-height: 500px;
+    }
+
+    /* MOBILE: desabilita hover */
+    .sidebar-setor:hover .sidebar-submenu {
+        opacity: 1;
+        visibility: visible;
+        max-height: 0;
+    }
+
+    .sidebar-setor.aberto:hover .sidebar-submenu {
+        max-height: 500px;
+    }
+}
+
+/* ========================================== */
+/* MÓDULO 27: CADASTRO DE FUNCIONÁRIOS (v2)    */
+/* ========================================== */
+
+/* Badge de tipo de usuário na listagem */
+.badge-tipo {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-tipo.funcionario {
+    background-color: #e9ecef;
+    color: #495057;
+}
+
+.badge-tipo.subordinado {
+    background-color: #cfe2ff;
+    color: #084298;
+}
+
+.badge-tipo.superior {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+/* Badge de setor */
+.badge-setor {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    background-color: var(--cor-cinza-claro);
+    color: var(--cor-primaria);
+    text-transform: uppercase;
+}
+
+/* ========================================== */
+/* MÓDULO 28: HOME DO ERP                      */
+/* ========================================== */
+
+.erp-atalhos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.card-atalho {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 25px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border-top: 4px solid var(--cor-verde-producao);
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.card-atalho:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+}
+
+.card-atalho .icone-atalho {
+    font-size: 40px;
+    display: block;
+    margin-bottom: 15px;
+}
+
+.card-atalho h3 {
+    font-family: var(--fonte-titulos);
+    font-size: 16px;
+    color: var(--cor-primaria);
+    margin-bottom: 8px;
+}
+
+.card-atalho p {
+    font-size: 13px;
+    color: #6c757d;
+    line-height: 1.4;
+}
+
+/* ========================================== */
+/* MÓDULO 29: BIBLIOTECA DE OPERAÇÕES         */
+/* ========================================== */
+
+/* Badges de máquina */
+.badge-maquina {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background-color: #e9ecef;
+    color: #495057;
+}
+
+/* Tempo em segundos com destaque */
+.tempo-segundos {
+    font-family: var(--fonte-titulos);
+    font-weight: 700;
+    color: var(--cor-verde-producao);
+}
+
+/* Badge de dificuldade */
+.dificuldade-1 { color: #28a745; font-weight: 700; }
+.dificuldade-2 { color: #ffc107; font-weight: 700; }
+.dificuldade-3 { color: #dc3545; font-weight: 700; }
+
+/* ========================================== */
+/* MÓDULO 30: CADASTRO RÁPIDO GENÉRICO          */
+/* ========================================== */
+
+.campo-com-botao {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.campo-com-botao select {
+    flex: 1;
+}
+
+.btn-add-rapido {
+    background-color: var(--cor-verde-producao);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.3s;
+    height: 38px;
+}
+
+.btn-add-rapido:hover {
+    background-color: #1B5E20;
+}
+
+/* Badge de equipamento */
+.badge-equipamento {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+/* ========================================== */
+/* MÓDULO 31: CADASTRO RÁPIDO COM DATALIST     */
+/* ========================================== */
+
+/* Estilo do input com datalist */
+input[list] {
+    background-color: #fff;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236c757d' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+}
+
+/* Modal de novo item (mesmo estilo do modal genérico) */
+#modal-novo-item .modal-caixa {
+    max-width: 500px;
+}
+
+#modal-descricao-novo {
+    color: #6c757d;
+    font-size: 13px;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+/* ========================================== */
+/* MÓDULO 32: TEXTO EM MAIÚSCULO (ERP)          */
+/* ========================================== */
+
+/* Aplica maiúsculo em todos os inputs de texto dentro do ERP */
+.pagina-erp input[type="text"],
+.pagina-erp input[type="email"],
+.pagina-erp input[type="search"],
+.pagina-erp input[list],
+.pagina-erp textarea,
+.pagina-erp select {
+    text-transform: uppercase;
+}
+
+/* Exceção: campos de e-mail ficam em minúsculo (regra de e-mail) */
+.pagina-erp input[type="email"] {
+    text-transform: lowercase;
+}
+
+/* Exceção: datalist (sugestões) mantém o formato original */
+.pagina-erp datalist option {
+    text-transform: none;
+}
+
+/* Exceção: campos com type="number" e "date" não mudam */
+.pagina-erp input[type="number"],
+.pagina-erp input[type="date"] {
+    text-transform: none;
+}
+
+/* ========================================== */
+/* MÓDULO 33: ESTOQUE UNIFICADO                 */
+/* ========================================== */
+
+/* Badge de categoria */
+.badge-categoria {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-categoria.interno {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.badge-categoria.externo {
+    background-color: #cfe2ff;
+    color: #084298;
+}
+
+/* Alerta de estoque baixo */
+.alerta-estoque-baixo {
+    color: #dc3545;
+    font-weight: 700;
+    font-size: 12px;
+}
+
+/* ========================================== */
+/* MÓDULO 34: ENTRADA DE CORTE                 */
+/* ========================================== */
+
+.entrada-secao {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border-left: 4px solid var(--cor-verde-producao);
+}
+
+.entrada-secao h2 {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.lista-itens-secao {
+    background-color: var(--cor-cinza-claro);
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    min-height: 60px;
+}
+
+.item-lista-entrada {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    border-left: 3px solid var(--cor-verde-producao);
+}
+
+.item-lista-entrada span {
+    font-size: 14px;
+    color: var(--cor-primaria);
+}
+
+.item-lista-entrada .qtd-destaque {
+    font-weight: 700;
+    color: var(--cor-verde-producao);
+}
+
+.item-lista-entrada button {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.item-lista-entrada button:hover {
+    background-color: #c82333;
+}
+
+.entrada-acoes {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    margin-bottom: 40px;
+}
+
+.btn-grande {
+    padding: 15px 40px;
+    font-size: 16px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .entrada-secao {
+        padding: 15px;
+    }
+    
+    .btn-grande {
+        width: 100%;
+        padding: 12px 20px;
+    }
+}
+
+/* Modal largo para cadastro completo */
+.modal-caixa-larga {
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-caixa-larga h4.subtitulo-form {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: var(--cor-verde-producao);
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 5px;
+}
+
+/* Info do fornecedor selecionado */
+#info-fornecedor {
+    background-color: #e8f5e9;
+    border-left: 4px solid var(--cor-verde-producao);
+    padding: 12px 15px;
+    border-radius: 4px;
+    font-size: 13px;
+    line-height: 1.6;
+    margin-top: 10px;
+    color: #1B5E20;
+}
+
+#info-fornecedor strong {
+    color: var(--cor-verde-producao);
+}
+
+/* ========================================== */
+/* MÓDULO 35: MODAIS (OVERLAY FIXO)            */
+/* ========================================== */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.modal-caixa {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 30px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.modal-caixa h3 {
+    font-family: var(--fonte-titulos);
+    color: var(--cor-verde-producao);
+    margin-bottom: 15px;
+    font-size: 20px;
+}
+
+.modal-caixa h4.subtitulo-form {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: var(--cor-verde-producao);
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 5px;
+}
+
+.modal-caixa label {
+    display: block;
+    font-weight: 600;
+    margin-top: 12px;
+    margin-bottom: 5px;
+    font-size: 13px;
+}
+
+.modal-caixa input,
+.modal-caixa select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+.modal-caixa input:focus,
+.modal-caixa select:focus {
+    outline: none;
+    border-color: var(--cor-verde-producao);
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+}
+
+.modal-caixa-larga {
+    max-width: 700px;
+}
+
+.modal-botoes {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 25px;
+}
+
+.modal-botoes .btn-primario,
+.modal-botoes .btn-secundario {
+    padding: 10px 20px;
+    font-size: 14px;
+}
+
+@media (max-width: 600px) {
+    .modal-botoes {
+        flex-direction: column;
+    }
+    
+    .modal-botoes .btn-primario,
+    .modal-botoes .btn-secundario {
+        width: 100%;
+    }
+}
+
+/* ========================================== */
+/* MÓDULO 36: EDIÇÃO DE MATERIAL DA OP         */
+/* ========================================== */
+
+/* Abas do modal */
+.abas-modal {
+    display: flex;
+    gap: 5px;
+    border-bottom: 2px solid #e9ecef;
+    margin-bottom: 20px;
+}
+
+.aba {
+    background: transparent;
+    border: none;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #6c757d;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    font-family: var(--fonte-textos);
+}
+
+.aba:hover {
+    color: var(--cor-verde-producao);
+}
+
+.aba.ativa {
+    color: var(--cor-verde-producao);
+    border-bottom-color: var(--cor-verde-producao);
+}
+
+.aba-conteudo {
+    display: none;
+}
+
+.aba-conteudo.ativa {
+    display: block;
+}
+
+/* Lista de itens na edição */
+.item-lista-edicao {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    border-left: 3px solid var(--cor-verde-producao);
+    gap: 10px;
+}
+
+.item-lista-edicao .item-info {
+    flex: 1;
+    font-size: 13px;
+    color: var(--cor-primaria);
+}
+
+.item-lista-edicao .item-info strong {
+    display: block;
+    margin-bottom: 3px;
+}
+
+.item-lista-edicao .item-info small {
+    color: #6c757d;
+}
+
+.item-lista-edicao button {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.item-lista-edicao button:hover {
+    background-color: #c82333;
+}
+
+/* Radio options no modal de motivo */
+.radio-opcoes {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.radio-opcao {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.radio-opcao:hover {
+    border-color: var(--cor-verde-producao);
+    background-color: #f8f9fa;
+}
+
+.radio-opcao input[type="radio"] {
+    margin-top: 3px;
+    accent-color: var(--cor-verde-producao);
+}
+
+.radio-opcao span {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.radio-opcao strong {
+    color: var(--cor-primaria);
+    font-size: 14px;
+}
+
+.radio-opcao small {
+    color: #6c757d;
+    font-size: 12px;
+}
+
+/* Histórico da OP */
+.historico-op {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid #e9ecef;
+}
+
+.historico-op h3 {
+    font-family: var(--fonte-titulos);
+    color: var(--cor-primaria);
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.historico-lista {
+    list-style: none;
+    padding: 0;
+}
+
+.historico-lista li {
+    padding: 10px 15px;
+    background-color: #f8f9fa;
+    border-left: 3px solid var(--cor-verde-producao);
+    border-radius: 4px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: #495057;
+}
+
+.historico-lista li .historico-data {
+    font-weight: 700;
+    color: var(--cor-verde-producao);
+}
+
+/* ========================================== */
+/* MÓDULO 37: FLUXOGRAMA DE PRODUÇÃO           */
+/* ========================================== */
+
+.fluxo-dados-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+    .fluxo-dados-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.fluxo-dados-grid label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+    font-size: 13px;
+}
+
+.fluxo-dados-grid input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+.fluxo-dados-grid input:focus {
+    outline: none;
+    border-color: var(--cor-verde-producao);
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+}
+
+/* Resumo */
+.fluxo-resumo {
+    display: flex;
+    gap: 30px;
+    padding: 15px 20px;
+    background-color: var(--cor-cinza-claro);
+    border-radius: 6px;
+    border-left: 4px solid var(--cor-verde-producao);
+    flex-wrap: wrap;
+}
+
+.fluxo-resumo-item {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.fluxo-resumo-item span {
+    font-size: 12px;
+    color: #6c757d;
+}
+
+.fluxo-resumo-item strong {
+    font-size: 22px;
+    color: var(--cor-verde-producao);
+    font-family: var(--fonte-titulos);
+}
+
+/* Zona de montagem */
+.fluxo-montagem {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 25px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 2px dashed var(--cor-verde-producao);
+}
+
+.fluxo-montagem-cabecalho {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.fluxo-montagem-cabecalho h2 {
+    margin-bottom: 5px;
+}
+
+.fluxo-montagem-cabecalho p {
+    margin: 0;
+    font-size: 13px;
+    color: #6c757d;
+}
+
+.fluxo-zona-montagem {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    min-height: 150px;
+}
+
+.fluxo-zona-placeholder {
+    text-align: center;
+    color: #adb5bd;
+    font-style: italic;
+    font-size: 14px;
+    margin: auto 0;
+    padding: 40px 20px;
+}
+
+/* Card de Módulo */
+.fluxo-modulo {
+    background-color: #fff;
+    border: 2px solid #dee2e6;
+    border-left: 5px solid var(--cor-verde-producao);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.fluxo-modulo:hover {
+    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.15);
+}
+
+.fluxo-modulo.sortable-ghost {
+    opacity: 0.4;
+    background-color: #e8f5e9;
+}
+
+.fluxo-modulo.sortable-chosen {
+    box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
+}
+
+/* Cabeçalho do módulo (clicável para expandir) */
+.fluxo-modulo-cabecalho {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    cursor: pointer;
+    background-color: #f8f9fa;
+    transition: background-color 0.2s;
+    gap: 10px;
+}
+
+.fluxo-modulo-cabecalho:hover {
+    background-color: #e8f5e9;
+}
+
+.fluxo-modulo-titulo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.fluxo-modulo-titulo h4 {
+    font-family: var(--fonte-titulos);
+    font-size: 15px;
+    color: var(--cor-primaria);
+    margin: 0;
+    text-transform: uppercase;
+}
+
+.fluxo-modulo-contador {
+    background-color: var(--cor-verde-producao);
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.fluxo-modulo-tempo {
+    font-size: 13px;
+    color: #6c757d;
+    font-weight: 600;
+}
+
+.fluxo-modulo-tempo strong {
+    color: var(--cor-verde-producao);
+}
+
+.fluxo-modulo-acoes {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.fluxo-modulo-acoes button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 5px 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    color: #6c757d;
+}
+
+.fluxo-modulo-acoes button:hover {
+    background-color: #e9ecef;
+}
+
+.fluxo-modulo-acoes .btn-remover-modulo:hover {
+    background-color: #f8d7da;
+    color: #dc3545;
+}
+
+.fluxo-modulo-expandir {
+    transition: transform 0.3s;
+    font-size: 16px;
+}
+
+.fluxo-modulo.aberto .fluxo-modulo-expandir {
+    transform: rotate(180deg);
+}
+
+/* Corpo do módulo (etapas) */
+.fluxo-modulo-corpo {
+    display: none;
+    padding: 0;
+    background-color: #fff;
+}
+
+.fluxo-modulo.aberto .fluxo-modulo-corpo {
+    display: block;
+    border-top: 1px solid #e9ecef;
+}
+
+/* Etapa dentro do módulo */
+.fluxo-etapa {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    border-bottom: 1px solid #f1f3f5;
+    transition: background-color 0.2s;
+}
+
+.fluxo-etapa:hover {
+    background-color: #f8f9fa;
+}
+
+.fluxo-etapa-numero {
+    background-color: #e9ecef;
+    color: var(--cor-primaria);
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.fluxo-etapa-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.fluxo-etapa-recorte {
+    font-size: 11px;
+    color: var(--cor-destaque);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.fluxo-etapa-operacao {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--cor-primaria);
+}
+
+.fluxo-etapa-meta {
+    display: flex;
+    gap: 12px;
+    font-size: 12px;
+    color: #6c757d;
+    margin-top: 3px;
+}
+
+.fluxo-etapa-meta span {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.fluxo-etapa-acoes {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.fluxo-etapa-acoes button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    color: #6c757d;
+    transition: background-color 0.2s;
+}
+
+.fluxo-etapa-acoes button:hover {
+    background-color: #e9ecef;
+}
+
+.fluxo-etapa-acoes .btn-remover-etapa:hover {
+    background-color: #f8d7da;
+    color: #dc3545;
+}
+
+/* Rodapé do módulo (adicionar etapa) */
+.fluxo-modulo-rodape {
+    padding: 12px 20px;
+    background-color: #f8f9fa;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.fluxo-modulo-rodape .btn-adicionar-etapa {
+    background-color: var(--cor-verde-producao);
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.fluxo-modulo-rodape .btn-adicionar-etapa:hover {
+    background-color: #1B5E20;
+}
+
+/* Biblioteca */
+.fluxo-biblioteca {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 2px solid #e9ecef;
+    margin-bottom: 20px;
+}
+
+.fluxo-biblioteca-cabecalho {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.fluxo-biblioteca-cabecalho h2 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.fluxo-busca {
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 13px;
+    min-width: 200px;
+    flex: 1;
+    max-width: 300px;
+}
+
+.fluxo-busca:focus {
+    outline: none;
+    border-color: var(--cor-verde-producao);
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+}
+
+.fluxo-biblioteca-lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    border: 2px dashed #ced4da;
+    min-height: 80px;
+    margin-bottom: 15px;
+}
+
+.fluxo-card-biblioteca {
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-left: 4px solid var(--cor-verde-producao);
+    border-radius: 4px;
+    padding: 10px 14px;
+    cursor: grab;
+    font-size: 12px;
+    transition: all 0.2s;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 150px;
+}
+
+.fluxo-card-biblioteca:hover {
+    border-color: var(--cor-verde-producao);
+    box-shadow: 0 2px 8px rgba(46, 125, 50, 0.15);
+    transform: translateY(-2px);
+}
+
+.fluxo-card-biblioteca:active {
+    cursor: grabbing;
+}
+
+.fluxo-card-biblioteca .nome {
+    font-weight: 700;
+    color: var(--cor-primaria);
+    text-transform: uppercase;
+}
+
+.fluxo-card-biblioteca .meta {
+    font-size: 11px;
+    color: #6c757d;
+    display: flex;
+    gap: 8px;
+}
+
+.fluxo-biblioteca-acoes {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* Ações finais */
+.fluxo-acoes-finais {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .fluxo-acoes-finais {
+        flex-direction: column;
+    }
+    
+    .fluxo-acoes-finais button {
+        width: 100%;
+    }
+    
+    .fluxo-biblioteca-cabecalho {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .fluxo-busca {
+        max-width: 100%;
+    }
+    
+    .fluxo-etapa {
+        flex-wrap: wrap;
+    }
+    
+    .fluxo-modulo-rodape {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+/* ========================================== */
+/* MÓDULO 38: TEMA VISUAL — FLUXOGRAMA         */
+/* Paleta: roxo profundo + ciano + coral       */
+/* ========================================== */
+
+.pagina-fluxo {
+    --fluxo-primaria: #4527A0;       /* Roxo profundo — criatividade */
+    --fluxo-secundaria: #5E35B1;     /* Roxo médio */
+    --fluxo-accent: #00BCD4;         /* Ciano — colaboração */
+    --fluxo-coral: #FF4081;          /* Coral — energia */
+    --fluxo-fundo-suave: #F8F5FF;    /* Lavanda quase branco */
+    --fluxo-cinza: #F1F3F9;
+}
+
+/* Fundo geral da página */
+.pagina-fluxo .estoque-container {
+    background: linear-gradient(135deg, #F8F5FF 0%, #EEF4FF 100%);
+    min-height: 100vh;
+}
+
+/* Cabeçalho da página */
+.pagina-fluxo .painel-cabecalho h1 strong {
+    color: var(--fluxo-primaria);
+}
+
+/* Cards de seção (formulário, montagem, biblioteca) */
+.pagina-fluxo .estoque-formulario,
+.pagina-fluxo .fluxo-montagem,
+.pagina-fluxo .fluxo-biblioteca {
+    border: 2px solid #E0D7F5;
+    box-shadow: 0 4px 16px rgba(69, 39, 160, 0.06);
+}
+
+.pagina-fluxo .fluxo-montagem {
+    border: 2px dashed var(--fluxo-primaria);
+    background: linear-gradient(135deg, #FFFFFF 0%, #FAF7FF 100%);
+}
+
+.pagina-fluxo .fluxo-biblioteca {
+    border: 2px solid #E0D7F5;
+}
+
+/* Títulos */
+.pagina-fluxo .titulo-producao {
+    color: var(--fluxo-primaria);
+}
+
+/* Resumo */
+.pagina-fluxo .fluxo-resumo {
+    background: linear-gradient(90deg, #F3E5F5 0%, #E1F5FE 100%);
+    border-left: 4px solid var(--fluxo-primaria);
+}
+
+.pagina-fluxo .fluxo-resumo-item strong {
+    color: var(--fluxo-primaria);
+}
+
+/* Botões primários dentro do fluxograma */
+.pagina-fluxo .btn-producao,
+.pagina-fluxo .btn-primario.btn-producao {
+    background-color: var(--fluxo-primaria);
+    transition: all 0.3s ease;
+}
+
+.pagina-fluxo .btn-producao:hover,
+.pagina-fluxo .btn-primario.btn-producao:hover {
+    background-color: var(--fluxo-secundaria);
+    box-shadow: 0 4px 12px rgba(69, 39, 160, 0.3);
+    transform: translateY(-1px);
+}
+
+/* Inputs */
+.pagina-fluxo .fluxo-dados-grid input:focus {
+    border-color: var(--fluxo-primaria);
+    box-shadow: 0 0 0 3px rgba(69, 39, 160, 0.15);
+}
+
+.pagina-fluxo .fluxo-busca:focus {
+    border-color: var(--fluxo-primaria);
+    box-shadow: 0 0 0 3px rgba(69, 39, 160, 0.15);
+}
+
+/* Cards de módulo na zona */
+.pagina-fluxo .fluxo-modulo {
+    border-left: 5px solid var(--fluxo-primaria);
+}
+
+.pagina-fluxo .fluxo-modulo:hover {
+    box-shadow: 0 6px 20px rgba(69, 39, 160, 0.15);
+    border-left-color: var(--fluxo-accent);
+}
+
+.pagina-fluxo .fluxo-modulo-cabecalho {
+    background: linear-gradient(90deg, #FAF7FF 0%, #F3F0FF 100%);
+}
+
+.pagina-fluxo .fluxo-modulo-cabecalho:hover {
+    background: linear-gradient(90deg, #F3E5F5 0%, #E8E0FF 100%);
+}
+
+.pagina-fluxo .fluxo-modulo-titulo h4 {
+    color: var(--fluxo-primaria);
+}
+
+.pagina-fluxo .fluxo-modulo-contador {
+    background-color: var(--fluxo-primaria);
+}
+
+.pagina-fluxo .fluxo-modulo-tempo strong {
+    color: var(--fluxo-primaria);
+}
+
+/* Etapas dentro do módulo */
+.pagina-fluxo .fluxo-etapa-numero {
+    background-color: #E8E0FF;
+    color: var(--fluxo-primaria);
+}
+
+.pagina-fluxo .fluxo-etapa-recorte {
+    color: var(--fluxo-coral);
+}
+
+.pagina-fluxo .fluxo-etapa-operacao {
+    color: var(--fluxo-primaria);
+}
+
+.pagina-fluxo .fluxo-modulo-rodape .btn-adicionar-etapa {
+    background-color: var(--fluxo-primaria);
+}
+
+.pagina-fluxo .fluxo-modulo-rodape .btn-adicionar-etapa:hover {
+    background-color: var(--fluxo-secundaria);
+}
+
+/* Cards da biblioteca */
+.pagina-fluxo .fluxo-card-biblioteca {
+    border-left: 4px solid var(--fluxo-accent);
+    transition: all 0.2s;
+}
+
+.pagina-fluxo .fluxo-card-biblioteca:hover {
+    border-color: var(--fluxo-accent);
+    border-left-color: var(--fluxo-coral);
+    box-shadow: 0 4px 12px rgba(0, 188, 212, 0.2);
+    transform: translateY(-2px);
+}
+
+.pagina-fluxo .fluxo-card-biblioteca .nome {
+    color: var(--fluxo-primaria);
+}
+
+/* Botões secundários dentro da página */
+.pagina-fluxo .btn-secundario {
+    border-color: var(--fluxo-primaria);
+    color: var(--fluxo-primaria);
+}
+
+.pagina-fluxo .btn-secundario:hover {
+    background-color: var(--fluxo-primaria);
+    color: #fff;
+}
+
+/* Placeholder da zona de montagem */
+.pagina-fluxo .fluxo-zona-placeholder {
+    color: #9E86C7;
+}
+
+/* Efeito sutil de "ideias flutuando" no topo */
+.pagina-fluxo .painel-cabecalho {
+    position: relative;
+}
+
+.pagina-fluxo .painel-cabecalho::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    right: 20px;
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle, rgba(0, 188, 212, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.pagina-fluxo .painel-cabecalho::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 10px;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, rgba(255, 64, 129, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+/* Ícone de "criatividade" no h1 */
+.pagina-fluxo .painel-cabecalho h1 {
+    position: relative;
+    z-index: 1;
+}
+
+/* Insumo no card da etapa */
+.fluxo-etapa-insumo {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: #5E35B1;
+    background-color: #F3E5F5;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-top: 4px;
+    width: fit-content;
+}
+
+.fluxo-etapa-insumo .tipo {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 9px;
+    letter-spacing: 0.5px;
+}
+
+.fluxo-etapa-insumo .tipo.recorte {
+    color: #F57C00;
+}
+
+.fluxo-etapa-insumo .tipo.aviamento {
+    color: #5E35B1;
+}
+
+/* Alça de arrastar da etapa */
+.fluxo-etapa-alca {
+    cursor: grab;
+    color: #adb5bd;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0 5px;
+    user-select: none;
+    transition: color 0.2s;
+    letter-spacing: -2px;
+}
+
+.fluxo-etapa-alca:hover {
+    color: var(--cor-verde-producao);
+}
+
+.fluxo-etapa-alca:active {
+    cursor: grabbing;
+}
+
+/* Botão de editar etapa */
+.fluxo-etapa-acoes .btn-editar-etapa:hover {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+/* Nome da etapa (destaque no card) */
+.fluxo-etapa-nome {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--cor-primaria);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 2px;
+}
+
+/* Recorte destacado abaixo do nome da etapa */
+.fluxo-etapa-recorte {
+    font-size: 11px;
+    color: var(--cor-destaque);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 3px;
+    display: block;
+}
+
+/* Metadados (máquina e tempo) */
+.fluxo-etapa-meta {
+    display: flex;
+    gap: 12px;
+    font-size: 12px;
+    color: #6c757d;
+    margin-top: 4px;
+}
+
+.fluxo-etapa-meta span {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+/* Lista de fluxogramas salvos */
+.fluxo-lista-salvos {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 2px solid #e9ecef;
+    margin-bottom: 20px;
+}
+
+.fluxo-lista-salvos-conteudo {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.fluxo-card-salvo {
+    background-color: #f8f9fa;
+    border-left: 4px solid var(--cor-verde-producao);
+    border-radius: 6px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.fluxo-card-salvo:hover {
+    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.15);
+    transform: translateY(-2px);
+}
+
+.fluxo-card-salvo-titulo {
+    font-family: var(--fonte-titulos);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--cor-primaria);
+    text-transform: uppercase;
+}
+
+.fluxo-card-salvo-info {
+    display: flex;
+    gap: 15px;
+    font-size: 12px;
+    color: #6c757d;
+    flex-wrap: wrap;
+}
+
+.fluxo-card-salvo-info span {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.fluxo-card-salvo-acoes {
+    display: flex;
+    gap: 8px;
+    margin-top: 5px;
+}
+
+.fluxo-card-salvo-acoes button {
+    flex: 1;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.fluxo-card-salvo-acoes .btn-abrir {
+    background-color: var(--cor-verde-producao);
+    color: #fff;
+}
+
+.fluxo-card-salvo-acoes .btn-abrir:hover {
+    background-color: #1B5E20;
+}
+
+.fluxo-card-salvo-acoes .btn-excluir-salvo {
+    background-color: transparent;
+    color: #dc3545;
+    border: 1px solid #dc3545;
+    flex: 0 0 auto;
+    padding: 6px 10px;
+}
+
+.fluxo-card-salvo-acoes .btn-excluir-salvo:hover {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.fluxo-card-salvo-categoria {
+    display: inline-block;
+    background-color: #e3f2fd;
+    color: #0d47a1;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 3px;
+}
+
+/* ========================================== */
+/* MÓDULO 40: FLUXOGRAMA NA OP                 */
+/* ========================================== */
+
+/* Lista de fluxogramas no modal de escolha */
+.lista-fluxogramas-op {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.card-escolher-fluxograma {
+    background-color: #fff;
+    border: 2px solid #e9ecef;
+    border-left: 4px solid var(--cor-verde-producao);
+    border-radius: 6px;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    transition: all 0.2s;
+}
+
+.card-escolher-fluxograma:hover {
+    border-color: var(--cor-verde-producao);
+    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.15);
+}
+
+.card-escolher-fluxograma-info {
+    flex: 1;
+}
+
+.card-escolher-fluxograma-titulo {
+    font-family: var(--fonte-titulos);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--cor-primaria);
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.card-escolher-fluxograma-meta {
+    display: flex;
+    gap: 15px;
+    font-size: 12px;
+    color: #6c757d;
+    flex-wrap: wrap;
+}
+
+.card-escolher-fluxograma-categoria {
+    display: inline-block;
+    background-color: #e3f2fd;
+    color: #0d47a1;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.card-escolher-fluxograma button {
+    background-color: var(--cor-verde-producao);
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+}
+
+.card-escolher-fluxograma button:hover {
+    background-color: #1B5E20;
+}
+
+/* Seção de fluxograma dentro do documento da OP */
+.op-fluxograma-section {
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 2px solid #e9ecef;
+}
+
+.op-fluxograma-section h3 {
+    font-family: var(--fonte-titulos);
+    color: var(--cor-primaria);
+    font-size: 18px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.op-fluxograma-modulo {
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-left: 4px solid var(--cor-verde-producao);
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 12px;
+}
+
+.op-fluxograma-modulo-cabecalho {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e9ecef;
+    margin-bottom: 12px;
+}
+
+.op-fluxograma-modulo-titulo {
+    font-family: var(--fonte-titulos);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--cor-primaria);
+    text-transform: uppercase;
+}
+
+.op-fluxograma-modulo-tempo {
+    font-size: 13px;
+    color: #6c757d;
+    font-weight: 600;
+}
+
+.op-fluxograma-etapa {
+    display: flex;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px dashed #f1f3f5;
+    font-size: 13px;
+}
+
+.op-fluxograma-etapa:last-child {
+    border-bottom: none;
+}
+
+.op-fluxograma-etapa-numero {
+    width: 22px;
+    height: 22px;
+    background-color: #e9ecef;
+    color: var(--cor-primaria);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.op-fluxograma-etapa-info {
+    flex: 1;
+}
+
+.op-fluxograma-etapa-nome {
+    font-weight: 700;
+    color: var(--cor-primaria);
+    text-transform: uppercase;
+}
+
+.op-fluxograma-etapa-detalhe {
+    color: #6c757d;
+    font-size: 12px;
+    display: flex;
+    gap: 12px;
+    margin-top: 2px;
+}
+
+.op-fluxograma-etapa-detalhe .recorte {
+    color: var(--cor-destaque);
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* Botão de escolher fluxograma */
+.op-escolher-fluxograma {
+    background-color: #fff3e0;
+    border: 2px dashed #ff9800;
+    border-radius: 8px;
+    padding: 25px;
+    text-align: center;
+    margin: 25px 0;
+}
+
+.op-escolher-fluxograma h3 {
+    font-family: var(--fonte-titulos);
+    color: #e65100;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.op-escolher-fluxograma p {
+    color: #6c757d;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.op-escolher-fluxograma button {
+    background-color: #ff9800;
+    color: #fff;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.op-escolher-fluxograma button:hover {
+    background-color: #f57c00;
+}
+
+/* Cabeçalho da seção de fluxograma na OP */
+.op-fluxograma-cabecalho {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.op-fluxograma-cabecalho h3 {
+    margin: 0;
+}
+
+.btn-trocar-fluxograma {
+    background-color: transparent;
+    border: 2px solid #ff9800;
+    color: #e65100;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.btn-trocar-fluxograma:hover {
+    background-color: #ff9800;
+    color: #fff;
+}
+
+/* Agrupamento dos botões do fluxograma na OP */
+.op-fluxograma-cabecalho-acoes {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.btn-remover-fluxograma {
+    background-color: transparent;
+    border: 2px solid #dc3545;
+    color: #dc3545;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.btn-remover-fluxograma:hover {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+/* ========================================== */
+/* MÓDULO 41: JORNADA DE TRABALHO (COMPACTO)  */
+/* ========================================== */
+
+/* Container da seção: limita largura e alinha à esquerda */
+#form-jornada {
+    max-width: 750px;
+}
+
+/* Grid: 2 colunas de dias no desktop */
+#form-jornada .jornada-linha {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 1px solid #f1f3f5;
+}
+
+#form-jornada .jornada-linha:last-of-type {
+    border-bottom: none;
+}
+
+/* Checkbox + nome do dia */
+#form-jornada .jornada-dia {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--cor-primaria);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    min-width: 0;
+}
+
+#form-jornada .jornada-dia input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    accent-color: var(--cor-verde-producao);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+/* Horários alinhados em linha horizontal */
+#form-jornada .jornada-horarios {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: #6c757d;
+    flex-wrap: nowrap;
+}
+
+#form-jornada .jornada-horarios input[type="time"] {
+    padding: 4px 6px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: var(--fonte-textos);
+    color: var(--cor-primaria);
+    background-color: #fff;
+    width: 78px;
+    text-transform: none;
+}
+
+#form-jornada .jornada-horarios input[type="time"]:focus {
+    outline: none;
+    border-color: var(--cor-verde-producao);
+    box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.1);
+}
+
+#form-jornada .jornada-horarios input[type="time"]:disabled {
+    background-color: #f1f3f5;
+    color: #adb5bd;
+    cursor: not-allowed;
+}
+
+#form-jornada .jornada-horarios .jornada-separador {
+    color: #ced4da;
+    font-weight: 700;
+    font-size: 11px;
+    padding: 0 2px;
+}
+
+/* Responsividade: no celular, uma coluna por dia */
+@media (max-width: 768px) {
+    #form-jornada {
+        max-width: 100%;
+    }
+
+    #form-jornada .jornada-linha {
+        grid-template-columns: 1fr;
+        gap: 6px;
+        padding: 10px 0;
+    }
+
+    #form-jornada .jornada-horarios {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    #form-jornada .jornada-horarios input[type="time"] {
+        flex: 1;
+        min-width: 70px;
+        width: auto;
+    }
+}
+
+/* ========================================== */
+/* MÓDULO 42: EXECUÇÃO DA OP                   */
+/* ========================================== */
+
+/* Linha da etapa ganha estado visual */
+.op-fluxograma-etapa {
+    align-items: center;
+    padding: 10px 0;
+    transition: background-color 0.3s;
+    border-radius: 4px;
+}
+
+.op-fluxograma-etapa[data-status="em_andamento"] {
+    background-color: #fff8e1;
+    border-left: 3px solid #ff9800;
+    padding-left: 8px;
+}
+
+.op-fluxograma-etapa[data-status="concluida"] {
+    background-color: #e8f5e9;
+    border-left: 3px solid #2E7D32;
+    padding-left: 8px;
+    opacity: 0.85;
+}
+
+/* Área de ações (botões) */
+.op-fluxograma-etapa-acoes {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    margin-left: auto;
+    padding-left: 10px;
+}
+
+/* Botão Iniciar */
+.btn-iniciar-operacao {
+    background-color: #ff9800;
+    color: #fff;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+    font-family: var(--fonte-textos);
+}
+
+.btn-iniciar-operacao:hover {
+    background-color: #f57c00;
+}
+
+/* Botão Concluir */
+.btn-concluir-operacao {
+    background-color: #2E7D32;
+    color: #fff;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+    font-family: var(--fonte-textos);
+}
+
+.btn-concluir-operacao:hover {
+    background-color: #1B5E20;
+}
+
+/* Selo Concluída */
+.status-concluida-selo {
+    font-size: 12px;
+    font-weight: 700;
+    color: #2E7D32;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+/* Selo Em andamento */
+.status-andamento-selo {
+    font-size: 11px;
+    font-weight: 700;
+    color: #e65100;
+    background-color: #fff3e0;
+    padding: 3px 8px;
+    border-radius: 12px;
+    letter-spacing: 0.3px;
+}
+
+/* Cabeçalho do módulo ganha selo quando concluído */
+.op-fluxograma-modulo.concluido .op-fluxograma-modulo-titulo::after {
+    content: ' ✓';
+    color: #2E7D32;
+    font-weight: 900;
+}
+
+/* Aviso quando a OP está finalizada */
+.op-finalizada-aviso {
+    background-color: #e8f5e9;
+    border: 2px solid #2E7D32;
+    border-radius: 6px;
+    padding: 15px 20px;
+    margin: 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #1B5E20;
+    font-weight: 600;
+}
+
+.op-finalizada-aviso .icone {
+    font-size: 24px;
+}
+
+@media (max-width: 768px) {
+    .op-fluxograma-etapa {
+        flex-wrap: wrap;
+    }
+
+    .op-fluxograma-etapa-acoes {
+        width: 100%;
+        justify-content: flex-end;
+        padding-left: 0;
+        margin-top: 8px;
+    }
+}

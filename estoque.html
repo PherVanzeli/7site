@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estoque | 7Site - ERP</title>
+    <meta name="robots" content="noindex">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="pagina-erp">
+
+    <div id="sidebar-include"></div>
+
+    <main class="estoque-container">
+        <div class="container">
+            
+            <!-- Cabeçalho -->
+            <div class="painel-cabecalho">
+                <div>
+                    <h1>Controle de <strong class="texto-producao">Estoque</strong> 📦</h1>
+                    <p>Cadastro unificado de itens internos e externos.</p>
+                </div>
+            </div>
+
+            <!-- Indicadores -->
+            <div class="estoque-indicadores">
+                <div class="card-indicador card-indicador-producao">
+                    <span>📦</span>
+                    <h3 id="total-itens-estoque">0</h3>
+                    <p>Total de Itens</p>
+                </div>
+                <div class="card-indicador card-indicador-producao">
+                    <span>🏠</span>
+                    <h3 id="total-internos">0</h3>
+                    <p>Itens Internos</p>
+                </div>
+                <div class="card-indicador card-indicador-producao">
+                    <span>🚚</span>
+                    <h3 id="total-externos">0</h3>
+                    <p>Itens Externos</p>
+                </div>
+            </div>
+
+            <!-- Formulário de Cadastro -->
+            <div class="estoque-formulario">
+                <h2 class="titulo-producao">Cadastrar Item</h2>
+                
+                <form id="form-estoque" class="formulario-padrao">
+                    
+                    <label for="categoria-estoque">Categoria *</label>
+                    <select id="categoria-estoque" required>
+                        <option value="" disabled selected>Selecione...</option>
+                        <option value="interno">Interno (patrimônio da confecção)</option>
+                        <option value="externo">Externo (vem com o corte do fornecedor)</option>
+                    </select>
+
+                    <label for="nome-estoque">Nome do Item *</label>
+                    <input type="text" id="nome-estoque" placeholder="Ex: LINHA 40 BRANCA" required>
+
+                    <label for="material-estoque">Material</label>
+                    <input type="text" id="material-estoque" placeholder="Ex: POLIÉSTER, METAL, PLÁSTICO">
+
+                    <label for="cor-estoque">Cor</label>
+                    <input type="text" id="cor-estoque" placeholder="Ex: BRANCA, PRETA, AZUL">
+
+                    <label for="tamanho-estoque">Tamanho / Dimensão</label>
+                    <input type="text" id="tamanho-estoque" placeholder="Ex: 40, 15CM, 18MM">
+
+                    <label for="unidade-estoque">Unidade de Medida *</label>
+                    <select id="unidade-estoque" required>
+                        <option value="UNIDADE" selected>UNIDADE</option>
+                        <option value="ROLO">ROLO</option>
+                        <option value="CAIXA">CAIXA</option>
+                        <option value="METRO">METRO</option>
+                        <option value="KG">KG</option>
+                        <option value="DUZIA">DÚZIA</option>
+                    </select>
+
+                    <!-- Campos exclusivos para Interno -->
+                    <div id="campos-internos" style="display: none;">
+                        <label for="quantidade-estoque">Quantidade Atual *</label>
+                        <input type="number" id="quantidade-estoque" placeholder="Ex: 20" min="0">
+
+                        <label for="quantidade-minima-estoque">Quantidade Mínima (alerta)</label>
+                        <input type="number" id="quantidade-minima-estoque" placeholder="Ex: 5" min="0">
+
+                        <label for="preco-custo-estoque">Preço de Custo Unitário (R$)</label>
+                        <input type="number" id="preco-custo-estoque" placeholder="Ex: 8.50" step="0.01" min="0">
+
+                        <label for="fornecedor-habitual-estoque">Fornecedor Habitual</label>
+                        <input type="text" id="fornecedor-habitual-estoque" placeholder="Ex: AVIAMENTOS SILVA">
+                    </div>
+
+                    <label for="observacoes-estoque">Observações</label>
+                    <input type="text" id="observacoes-estoque" placeholder="Informações adicionais">
+
+                    <button type="submit" class="btn-primario btn-producao">Cadastrar Item</button>
+                </form>
+            </div>
+
+            <!-- Lista de Itens -->
+            <div class="estoque-tabela">
+                <h2 class="titulo-producao">Itens Cadastrados</h2>
+                
+                <div class="filtros-financeiro">
+                    <select id="filtro-categoria-estoque" onchange="listarEstoque()">
+                        <option value="todos">Todas as Categorias</option>
+                        <option value="interno">Somente Internos</option>
+                        <option value="externo">Somente Externos</option>
+                    </select>
+                </div>
+
+                <div id="lista-estoque">
+                    <p class="texto-placeholder">Nenhum item cadastrado ainda.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div id="footer-include"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <script src="js/firebase.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>

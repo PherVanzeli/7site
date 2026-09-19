@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produção | 7Site - PCP</title>
+    <meta name="robots" content="noindex">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="pagina-erp">
+
+    <div id="sidebar-include"></div>
+
+    <main class="estoque-container">
+        <div class="container">
+            
+            <!-- Cabeçalho -->
+            <div class="painel-cabecalho">
+                <div>
+                    <h1>Controle de <strong class="texto-producao">Produção</strong> 🏭</h1>
+                    <p>Gere Ordens de Produção (OPs) e acompanhe o status dos lotes.</p>
+                </div>
+                <button class="btn-sair" onclick="sairDoSistema()">Sair do Portal</button>
+            </div>
+
+            <!-- Indicadores Rápidos -->
+            <div class="estoque-indicadores">
+                <div class="card-indicador card-indicador-producao">
+                    <span>📋</span>
+                    <h3 id="total-ops">0</h3>
+                    <p>Total de OPs</p>
+                </div>
+                <div class="card-indicador card-indicador-producao">
+                    <span>⚙️</span>
+                    <h3 id="ops-em-producao">0</h3>
+                    <p>Em Produção</p>
+                </div>
+                <div class="card-indicador card-indicador-producao">
+                    <span>✅</span>
+                    <h3 id="ops-finalizadas">0</h3>
+                    <p>Finalizadas</p>
+                </div>
+            </div>
+
+            <!-- Selecionar Corte para Produção -->
+            <div class="estoque-formulario">
+                <h2 class="titulo-producao">Gerar Ordem de Produção (OP)</h2>
+                
+                <form id="form-producao" class="formulario-padrao">
+                    <label for="corte-select">Selecione o Corte do Estoque *</label>
+                    <select id="corte-select" required>
+                        <option value="" disabled selected>Carregando cortes...</option>
+                    </select>
+
+                    <label for="encarregado">Encarregado Responsável *</label>
+                    <input type="text" id="encarregado" placeholder="Nome do encarregado" required>
+
+                    <button type="submit" class="btn-primario btn-producao">Gerar OP e Enviar para Produção</button>
+                </form>
+            </div>
+
+            <!-- Lista de OPs Ativas e Finalizadas -->
+            <div class="estoque-tabela">
+                <h2 class="titulo-producao">Ordens de Produção</h2>
+                <div id="lista-ops">
+                    <p class="texto-placeholder">Nenhuma OP gerada ainda.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div id="footer-include"></div>
+
+    <!-- Firebase (Backend) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <!-- Nossos Scripts -->
+    <script src="js/firebase.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>

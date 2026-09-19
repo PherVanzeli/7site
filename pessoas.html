@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Pessoas | 7Site</title>
+    <meta name="robots" content="noindex">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="pagina-erp">
+
+    <div id="sidebar-include"></div>
+
+    <main class="estoque-container">
+        <div class="container">
+            
+            <!-- Cabeçalho -->
+            <div class="painel-cabecalho">
+                <div>
+                    <h1>Cadastro de <strong class="texto-producao">Pessoas</strong> 👤</h1>
+                    <p>Registre pessoas físicas e jurídicas. O tipo é identificado automaticamente.</p>
+                </div>
+                <button class="btn-sair" onclick="sairDoSistema()">Sair do Portal</button>
+            </div>
+
+            <!-- Formulário -->
+            <div class="estoque-formulario">
+                <h2 class="titulo-producao">Nova Pessoa</h2>
+                
+                <form id="form-pessoa" class="formulario-padrao">
+                    
+                    <!-- Dados Básicos -->
+                    <h3 class="subtitulo-form">Identificação</h3>
+                    
+                    <label for="nome-pessoa">Nome Completo ou Razão Social *</label>
+                    <input type="text" id="nome-pessoa" placeholder="Ex: Maria de Fátima ou Tecidos Martins LTDA" required>
+
+                    <label for="documento-pessoa">CPF ou CNPJ *</label>
+                    <div class="documento-row">
+                        <input type="text" id="documento-pessoa" placeholder="000.000.000-00 ou 00.000.000/0001-00" required>
+                        <button type="button" class="btn-buscar-cnpj" onclick="consultarCNPJ()">🔍</button>
+                    </div>
+
+                    <!-- Data de Nascimento ou Fundação (label dinâmico) -->
+                    <label for="data-nascimento-fundacao" id="label-data">Data de Nascimento</label>
+                    <input type="date" id="data-nascimento-fundacao">
+
+                    <!-- Inscrição Estadual (aparece somente para CNPJ) -->
+                    <div id="inscricao-estadual-container" style="display: none;">
+                        <label for="inscricao-estadual">Inscrição Estadual</label>
+                        <input type="text" id="inscricao-estadual" placeholder="000.000.000.000">
+                    </div>
+
+                    <!-- Contato -->
+                    <h3 class="subtitulo-form">Contato</h3>
+                    
+                    <div id="telefones-container">
+                        <div class="telefone-row">
+                            <input type="text" id="telefone-1" class="input-telefone" placeholder="(11) 99999-9999" required>
+                            <button type="button" class="btn-add-telefone" onclick="adicionarTelefone()">+</button>
+                        </div>
+                    </div>
+
+                    <label for="email-pessoa">E-mail</label>
+                    <input type="email" id="email-pessoa" placeholder="contato@exemplo.com">
+
+                    <!-- Endereço -->
+                    <h3 class="subtitulo-form">Endereço</h3>
+
+                    <label for="cep-pessoa">CEP *</label>
+                    <input type="text" id="cep-pessoa" placeholder="00000-000" required>
+
+                    <label for="logradouro-pessoa">Rua / Avenida *</label>
+                    <input type="text" id="logradouro-pessoa" placeholder="Ex: Rua das Máquinas" required>
+
+                    <label for="numero-pessoa">Número *</label>
+                    <input type="text" id="numero-pessoa" placeholder="Ex: 123" required>
+
+                    <label for="complemento-pessoa">Complemento (Opcional)</label>
+                    <input type="text" id="complemento-pessoa" placeholder="Ex: Galpão 4, Fundos">
+
+                    <label for="bairro-pessoa">Bairro *</label>
+                    <input type="text" id="bairro-pessoa" placeholder="Ex: Bairro Industrial" required>
+
+                    <label for="cidade-pessoa">Cidade *</label>
+                    <input type="text" id="cidade-pessoa" placeholder="Ex: Quatiguá" required>
+
+                    <label for="estado-pessoa">Estado (UF) *</label>
+                    <input type="text" id="estado-pessoa" placeholder="Ex: PR" maxlength="2" required>
+
+                    <button type="submit" class="btn-primario btn-producao">Cadastrar Pessoa</button>
+                </form>
+            </div>
+
+            <!-- Lista de Pessoas -->
+            <div class="estoque-tabela">
+                <h2 class="titulo-producao">Pessoas Cadastradas</h2>
+                <div id="lista-pessoas">
+                    <p class="texto-placeholder">Nenhuma pessoa cadastrada.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div id="footer-include"></div>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <script src="js/firebase.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Painel | 7Site</title>
+    <meta name="robots" content="noindex"> <!-- Não queremos que o Google indexe essa página -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- O JavaScript vai injetar o Cabeçalho aqui -->
+    <div id="header-include"></div>
+
+    <main class="painel-container">
+        <div class="container">
+             <div class="painel-cabecalho">
+                <div>
+                   <h1>Olá, <strong id="nome-usuario">...</strong> 👋</h1>
+                    <p>Matrícula: 0001 | Setor: Costura</p>
+                </div>
+                <button class="btn-sair" onclick="sairDoSistema()">Sair do Portal</button>
+            </div>
+            <!-- MURAL DE AVISOS -->
+            <div class="aviso-rh">
+                <strong>📢 Aviso do RH:</strong> A festa de confraternização será no dia 20/12. Não esqueça de confirmar presença na lista.
+            </div>
+
+            <!-- GRID DE AÇÕES DO FUNCIONÁRIO -->
+            <div class="painel-acoes">
+                
+                <!-- Card Holerite -->
+                <div class="card-acao" id="card-holerite">
+                    <span class="icone-acao">💰</span>
+                    <h3>Holerites</h3>
+                    <p>Consulte e baixe seus contracheques mensais.</p>
+                    <button class="btn-primario" onclick="mostrarHolerites()">Abrir Holerites</button>
+                </div>
+
+                <!-- Card Enviar Atestado -->
+                <div class="card-acao" id="card-atestado">
+                    <span class="icone-acao">📄</span>
+                    <h3>Enviar Atestado</h3>
+                    <p>Envie foto ou PDF de atestados médicos.</p>
+                    <button class="btn-primario" onclick="mostrarUpload()">Enviar Arquivo</button>
+                </div>
+
+                <!-- Card Documentos -->
+                <div class="card-acao" id="card-documentos">
+                    <span class="icone-acao">🗂️</span>
+                    <h3>Solicitar Documento</h3>
+                    <p>Peça 2ª via de holerite ou declarações.</p>
+                    <button class="btn-primario" onclick="solicitarDocumento()">Fazer Pedido</button>
+                </div>
+
+            </div>
+
+            <!-- ÁREA DE CONTEÚDO DINÂMICO (O que aparece quando clica) -->
+            <div class="area-dinamica" id="area-dinamica">
+                <!-- Aqui o JavaScript vai injetar a lista de holerites ou o formulário de upload -->
+                <p class="texto-placeholder">👈 Selecione uma das opções acima para começar.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- O JavaScript vai injetar o Rodapé aqui -->
+    <div id="footer-include"></div>
+
+        <!-- Firebase (O Backend/Combustível) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <!-- Nossos Scripts (A Mecânica do Site) -->
+    <script src="js/firebase.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>

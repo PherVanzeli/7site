@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurações | 7Site</title>
+    <meta name="robots" content="noindex">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="pagina-erp">
+
+    <div id="sidebar-include"></div>
+
+    <main class="estoque-container">
+        <div class="container">
+            
+            <!-- Cabeçalho -->
+            <div class="painel-cabecalho">
+                <div>
+                    <h1>Configurações <strong class="texto-producao">do Sistema</strong> ⚙️</h1>
+                    <p>Ajuste os dados da empresa, preferências, permissões e auditoria.</p>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 1. DADOS DA EMPRESA (WHITE LABEL)          -->
+            <!-- ========================================== -->
+            <div class="estoque-formulario">
+                <h2 class="titulo-producao">🏢 Dados da Empresa</h2>
+                <p class="ajuda-form">Essas informações aparecem no site institucional e nos documentos gerados.</p>
+                
+                <form id="form-empresa" class="formulario-padrao">
+                    <label for="config-nome">Nome da Confecção *</label>
+                    <input type="text" id="config-nome" placeholder="Ex: 7ete7" required>
+
+                    <label for="config-cnpj">CNPJ</label>
+                    <input type="text" id="config-cnpj" placeholder="00.000.000/0001-00">
+
+                    <label for="config-telefone">Telefone</label>
+                    <input type="text" id="config-telefone" placeholder="(11) 99999-9999">
+
+                    <label for="config-email">E-mail Institucional</label>
+                    <input type="email" id="config-email" placeholder="contato@empresa.com.br">
+
+                    <label for="config-endereco">Endereço</label>
+                    <input type="text" id="config-endereco" placeholder="Rua, número, bairro, cidade/UF">
+
+                    <button type="submit" class="btn-primario btn-producao">Salvar Dados da Empresa</button>
+                </form>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 2. PREFERÊNCIAS DO SISTEMA                 -->
+            <!-- ========================================== -->
+            <div class="estoque-formulario">
+                <h2 class="titulo-producao">⚙️ Preferências do Sistema</h2>
+                <p class="ajuda-form">Ajustes de comportamento e formato de dados.</p>
+                
+                <form id="form-preferencias" class="formulario-padrao">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="config-maiusculo">
+                        Aplicar texto em MAIÚSCULO automaticamente nos cadastros internos
+                    </label>
+
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="config-notificacoes">
+                        Ativar notificações internas (avisos do RH)
+                    </label>
+
+                    <label for="config-fuso">Fuso Horário</label>
+                    <select id="config-fuso">
+                        <option value="America/Sao_Paulo" selected>Brasília (GMT-3)</option>
+                        <option value="America/Manaus">Manaus (GMT-4)</option>
+                        <option value="America/Belem">Belém (GMT-3)</option>
+                    </select>
+
+                    <button type="submit" class="btn-primario btn-producao">Salvar Preferências</button>
+                </form>
+            </div>
+
+                        <!-- ========================================== -->
+            <!-- 3. JORNADA DE TRABALHO                     -->
+            <!-- ========================================== -->
+            <div class="estoque-formulario">
+                <h2 class="titulo-producao">⏰ Jornada de Trabalho</h2>
+                <p class="ajuda-form">Defina os horários de funcionamento da fábrica. Isso será usado para calcular o tempo real de produção (apenas horas úteis).</p>
+
+                <form id="form-jornada" class="formulario-padrao">
+
+                    <div class="jornada-linha" data-dia="segunda">
+                        <label class="jornada-dia">
+                            <input type="checkbox" id="segunda-aberto" checked>
+                            <span>SEGUNDA</span>
+                        </label>
+                        <div class="jornada-horarios">
+                            <input type="time" id="segunda-inicio1" value="07:00">
+                            <span>às</span>
+                            <input type="time" id="segunda-fim1" value="12:00">
+                            <span class="jornada-separador">|</span>
+                            <input type="time" id="segunda-inicio2" value="13:00">
+                            <span>às</span>
+                            <input type="time" id="segunda-fim2" value="17:00">
+                        </div>
+                    </div>
+
+                    <div class="jornada-linha" data-dia="terca">
+                        <label class="jornada-dia">
+                            <input type="checkbox" id="terca-aberto" checked>
+                            <span>TERÇA</span>
+                        </label>
+                        <div class="jornada-horarios">
+                            <input type="time" id="terca-inicio1" value="07:00">
+                            <span>às</span>
+                            <input type="time" id="terca-fim1" value="12:00">
+                            <span class="jornada-separador">|</span>
+                            <input type="time" id="terca-inicio2" value="13:00">
+                            <span>às</span>
+                            <input type="time" id="terca-fim2" value="17:00">
+                        </div>
+                    </div>
+
+                    <div class="jornada-linha" data-dia="quarta">
+                        <label class="jornada-dia">
+                            <input type="checkbox" id="quarta-aberto" checked>
+                            <span>QUARTA</span>
+                        </label>
+                        <div class="jornada-horarios">
+                            <input type="time" id="quarta-inicio1" value="07:00">
+                            <span>às</span>
+                            <input type="time" id="quarta-fim1" value="12:00">
+                            <span class="jornada-separador">|</span>
+                            <input type="time" id="quarta-inicio2" value="13:00">
+                            <span>às</span>
+                            <input type="time" id="quarta-fim2" value="17:00">
+                        </div>
+                    </div>
+
+                    <div class="jornada-linha" data-dia="quinta">
+                        <label class="jornada-dia">
+                            <input type="checkbox" id="quinta-aberto" checked>
+                            <span>QUINTA</span>
+                        </label>
+                        <div class="jornada-horarios">
+                            <input type="time" id="quinta-inicio1" value="07:00">
+                            <span>às</span>
+                            <input type="time" id="quinta-fim1" value="12:00">
+                            <span class="jornada-separador">|</span>
+                            <input type="time" id="quinta-inicio2" value="13:00">
+                            <span>às</span>
+                            <input type="time" id="quinta-fim2" value="17:00">
+                        </div>
+                    </div>
+
+                    <div class="jornada-linha" data-dia="sexta">
+                        <label class="jornada-dia">
+                            <input type="checkbox" id="sexta-aberto" checked>
+                            <span>SEXTA</span>
+                        </label>
+                        <div class="jornada-horarios">
+                            <input type="time" id="sexta-inicio1" value="07:00">
+                            <span>às</span>
+                            <input type="time" id="sexta-fim1" value="12:00">
+                            <span class="jornada-separador">|</span>
+                            <input type="time" id="sexta-inicio2" value="13:00">
+                            <span>às</span>
+                            <input type="time" id="sexta-fim2" value="17:00">
+                        </div>
+                    </div>
+
+                    <div class="jornada-linha" data-dia="sabado">
+                        <label class="jornada-dia">
+                            <input type="checkbox" id="sabado-aberto" checked>
+                            <span>SÁBADO</span>
+                        </label>
+                        <div class="jornada-horarios">
+                            <input type="time" id="sabado-inicio1" value="07:00">
+                            <span>às</span>
+                            <input type="time" id="sabado-fim1" value="11:00">
+                            <span class="jornada-separador">|</span>
+                            <input type="time" id="sabado-inicio2" value="">
+                            <span>às</span>
+                            <input type="time" id="sabado-fim2" value="">
+                        </div>
+                    </div>
+
+                    <div class="jornada-linha" data-dia="domingo">
+                        <label class="jornada-dia">
+                            <input type="checkbox" id="domingo-aberto">
+                            <span>DOMINGO</span>
+                        </label>
+                        <div class="jornada-horarios">
+                            <input type="time" id="domingo-inicio1" value="">
+                            <span>às</span>
+                            <input type="time" id="domingo-fim1" value="">
+                            <span class="jornada-separador">|</span>
+                            <input type="time" id="domingo-inicio2" value="">
+                            <span>às</span>
+                            <input type="time" id="domingo-fim2" value="">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primario btn-producao" style="margin-top: 20px;">Salvar Jornada</button>
+                </form>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 3. PERFIS E PERMISSÕES                     -->
+            <!-- ========================================== -->
+            <div class="estoque-formulario">
+                <h2 class="titulo-producao">🔐 Perfis e Permissões</h2>
+                <p class="ajuda-form">Defina o que cada nível de acesso pode fazer no sistema.</p>
+                
+                <div class="permissoes-grid">
+                    <div class="card-permissao">
+                        <h4>Nível 1 - Funcionário</h4>
+                        <ul>
+                            <li>✅ Ver holerites</li>
+                            <li>✅ Enviar atestados</li>
+                            <li>❌ Acessar CDF</li>
+                            <li>❌ Acessar RH</li>
+                        </ul>
+                    </div>
+                    <div class="card-permissao">
+                        <h4>Nível 2 - Gestor</h4>
+                        <ul>
+                            <li>✅ Ver holerites</li>
+                            <li>✅ Enviar atestados</li>
+                            <li>✅ Acessar CDF</li>
+                            <li>❌ Acessar RH</li>
+                        </ul>
+                    </div>
+                    <div class="card-permissao">
+                        <h4>Nível 3 - RH</h4>
+                        <ul>
+                            <li>✅ Ver holerites</li>
+                            <li>✅ Enviar atestados</li>
+                            <li>✅ Acessar CDF</li>
+                            <li>✅ Acessar RH</li>
+                        </ul>
+                    </div>
+                    <div class="card-permissao">
+                        <h4>Nível 4 - TI/Admin</h4>
+                        <ul>
+                            <li>✅ Acesso Total</li>
+                            <li>✅ Gerenciar Configurações</li>
+                            <li>✅ Criar outros Admins</li>
+                            <li>✅ Excluir dados</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 4. AUDITORIA E LOGS                        -->
+            <!-- ========================================== -->
+            <div class="estoque-formulario">
+                <h2 class="titulo-producao">📋 Auditoria e Logs</h2>
+                <p class="ajuda-form">Últimas ações registradas no sistema.</p>
+                
+                <div id="lista-logs">
+                    <p class="texto-placeholder">Nenhum log registrado ainda.</p>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 5. BACKUP E EXPORTAÇÃO                     -->
+            <!-- ========================================== -->
+            <div class="estoque-formulario">
+                <h2 class="titulo-producao">💾 Backup e Exportação</h2>
+                <p class="ajuda-form">Exporte os dados do sistema em formato CSV (Excel) para backup externo.</p>
+                
+                <div class="backup-botoes">
+                    <button class="btn-secundario" onclick="exportarPessoas()">📥 Exportar Pessoas (CSV)</button>
+                    <button class="btn-secundario" onclick="exportarEstoque()">📥 Exportar Estoque (CSV)</button>
+                    <button class="btn-secundario" onclick="exportarOPs()">📥 Exportar OPs (CSV)</button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div id="footer-include"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <script src="js/firebase.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trabalhe Conosco | 7Site - Confecção &amp; Tecnologia</title>
+    <meta name="description" content="Faça parte do nosso time. Cadastre seu currículo para vagas de costura, corte e acabamento.">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- O JavaScript vai injetar o Cabeçalho aqui -->
+    <div id="header-include"></div>
+
+    <!-- ========================================== -->
+    <!-- CABEÇALHO DA PÁGINA DE VAGAS              -->
+    <!-- ========================================== -->
+    <main>
+        <section class="pagina-cabecalho">
+            <div class="container">
+                <h1>Trabalhe <strong>Conosco</strong></h1>
+                <p>Banco de Talentos da 7Site. Cadastre-se para fazer parte da nossa equipe de produção.</p>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VANTAGENS DE TRABALHAR NA EMPRESA          -->
+        <!-- ========================================== -->
+        <section class="beneficios-vagas">
+            <div class="container">
+                <div class="grid-beneficios">
+                    <div class="card-beneficio">
+                        <span class="icone">💰</span>
+                        <h3>Pagamento em Dia</h3>
+                        <p>Remuneração competitiva e pontualidade no pagamento.</p>
+                    </div>
+                    <div class="card-beneficio">
+                        <span class="icone">🚌</span>
+                        <h3>Vale Transporte</h3>
+                        <p>Ajuda de custo para você chegar na fábrica com tranquilidade.</p>
+                    </div>
+                    <div class="card-beneficio">
+                        <span class="icone">🍽️</span>
+                        <h3>Refeição na Empresa</h3>
+                        <p>Espaço de convivência e alimentação para a equipe.</p>
+                    </div>
+                    <div class="card-beneficio">
+                        <span class="icone">📈</span>
+                        <h3>Oportunidade de Crescer</h3>
+                        <p>Valorizamos a promoção interna e o desenvolvimento.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- FORMULÁRIO DE CANDIDATURA (FICHA)          -->
+        <!-- ========================================== -->
+        <section class="formulario-vagas">
+            <div class="container">
+                <div class="formulario-vagas-box">
+                    <h2>Preencha sua Ficha de Inscrição</h2>
+                    <p>Leva menos de 3 minutos. Os dados são enviados diretamente para o nosso RH.</p>
+
+                    <form id="form-vagas" class="formulario-padrao">
+                        
+                        <!-- ETAPA 1: DADOS PESSOAIS -->
+                        <div class="etapa-form ativa" id="etapa-1">
+                            <h3>1. Seus Dados</h3>
+                            
+                            <label for="nome-completo">Nome Completo *</label>
+                            <input type="text" id="nome-completo" name="nome" placeholder="Digite seu nome completo" required>
+
+                            <label for="telefone">Telefone (WhatsApp) *</label>
+                            <input type="tel" id="telefone" name="telefone" placeholder="(11) 99999-9999" required>
+
+                            <label for="bairro">Bairro / Cidade *</label>
+                            <input type="text" id="bairro" name="bairro" placeholder="Ex: Bairro Industrial / São Paulo" required>
+
+                            <button type="button" class="btn-primario btn-proximo" data-proximo="2">Próximo Passo →</button>
+                        </div>
+
+                        <!-- ETAPA 2: EXPERIÊNCIA -->
+                        <div class="etapa-form" id="etapa-2">
+                            <h3>2. Experiência Profissional</h3>
+                            
+                            <label for="vaga-interesse">Vaga de Interesse *</label>
+                            <select id="vaga-interesse" name="vaga" required>
+                                <option value="" disabled selected>Selecione a vaga...</option>
+                                <option value="costureira">Costureira(o) em Geral</option>
+                                <option value="overloque">Overloquista / Galoneira</option>
+                                <option value="corte">Auxiliar de Corte</option>
+                                <option value="acabamento">Arrematadeira / Acabamento</option>
+                                <option value="modelista">Modelista</option>
+                                <option value="outros">Outras áreas</option>
+                            </select>
+
+                            <label for="tempo-experiencia">Tempo de Experiência *</label>
+                            <select id="tempo-experiencia" name="experiencia" required>
+                                <option value="" disabled selected>Selecione...</option>
+                                <option value="sem-experiencia">Não tenho experiência (Aprendiz)</option>
+                                <option value="1-2-anos">1 a 2 anos</option>
+                                <option value="3-5-anos">3 a 5 anos</option>
+                                <option value="mais-de-5">Mais de 5 anos</option>
+                            </select>
+
+                            <label for="turno">Turno Desejado *</label>
+                            <select id="turno" name="turno" required>
+                                <option value="" disabled selected>Selecione...</option>
+                                <option value="diurno">Diurno (Manhã/Tarde)</option>
+                                <option value="noturno">Noturno</option>
+                                <option value="indiferente">Indiferente</option>
+                            </select>
+
+                            <div class="botoes-navegacao">
+                                <button type="button" class="btn-secundario btn-voltar" data-voltar="1">← Voltar</button>
+                                <button type="button" class="btn-primario btn-proximo" data-proximo="3">Próximo Passo →</button>
+                            </div>
+                        </div>
+
+                        <!-- ETAPA 3: RESUMO E ENVIO -->
+                        <div class="etapa-form" id="etapa-3">
+                            <h3>3. Resumo e Observações</h3>
+                            
+                            <label for="resumo">Fale um pouco sobre você (Opcional)</label>
+                            <textarea id="resumo" name="resumo" rows="4" placeholder="Conte sua experiência com máquinas, tecidos ou o que você sabe fazer..."></textarea>
+
+                            <label for="como-soube">Como ficou sabendo da vaga? *</label>
+                            <select id="como-soube" name="origem" required>
+                                <option value="" disabled selected>Selecione...</option>
+                                <option value="site">Site da empresa</option>
+                                <option value="instagram">Instagram / Facebook</option>
+                                <option value="indicacao">Indicação de amigo/funcionário</option>
+                                <option value="outros">Outros</option>
+                            </select>
+
+                            <div class="botoes-navegacao">
+                                <button type="button" class="btn-secundario btn-voltar" data-voltar="2">← Voltar</button>
+                                <button type="submit" class="btn-primario btn-enviar">Finalizar Cadastro</button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- O JavaScript vai injetar o Rodapé aqui -->
+    <div id="footer-include"></div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

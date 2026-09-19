@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrada de Corte | 7Site - Expedição</title>
+    <meta name="robots" content="noindex">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="pagina-erp">
+
+    <div id="sidebar-include"></div>
+
+    <main class="estoque-container">
+        <div class="container">
+            
+            <!-- Cabeçalho -->
+            <div class="painel-cabecalho">
+                <div>
+                    <h1>Entrada de <strong class="texto-producao">Corte</strong> 📥</h1>
+                    <p>Registre a entrada de NF e Ordens de Corte. A OP é gerada automaticamente.</p>
+                </div>
+                <button class="btn-sair" onclick="sairDoSistema()">Sair do Portal</button>
+            </div>
+
+            <form id="form-entrada-corte" class="formulario-padrao">
+
+                <!-- ========================================== -->
+                <!-- SEÇÃO 1: DADOS DA NOTA FISCAL               -->
+                <!-- ========================================== -->
+                <div class="entrada-secao">
+                    <h2 class="titulo-producao">📄 1. Dados da Nota Fiscal</h2>
+                    
+                    <label for="fornecedor-cnpj">CNPJ do Fornecedor *</label>
+                    <input type="text" id="fornecedor-cnpj" placeholder="00.000.000/0001-00" maxlength="18" required>
+                    <p class="ajuda-form">Digite o CNPJ. O sistema identifica automaticamente o fornecedor.</p>
+                    <div id="info-fornecedor"></div>
+
+                    <label for="numero-nf">Número da NF *</label>
+                    <input type="text" id="numero-nf" placeholder="Ex: 12345" required>
+
+                    <label for="serie-nf">Série (opcional)</label>
+                    <input type="text" id="serie-nf" placeholder="Ex: 1">
+
+                    <label for="data-emissao-nf">Data de Emissão *</label>
+                    <input type="date" id="data-emissao-nf" required>
+
+                    <label for="valor-nf">Valor Total da NF (R$)</label>
+                    <input type="number" id="valor-nf" placeholder="Ex: 5000.00" step="0.01" min="0">
+
+                    <label for="chave-acesso-nf">Chave de Acesso (opcional)</label>
+                    <input type="text" id="chave-acesso-nf" placeholder="44 dígitos" maxlength="44">
+                </div>
+
+                <!-- ========================================== -->
+                <!-- SEÇÃO 2: ORDEM DE CORTE                     -->
+                <!-- ========================================== -->
+                <div class="entrada-secao">
+                    <h2 class="titulo-producao">✂️ 2. Ordem de Corte</h2>
+
+                    <label for="numero-oc">Número da Ordem de Corte *</label>
+                    <input type="text" id="numero-oc" placeholder="Ex: OC-2026-001" required>
+
+                    <label for="modelo-oc">Modelo (código do fornecedor)</label>
+                    <input type="text" id="modelo-oc" placeholder="Ex: RL-9001">
+
+                    <label for="descricao-peca">Descrição da Peça *</label>
+                    <input type="text" id="descricao-peca" placeholder="Ex: CALÇA MASCULINA SARJA CHINO" required>
+
+                    <label for="quantidade-total">Quantidade Total de Peças *</label>
+                    <input type="number" id="quantidade-total" placeholder="Ex: 400" min="1" required>
+                </div>
+
+                                <!-- ========================================== -->
+                <!-- SEÇÃO 3: RECORTES DO CORTE                  -->
+                <!-- ========================================== -->
+                <div class="entrada-secao">
+                    <h2 class="titulo-producao">🧩 3. Recortes do Corte</h2>
+                    <p class="ajuda-form">Recortes são componentes do corte (bolsos, cós, passantes, etc.). Informe quantos vêm por peça.</p>
+
+                    <div id="lista-recortes" class="lista-itens-secao">
+                        <p class="texto-placeholder">Nenhum recorte adicionado ainda.</p>
+                    </div>
+
+                    <div class="controles-aviamento">
+                        <input type="text" id="recorte-nome" list="lista-recortes-sugestoes" placeholder="Digite o nome do recorte" class="select-aviamento">
+                        <datalist id="lista-recortes-sugestoes"></datalist>
+                        <input type="number" id="recorte-qtd-peca" placeholder="Qtd/peça" min="1" value="1" class="input-aviamento">
+                        <button type="button" class="btn-producao btn-compacto" onclick="adicionarRecorte()">+ Adicionar</button>
+                    </div>
+                </div>
+                
+                <!-- ========================================== -->
+                <!-- SEÇÃO 4: AVIAMENTOS EXTERNOS                -->
+                <!-- ========================================== -->
+                <div class="entrada-secao">
+                    <h2 class="titulo-producao">🧷 4. Aviamentos Externos (vêm com o corte)</h2>
+                    <p class="ajuda-form">Aviamentos que o fornecedor enviou junto com o corte. Digite para buscar ou cadastre um novo automaticamente.</p>
+
+                    <div id="lista-av-externos" class="lista-itens-secao">
+                        <p class="texto-placeholder">Nenhum aviamento externo adicionado ainda.</p>
+                    </div>
+
+                    <div class="controles-aviamento controles-aviamento-largo">
+                        <input type="text" id="av-externo-nome" list="lista-av-externos-sugestoes" placeholder="Nome (ex: ZÍPER)" class="input-medio">
+                        <datalist id="lista-av-externos-sugestoes"></datalist>
+                        <input type="text" id="av-externo-material" placeholder="Material (METAL)" class="input-curto">
+                        <input type="text" id="av-externo-cor" placeholder="Cor (PRETO)" class="input-curto">
+                        <input type="text" id="av-externo-tamanho" placeholder="Tam. (15CM)" class="input-curto">
+                        <input type="number" id="av-externo-qtd" placeholder="Qtd" min="1" class="input-pequeno">
+                        <select id="av-externo-unidade" class="input-pequeno">
+                            <option value="UN">UN</option>
+                            <option value="MT">MT</option>
+                        </select>
+                        <button type="button" class="btn-producao btn-compacto" onclick="adicionarAviamentoExterno()">+ Adicionar</button>
+                    </div>
+                </div>
+
+                <!-- ========================================== -->
+                <!-- AÇÕES                                        -->
+                <!-- ========================================== -->
+                <div class="entrada-acoes">
+                    <button type="submit" class="btn-primario btn-producao btn-grande">✅ Registrar Entrada e Gerar OP</button>
+                </div>
+
+            </form>
+
+            <!-- Modal de Cadastro de Novo Fornecedor -->
+            <div id="modal-novo-fornecedor" class="modal-overlay" style="display: none;">
+                <div class="modal-caixa modal-caixa-larga">
+                    <h3>Cadastrar Novo Fornecedor</h3>
+                    <p class="ajuda-form">Preencha os dados do fornecedor. Ele ficará disponível para futuras entradas.</p>
+
+                    <label for="modal-forn-nome">Razão Social *</label>
+                    <input type="text" id="modal-forn-nome" placeholder="Ex: TECIDOS MARTINS LTDA">
+
+                    <label for="modal-forn-cnpj">CNPJ *</label>
+                    <div class="campo-com-botao">
+                        <input type="text" id="modal-forn-cnpj" placeholder="00.000.000/0001-00" maxlength="18">
+                        <button type="button" class="btn-buscar-cnpj" onclick="buscarCNPJModal()">🔍</button>
+                    </div>
+
+                    <label for="modal-forn-ie">Inscrição Estadual</label>
+                    <input type="text" id="modal-forn-ie" placeholder="000.000.000.000">
+
+                    <label for="modal-forn-telefone">Telefone *</label>
+                    <input type="text" id="modal-forn-telefone" placeholder="(11) 99999-9999">
+
+                    <label for="modal-forn-email">E-mail</label>
+                    <input type="email" id="modal-forn-email" placeholder="contato@fornecedor.com.br">
+
+                    <h4 class="subtitulo-form">Endereço</h4>
+
+                    <label for="modal-forn-cep">CEP *</label>
+                    <input type="text" id="modal-forn-cep" placeholder="00000-000" maxlength="9">
+
+                    <label for="modal-forn-logradouro">Rua / Avenida *</label>
+                    <input type="text" id="modal-forn-logradouro" placeholder="Ex: AVENIDA PAULISTA">
+
+                    <label for="modal-forn-numero">Número *</label>
+                    <input type="text" id="modal-forn-numero" placeholder="Ex: 1000">
+
+                    <label for="modal-forn-complemento">Complemento</label>
+                    <input type="text" id="modal-forn-complemento" placeholder="Ex: SALA 5">
+
+                    <label for="modal-forn-bairro">Bairro *</label>
+                    <input type="text" id="modal-forn-bairro" placeholder="Ex: BELA VISTA">
+
+                    <label for="modal-forn-cidade">Cidade *</label>
+                    <input type="text" id="modal-forn-cidade" placeholder="Ex: SÃO PAULO" readonly>
+
+                    <label for="modal-forn-estado">Estado (UF) *</label>
+                    <input type="text" id="modal-forn-estado" placeholder="Ex: SP" maxlength="2" readonly>
+
+                    <div class="modal-botoes">
+                        <button type="button" class="btn-secundario" onclick="fecharModalFornecedor()">Cancelar</button>
+                        <button type="button" class="btn-primario btn-producao" onclick="salvarNovoFornecedor()">Salvar Fornecedor</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal de Confirmação de Novo Item -->
+            <div id="modal-novo-item" class="modal-overlay" style="display: none;">
+                <div class="modal-caixa">
+                    <h3 id="modal-titulo-novo">Novo Item Detectado</h3>
+                    <p id="modal-descricao-novo" class="ajuda-form"></p>
+                    
+                    <label for="modal-input-novo" id="modal-label-novo">Nome do Item *</label>
+                    <input type="text" id="modal-input-novo" placeholder="Digite o nome correto...">
+
+                    <div class="modal-botoes">
+                        <button type="button" class="btn-secundario" onclick="fecharModalNovoItem()">Cancelar</button>
+                        <button type="button" class="btn-primario btn-producao" onclick="confirmarNovoItem()">Confirmar e Salvar</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div id="footer-include"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <script src="js/firebase.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>

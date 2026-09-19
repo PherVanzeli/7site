@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financeiro | 7Site</title>
+    <meta name="robots" content="noindex">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="pagina-erp">
+
+    <div id="sidebar-include"></div>
+
+    <main class="estoque-container">
+        <div class="container">
+            
+            <!-- Cabeçalho -->
+            <div class="painel-cabecalho">
+                <div>
+                    <h1>Gestão <strong class="texto-producao">Financeira</strong> 💰</h1>
+                    <p>Controle de entradas, saídas e fluxo de caixa.</p>
+                </div>
+            </div>
+
+            <!-- Indicadores -->
+            <div class="estoque-indicadores">
+                <div class="card-indicador card-indicador-producao">
+                    <span>💵</span>
+                    <h3 id="total-saldo">R$ 0,00</h3>
+                    <p>Saldo Atual</p>
+                </div>
+                <div class="card-indicador card-indicador-producao">
+                    <span>📤</span>
+                    <h3 id="total-pagar">R$ 0,00</h3>
+                    <p>A Pagar</p>
+                </div>
+                <div class="card-indicador card-indicador-producao">
+                    <span>📥</span>
+                    <h3 id="total-receber">R$ 0,00</h3>
+                    <p>A Receber</p>
+                </div>
+                <div class="card-indicador card-indicador-producao">
+                    <span>📊</span>
+                    <h3 id="total-resultado">R$ 0,00</h3>
+                    <p>Resultado do Mês</p>
+                </div>
+            </div>
+
+            <!-- Formulário de Lançamento -->
+            <div class="estoque-formulario">
+                <h2 class="titulo-producao">Novo Lançamento</h2>
+                
+                <form id="form-financeiro" class="formulario-padrao">
+                    
+                    <label for="tipo-lancamento">Tipo *</label>
+                    <select id="tipo-lancamento" required>
+                        <option value="" disabled selected>Selecione...</option>
+                        <option value="entrada">Entrada (Receita)</option>
+                        <option value="saida">Saída (Despesa)</option>
+                    </select>
+
+                    <label for="categoria-lancamento">Categoria *</label>
+                    <select id="categoria-lancamento" required>
+                        <option value="" disabled selected>Selecione...</option>
+                        <optgroup label="Saídas">
+                            <option value="Tecido">Tecido</option>
+                            <option value="Aviamento">Aviamento</option>
+                            <option value="Salário">Salário</option>
+                            <option value="Energia">Energia</option>
+                            <option value="Água">Água</option>
+                            <option value="Aluguel">Aluguel</option>
+                            <option value="Impostos">Impostos</option>
+                            <option value="Manutenção">Manutenção</option>
+                            <option value="Outros">Outros</option>
+                        </optgroup>
+                        <optgroup label="Entradas">
+                            <option value="Venda Loja">Venda Loja</option>
+                            <option value="Venda Atacado">Venda Atacado</option>
+                            <option value="Serviço de Facção">Serviço de Facção</option>
+                        </optgroup>
+                    </select>
+
+                    <label for="descricao-lancamento">Descrição *</label>
+                    <input type="text" id="descricao-lancamento" placeholder="Ex: Compra de tecido malha fria" required>
+
+                    <label for="valor-lancamento">Valor (R$) *</label>
+                    <input type="number" id="valor-lancamento" placeholder="0,00" step="0.01" min="0" required>
+
+                    <label for="vencimento-lancamento">Data de Vencimento *</label>
+                    <input type="date" id="vencimento-lancamento" required>
+
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="pago-check">
+                        Já foi pago/recebido
+                    </label>
+
+                    <button type="submit" class="btn-primario btn-producao">Registrar Lançamento</button>
+                </form>
+            </div>
+
+            <!-- Lista de Lançamentos -->
+            <div class="estoque-tabela">
+                <h2 class="titulo-producao">Lançamentos</h2>
+                
+                <div class="filtros-financeiro">
+                    <select id="filtro-status" onchange="listarLancamentos()">
+                        <option value="todos">Todos</option>
+                        <option value="pendente">Apenas Pendentes</option>
+                        <option value="pago">Apenas Pagos/Recebidos</option>
+                    </select>
+                    <select id="filtro-tipo" onchange="listarLancamentos()">
+                        <option value="todos">Entradas e Saídas</option>
+                        <option value="entrada">Apenas Entradas</option>
+                        <option value="saida">Apenas Saídas</option>
+                    </select>
+                </div>
+
+                <div id="lista-lancamentos">
+                    <p class="texto-placeholder">Nenhum lançamento registrado.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div id="footer-include"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <script src="js/firebase.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>

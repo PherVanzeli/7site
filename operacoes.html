@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca de Operações | 7Site</title>
+    <meta name="robots" content="noindex">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="pagina-erp">
+
+    <div id="sidebar-include"></div>
+
+    <main class="estoque-container">
+        <div class="container">
+            
+            <!-- Cabeçalho -->
+            <div class="painel-cabecalho">
+                <div>
+                    <h1>Biblioteca de <strong class="texto-producao">Operações</strong> 🧠</h1>
+                    <p>Cadastre as operações técnicas que podem ser executadas na confecção.</p>
+                </div>
+            </div>
+
+            <!-- Formulário de Cadastro -->
+            <div class="estoque-formulario">
+                <h2 class="titulo-producao">Nova Operação</h2>
+                
+                <form id="form-operacao" class="formulario-padrao">
+                    
+                    <label for="codigo-operacao">Código (opcional)</label>
+                    <input type="text" id="codigo-operacao" placeholder="Ex: OP-001 (deixe em branco para gerar automático)">
+
+                    <label for="nome-operacao">Nome da Operação *</label>
+                    <input type="text" id="nome-operacao" placeholder="Ex: REFILAGEM, PESPONTO, APLICAÇÃO" required>
+
+                    <button type="submit" class="btn-primario btn-producao">Cadastrar Operação</button>
+                </form>
+            </div>
+
+            <!-- Lista de Operações -->
+            <div class="estoque-tabela">
+                <h2 class="titulo-producao">Operações Cadastradas</h2>
+                <div id="lista-operacoes">
+                    <p class="texto-placeholder">Nenhuma operação cadastrada ainda.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div id="footer-include"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <script src="js/firebase.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
