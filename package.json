@@ -1,0 +1,12 @@
+{
+  "name": "7site-erp",
+  "version": "9.0.0",
+  "private": true,
+  "description": "7Site ERP — confecção e tecnologia",
+  "scripts": {
+    "lint": "eslint js --ext .js"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0"
+  }
+}

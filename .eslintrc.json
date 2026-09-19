@@ -1,0 +1,59 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "globals": {
+    "firebase": "readonly",
+    "auth": "readonly",
+    "db": "readonly",
+    "Sortable": "readonly",
+    "maiusculo": "readonly",
+    "validarCPF": "readonly",
+    "formatarTempo": "readonly",
+    "listarFuncionarios": "readonly",
+    "listarEstoque": "readonly",
+    "consultarCNPJ": "readonly",
+    "listarPessoas": "readonly",
+    "listarOperacoes": "readonly",
+    "listarLancamentos": "readonly",
+    "carregarEdicaoAviamentos": "readonly",
+    "carregarEdicaoRecortes": "readonly",
+    "carregarDatalistsEdicao": "readonly",
+    "executarRemocao": "readonly",
+    "fecharModalAutorizacao": "readonly",
+    "fecharModalMotivo": "readonly",
+    "fecharModalEdicao": "readonly",
+    "abrirModalFornecedor": "readonly",
+    "mostrarResumoFornecedor": "readonly",
+    "buscarCNPJModal": "readonly",
+    "abrirModalNovoRecorte": "readonly",
+    "renderizarRecortes": "readonly",
+    "abrirModalNovoAviamento": "readonly",
+    "renderizarAviamentosExternos": "readonly",
+    "fecharModalNovoItem": "readonly",
+    "carregarRecortesSugestoes": "readonly",
+    "carregarAviamentosExternos": "readonly",
+    "carregarOPs": "readonly",
+    "carregarFluxogramasParaOP": "readonly",
+    "fecharModalEscolherFluxograma": "readonly",
+    "configurarBuscaFornecedorPorCNPJ": "readonly",
+    "abrirModalEditarEtapa": "readonly",
+    "abrirModalNovaEtapa": "readonly",
+    "fecharModalNovoModulo": "readonly",
+    "abrirModalNovaMaquina": "readonly",
+    "fecharModalNovaEtapa": "readonly",
+    "fecharModalNovaMaquina": "readonly",
+    "fecharModalSalvarFluxograma": "readonly"
+  },
+  "parserOptions": {
+    "ecmaVersion": 2021
+  },
+  "rules": {
+    "no-undef": "error",
+    "no-unused-vars": "off"
+  },
+  "ignorePatterns": [
+    "js/lib/**"
+  ]
+}
