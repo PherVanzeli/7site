@@ -3459,6 +3459,37 @@ input[list] {
     color: #5E35B1;
 }
 
+/* Linhas de insumo no modal de etapa */
+.fluxo-insumo-linha {
+    display: grid;
+    grid-template-columns: 110px 1fr 80px 70px 32px;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 8px;
+}
+.fluxo-insumo-linha select,
+.fluxo-insumo-linha input {
+    padding: 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 13px;
+    width: 100%;
+    box-sizing: border-box;
+}
+.fluxo-insumo-linha .btn-remover-insumo {
+    background: #f8d7da;
+    color: #dc3545;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    padding: 6px 0;
+}
+.fluxo-insumo-linha .btn-remover-insumo:hover {
+    background: #f5c2c7;
+}
+
 /* Alça de arrastar da etapa */
 .fluxo-etapa-alca {
     cursor: grab;

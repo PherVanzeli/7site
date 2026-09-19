@@ -144,38 +144,13 @@
                     <input type="text" id="etapa-operacao" list="lista-operacoes-etapa" placeholder="Ex: FECHAR ZÍPER" required>
                     <datalist id="lista-operacoes-etapa"></datalist>
 
-                                        <!-- Bloco de Insumo (opcional) -->
-                    <div style="background: #F8F5FF; padding: 15px; border-radius: 6px; margin: 15px 0; border-left: 4px solid #5E35B1;">
-                        <h4 style="margin: 0 0 10px; font-size: 14px; color: #4527A0;">📎 Insumo (opcional)</h4>
-
-                        <label for="etapa-insumo-tipo">Tipo de Insumo</label>
-                        <select id="etapa-insumo-tipo">
-                            <option value="">Nenhum</option>
-                            <option value="recorte">RECORTE</option>
-                            <option value="aviamento">AVIAMENTO</option>
-                        </select>
-
-                        <label for="etapa-insumo-nome">Nome do Insumo</label>
-                        <input type="text" id="etapa-insumo-nome" list="lista-insumos-etapa" placeholder="Ex: FAIXA REFLEXIVA 5CM">
-                        <datalist id="lista-insumos-etapa"></datalist>
-
-                        <div style="display: flex; gap: 10px; align-items: flex-end; margin-top: 10px;">
-                            <div style="flex: 2;">
-                                <label for="etapa-insumo-qtd">Quantidade por Peça</label>
-                                <input type="number" id="etapa-insumo-qtd" placeholder="Ex: 0.20" step="0.01" min="0">
-                            </div>
-                            <div style="flex: 1;">
-                                <label for="etapa-insumo-unidade">Unidade</label>
-                                <select id="etapa-insumo-unidade">
-                                    <option value="UN">UN</option>
-                                    <option value="MT">MT</option>
-                                    <option value="KG">KG</option>
-                                    <option value="ROLO">ROLO</option>
-                                </select>
-                            </div>
+                                                            <div style="background: #F8F5FF; padding: 15px; border-radius: 6px; margin: 15px 0; border-left: 4px solid #5E35B1;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                            <h4 style="margin: 0; font-size: 14px; color: #4527A0;">📎 Insumos (opcional)</h4>
+                            <button type="button" class="btn-secundario btn-compacto" onclick="adicionarLinhaInsumo()">+ Adicionar Insumo</button>
                         </div>
+                        <div id="etapa-insumos-lista"></div>
                     </div>
-
                     <label for="etapa-maquina">Máquina *</label>
                     <input type="text" id="etapa-maquina" list="lista-maquinas-etapa" placeholder="Ex: RETA" required>
                     <datalist id="lista-maquinas-etapa"></datalist>

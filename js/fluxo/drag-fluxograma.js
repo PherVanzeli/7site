@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
             cacheDatalists.equipamentos = [];
         });
 
-        db.collection('estoque').where('categoria', '==', 'externo').get()
+        db.collection('estoque').get()
             .then(function(snap) {
                 cacheDatalists.aviamentos = [];
                 snap.forEach(function(doc) {
@@ -508,16 +508,12 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('etapa-equipamento').value = '';
         document.getElementById('etapa-tempo').value = 30;
         document.getElementById('etapa-observacoes').value = '';
-        document.getElementById('etapa-insumo-tipo').value = '';
-        document.getElementById('etapa-insumo-nome').value = '';
-        document.getElementById('etapa-insumo-qtd').value = '';
-        document.getElementById('etapa-insumo-unidade').value = 'UN';
+        renderizarInsumosModal([]);
 
         popularDatalist('lista-recortes-etapa', cacheDatalists.recortes);
         popularDatalist('lista-operacoes-etapa', cacheDatalists.operacoes);
         popularDatalist('lista-maquinas-etapa', cacheDatalists.maquinas);
         popularDatalist('lista-equipamentos-etapa', cacheDatalists.equipamentos);
-        popularDatalist('lista-insumos-etapa', []);
 
         // Restaura o botão para "Adicionar Etapa"
         const botaoSalvar = document.querySelector('#modal-nova-etapa .btn-primario');
@@ -551,25 +547,12 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('etapa-tempo').value = etapa.tempo_segundos || 30;
         document.getElementById('etapa-equipamento').value = etapa.equipamento && etapa.equipamento !== 'NENHUM' ? etapa.equipamento : '';
         document.getElementById('etapa-observacoes').value = etapa.observacoes || '';
-        const insumos = normalizarInsumos(etapa);
-        const insumo = insumos[0] || {};
-        document.getElementById('etapa-insumo-tipo').value = insumo.tipo || '';
-        document.getElementById('etapa-insumo-nome').value = insumo.nome || '';
-        document.getElementById('etapa-insumo-qtd').value = insumo.quantidade || '';
-        document.getElementById('etapa-insumo-unidade').value = insumo.unidade || 'UN';
+        renderizarInsumosModal(normalizarInsumos(etapa));
 
         popularDatalist('lista-recortes-etapa', cacheDatalists.recortes);
         popularDatalist('lista-operacoes-etapa', cacheDatalists.operacoes);
         popularDatalist('lista-maquinas-etapa', cacheDatalists.maquinas);
         popularDatalist('lista-equipamentos-etapa', cacheDatalists.equipamentos);
-
-        if (insumo.tipo === 'recorte') {
-            popularDatalist('lista-insumos-etapa', cacheDatalists.recortes);
-        } else if (insumo.tipo === 'aviamento') {
-            popularDatalist('lista-insumos-etapa', cacheDatalists.aviamentos);
-        } else {
-            popularDatalist('lista-insumos-etapa', []);
-        }
 
         const botaoSalvar = document.querySelector('#modal-nova-etapa .btn-primario');
         if (botaoSalvar) {
@@ -604,10 +587,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const equipamento = document.getElementById('etapa-equipamento').value.trim().toUpperCase() || 'NENHUM';
         const tempo = parseInt(document.getElementById('etapa-tempo').value);
         const observacoes = document.getElementById('etapa-observacoes').value.trim().toUpperCase();
-        const insumoTipo = document.getElementById('etapa-insumo-tipo').value;
-        const insumoNome = document.getElementById('etapa-insumo-nome').value.trim().toUpperCase();
-        const insumoQtd = parseFloat(document.getElementById('etapa-insumo-qtd').value) || 0;
-        const insumoUnidade = document.getElementById('etapa-insumo-unidade').value;
+        const insumos = lerInsumosDoModal();
+        if (insumos === null) return;
 
         if (!nomeEtapa) { alert('Informe o nome da etapa.'); return; }
         if (!recorte || !operacao || !maquina) { alert('Preencha Recorte, Operação e Máquina.'); return; }
@@ -620,8 +601,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         if (!tempo || tempo < 1) { alert('Informe um tempo válido em segundos.'); return; }
-        if (insumoTipo && !insumoNome) { alert('Informe o nome do insumo.'); return; }
-        if (insumoTipo && insumoQtd <= 0) { alert('Informe a quantidade do insumo.'); return; }
 
         const modulo = modulosDisponiveis.find(m => m.id === moduloEmEdicao);
         if (!modulo) return;
@@ -635,9 +614,7 @@ document.addEventListener('DOMContentLoaded', function() {
             tempo_segundos: tempo,
             observacoes: observacoes,
             permite_paralelo: false,
-            insumos: (insumoTipo && insumoNome)
-                ? [{ tipo: insumoTipo, nome: insumoNome, quantidade: insumoQtd, unidade: insumoUnidade }]
-                : []
+            insumos: insumos
         };
 
         const etapasAtualizadas = [...(modulo.etapas || []), novaEtapa];
@@ -676,10 +653,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const tempo = parseInt(document.getElementById('etapa-tempo').value);
         const equipamento = document.getElementById('etapa-equipamento').value.trim().toUpperCase() || 'NENHUM';
         const observacoes = document.getElementById('etapa-observacoes').value.trim().toUpperCase();
-        const insumoTipo = document.getElementById('etapa-insumo-tipo').value;
-        const insumoNome = document.getElementById('etapa-insumo-nome').value.trim().toUpperCase();
-        const insumoQtd = parseFloat(document.getElementById('etapa-insumo-qtd').value) || 0;
-        const insumoUnidade = document.getElementById('etapa-insumo-unidade').value;
+        const insumos = lerInsumosDoModal();
+        if (insumos === null) return;
 
         if (!nomeEtapa) { alert('Informe o nome da etapa.'); return; }
         if (!recorte || !operacao || !maquina) { alert('Preencha Recorte, Operação e Máquina.'); return; }
@@ -692,8 +667,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         if (!tempo || tempo < 1) { alert('Informe um tempo válido.'); return; }
-        if (insumoTipo && !insumoNome) { alert('Informe o nome do insumo.'); return; }
-        if (insumoTipo && insumoQtd <= 0) { alert('Informe a quantidade do insumo.'); return; }
 
         const modulo = modulosDisponiveis.find(m => m.id === moduloId);
         if (!modulo) return;
@@ -709,9 +682,7 @@ document.addEventListener('DOMContentLoaded', function() {
             tempo_segundos: tempo,
             observacoes: observacoes,
             permite_paralelo: etapasAtualizadas[index].permite_paralelo || false,
-            insumos: (insumoTipo && insumoNome)
-                ? [{ tipo: insumoTipo, nome: insumoNome, quantidade: insumoQtd, unidade: insumoUnidade }]
-                : []
+            insumos: insumos
         };
 
         db.collection('modulos').doc(moduloId).update({
@@ -734,6 +705,98 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Erro ao editar etapa:', erro);
             alert('❌ Erro ao salvar alterações.');
         });
+    };
+
+    // ==========================================
+    // 10.1 INSUMOS MÚLTIPLOS POR ETAPA
+    // ==========================================
+    let insumoRowSeq = 0;
+
+    function obterSugestoesInsumo(tipo) {
+        if (tipo === 'recorte') return cacheDatalists.recortes;
+        if (tipo === 'aviamento') return cacheDatalists.aviamentos;
+        return [];
+    }
+
+    function popularDatalistLinha(linha) {
+        const select = linha.querySelector('.fluxo-insumo-tipo');
+        const datalistId = 'dl-' + linha.dataset.insumoId;
+        popularDatalist(datalistId, obterSugestoesInsumo(select.value));
+    }
+
+    function gerarLinhaInsumoHTML(dados) {
+        dados = dados || {};
+        const id = 'insumo-' + (++insumoRowSeq);
+        const tipo = dados.tipo || '';
+        const nome = dados.nome || '';
+        const qtd = dados.quantidade || '';
+        const unidade = dados.unidade || 'UN';
+        const tipos = ['', 'recorte', 'aviamento'].map(function(t) {
+            const rotulo = t === 'recorte' ? 'RECORTE' : (t === 'aviamento' ? 'AVIAMENTO' : 'Nenhum');
+            return '<option value="' + t + '"' + (t === tipo ? ' selected' : '') + '>' + rotulo + '</option>';
+        }).join('');
+        const unidades = ['UN', 'MT', 'KG', 'ROLO'].map(function(u) {
+            return '<option value="' + u + '"' + (u === unidade ? ' selected' : '') + '>' + u + '</option>';
+        }).join('');
+        return `
+            <div class="fluxo-insumo-linha" data-insumo-id="${id}">
+                <select class="fluxo-insumo-tipo" onchange="atualizarDatalistLinha(this)">${tipos}</select>
+                <input type="text" class="fluxo-insumo-nome" list="dl-${id}" placeholder="Nome do insumo" value="${nome}">
+                <datalist id="dl-${id}"></datalist>
+                <input type="number" class="fluxo-insumo-qtd" placeholder="Qtd" step="0.01" min="0" value="${qtd}">
+                <select class="fluxo-insumo-unidade">${unidades}</select>
+                <button type="button" class="btn-remover-insumo" onclick="removerLinhaInsumo(this)">×</button>
+            </div>`;
+    }
+
+    function renderizarInsumosModal(lista) {
+        const container = document.getElementById('etapa-insumos-lista');
+        if (!container) return;
+        insumoRowSeq = 0;
+        container.innerHTML = '';
+        (lista || []).forEach(function(item) {
+            container.insertAdjacentHTML('beforeend', gerarLinhaInsumoHTML(item));
+        });
+        container.querySelectorAll('.fluxo-insumo-linha').forEach(function(linha) {
+            popularDatalistLinha(linha);
+        });
+    }
+
+    function lerInsumosDoModal() {
+        const container = document.getElementById('etapa-insumos-lista');
+        if (!container) return [];
+        const insumos = [];
+        const linhas = container.querySelectorAll('.fluxo-insumo-linha');
+        for (let i = 0; i < linhas.length; i++) {
+            const linha = linhas[i];
+            const tipo = linha.querySelector('.fluxo-insumo-tipo').value;
+            const nome = linha.querySelector('.fluxo-insumo-nome').value.trim().toUpperCase();
+            const qtd = parseFloat(linha.querySelector('.fluxo-insumo-qtd').value) || 0;
+            const unidade = linha.querySelector('.fluxo-insumo-unidade').value;
+            if (!tipo && !nome) continue;
+            if (tipo && !nome) { alert('Informe o nome do insumo da linha ' + (i + 1) + '.'); return null; }
+            if (tipo && qtd <= 0) { alert('Informe a quantidade do insumo da linha ' + (i + 1) + '.'); return null; }
+            insumos.push({ tipo: tipo, nome: nome, quantidade: qtd, unidade: unidade });
+        }
+        return insumos;
+    }
+
+    window.adicionarLinhaInsumo = function() {
+        const container = document.getElementById('etapa-insumos-lista');
+        if (!container) return;
+        container.insertAdjacentHTML('beforeend', gerarLinhaInsumoHTML({}));
+    };
+
+    window.removerLinhaInsumo = function(botao) {
+        const linha = botao.closest('.fluxo-insumo-linha');
+        if (linha) linha.remove();
+    };
+
+    window.atualizarDatalistLinha = function(select) {
+        const linha = select.closest('.fluxo-insumo-linha');
+        if (!linha) return;
+        popularDatalistLinha(linha);
+        linha.querySelector('.fluxo-insumo-nome').value = '';
     };
 
     // ==========================================
@@ -1043,25 +1106,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // 17. EVENT LISTENERS
     // ==========================================
     
-    // Datalist dinâmico de insumos
-    document.addEventListener('change', function(e) {
-        if (e.target && e.target.id === 'etapa-insumo-tipo') {
-            const tipo = e.target.value;
-            let lista = [];
-
-            if (tipo === 'recorte') {
-                lista = cacheDatalists.recortes;
-            } else if (tipo === 'aviamento') {
-                lista = cacheDatalists.aviamentos;
-            }
-
-            popularDatalist('lista-insumos-etapa', lista);
-
-            const campoNome = document.getElementById('etapa-insumo-nome');
-            if (campoNome) campoNome.value = '';
-        }
-    });
-
     // Busca na biblioteca de módulos
     const inputBusca = document.getElementById('fluxo-busca-modulo');
     if (inputBusca) {
