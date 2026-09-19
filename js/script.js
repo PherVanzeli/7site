@@ -8,36 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // ==========================================
     const opDocumento = document.getElementById('op-documento');
 
-    // ==========================================
-    // 5. CONTATO
-    // ==========================================
-    const formContato = document.getElementById('form-contato');
-    if (formContato) {
-        formContato.addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('✅ Mensagem enviada com sucesso!');
-            formContato.reset();
-        });
-    }
 
-    // ==========================================
-    // 6. VAGAS
-    // ==========================================
-    const formVagas = document.getElementById('form-vagas');
-    if (formVagas) {
-        window.irParaEtapa = function(num) {
-            const etapas = formVagas.querySelectorAll('.etapa-form');
-            etapas.forEach(function(et) { et.classList.remove('ativa'); });
-            const alvo = document.getElementById('etapa-' + num);
-            if (alvo) alvo.classList.add('ativa');
-        };
-        formVagas.addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('✅ Cadastro enviado!');
-            formVagas.reset();
-            window.irParaEtapa(1);
-        });
-    }
 
     // ==========================================
     // 7. LOGIN
@@ -254,25 +225,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     };
 
-    // ==========================================
-    // 13. CARROSSEL DE NOTÍCIAS
-    // ==========================================
-    let slideAtual = 0;
-    window.irParaSlide = function(i) {
-        const slides = document.querySelectorAll('.carrossel-slide');
-        const bolinhas = document.querySelectorAll('.bolinha');
-        if (!slides.length) return;
-        slides.forEach(s => s.classList.remove('ativo'));
-        bolinhas.forEach(b => b.classList.remove('ativa'));
-        slideAtual = i;
-        if (slideAtual >= slides.length) slideAtual = 0;
-        if (slideAtual < 0) slideAtual = slides.length - 1;
-        slides[slideAtual].classList.add('ativo');
-        bolinhas[slideAtual].classList.add('ativa');
-    };
-    window.mudarSlide = function(d) { window.irParaSlide(slideAtual + d); };
-    const carrossel = document.getElementById('carrossel');
-    if (carrossel) setInterval(function() { window.mudarSlide(1); }, 5000);
 
     // ==========================================
     // 14. MÓDULO DE ESTOQUE
