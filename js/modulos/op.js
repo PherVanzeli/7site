@@ -503,6 +503,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <span>🔧 ${etapa.maquina || '—'}</span>
                                     <span>⏱️ ${etapa.tempo_segundos || 0}s</span>
                                 </div>
+                                ${gerarInsumosHTML(normalizarInsumos(etapa))}
                             </div>
                             <div class="op-fluxograma-etapa-acoes">
                                 ${renderizarBotoesEtapa(moduloIdx, idx, etapa)}

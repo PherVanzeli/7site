@@ -3459,6 +3459,13 @@ input[list] {
     color: #5E35B1;
 }
 
+.fluxo-etapa-insumos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 4px;
+}
+
 /* Linhas de insumo no modal de etapa */
 .fluxo-insumo-linha {
     display: grid;

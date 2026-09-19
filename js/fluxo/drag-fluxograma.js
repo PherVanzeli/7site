@@ -149,6 +149,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <span>🔧 ${etapa.maquina || '—'}</span>
                                 <span>⏱️ ${etapa.tempo_segundos || 0}s</span>
                             </div>
+                            ${gerarInsumosHTML(normalizarInsumos(etapa))}
                         </div>
                         <div class="fluxo-etapa-acoes">
                             <button type="button" class="btn-editar-etapa" title="Editar etapa">✏️</button>

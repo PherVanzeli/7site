@@ -48,3 +48,14 @@ window.normalizarInsumos = function(etapa) {
     return [];
 };
 window.SITE.utils.normalizarInsumos = window.normalizarInsumos;
+
+window.gerarInsumosHTML = function(insumos) {
+    insumos = insumos || [];
+    if (!insumos.length) return '';
+    const badges = insumos.map(function(i) {
+        const rotulo = i.tipo === 'recorte' ? 'RECORTE' : (i.tipo === 'aviamento' ? 'AVIAMENTO' : (i.tipo || '').toUpperCase());
+        return '<span class="fluxo-etapa-insumo"><span class="tipo ' + (i.tipo || '') + '">' + rotulo + '</span> ' + (i.nome || '') + ' ×' + (i.quantidade || 0) + ' ' + (i.unidade || 'UN') + '</span>';
+    }).join('');
+    return '<div class="fluxo-etapa-insumos">' + badges + '</div>';
+};
+window.SITE.utils.gerarInsumosHTML = window.gerarInsumosHTML;
