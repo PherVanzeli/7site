@@ -362,13 +362,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (elTempoTotal) elTempoTotal.textContent = formatarTempo(totalTempo);
     }
 
-    function formatarTempo(segundos) {
-        if (segundos < 60) return segundos + 's';
-        const min = Math.floor(segundos / 60);
-        const seg = segundos % 60;
-        if (seg === 0) return min + 'min';
-        return `${min}min ${seg}s`;
-    }
 
     // ==========================================
     // 7. SORTABLE PRINCIPAL (MÓDULOS)

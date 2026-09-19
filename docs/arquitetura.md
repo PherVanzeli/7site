@@ -9,7 +9,7 @@
 ### Frontend
 - **HTML5** — Estrutura das páginas.
 - **CSS3** — Estilo e responsividade (arquivo único: `css/style.css`).
-- **JavaScript (Vanilla)** — Toda a lógica do sistema (arquivo único: `js/script.js`).
+- **JavaScript (Vanilla)** — Lógica modular em `js/` (core, site, auth, modulos, fluxo).
 
 ### Backend / Serviços
 - **Firebase Authentication** — Login por CPF (convertido em e-mail interno).
@@ -67,8 +67,13 @@
 │   └── style.css            → Todos os estilos do projeto
 │
 ├── /js
-│   ├── firebase.js          → Configuração e conexão com Firebase
-│   └── script.js            → Toda a lógica da aplicação
+│   ├── firebase.js          → Conexão com Firebase (auth, db)
+│   ├── /core                → Núcleo compartilhado (utils, menu, componentes, guard)
+│   ├── /site                → Site público (contato, vagas, noticias)
+│   ├── /auth                → Autenticação (login, painel)
+│   ├── /modulos             → Módulos do ERP (rh, estoque, pessoas, op, ...)
+│   ├── /fluxo               → Fluxograma (drag-and-drop)
+│   └── /lib                 → Bibliotecas de terceiros (SortableJS)
 │
 ├── /components
 │   ├── header.html          → Cabeçalho do site público
@@ -94,7 +99,7 @@ Cada página interna tem:
 <div id="footer-include"></div>
 ```
 
-O `script.js` carrega os arquivos de `/components/` e injeta o conteúdo automaticamente via `fetch`.
+O `js/core/componentes.js` carrega os arquivos de `/components/` e injeta o conteúdo automaticamente via `fetch`.
 
 ### Por que isso importa
 
@@ -209,7 +214,7 @@ firebase deploy
 
 - **Texto em maiúsculo:** Função `maiusculo()` aplicada a todos os cadastros do ERP.
 - **CSS:** Classes em português (`btn-primario`, `card-indicador`).
-- **JavaScript:** Funções globais expostas via `window.funcao` quando precisam ser chamadas no HTML.
+- **JavaScript:** Funções expostas via namespace `window.SITE.*`; `window.funcao` apenas quando chamadas inline no HTML.
 - **Firestore:** Nomes de coleções em minúsculo, sem acento (`producao`, `operacoes`).
 
 ---
@@ -220,6 +225,7 @@ firebase deploy
 - Ajuste de perfis e permissões editáveis (definição futura).
 - Auditoria de logs (a implementar).
 - Integração com NF-e (fase futura).
+- Migrar globals de compatibilidade do ESLint (`window.X`) para `window.SITE.*` (gradual).
 
 ---
 
