@@ -10,74 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-    // ==========================================
-    // 7. LOGIN
-    // ==========================================
-    const formLogin = document.getElementById('form-login');
-    if (formLogin) {
-        formLogin.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const cpf = document.getElementById('cpf').value.trim();
-            const senha = document.getElementById('senha').value;
-            const msgErro = document.getElementById('msg-erro');
-            let email = cpf.includes('@') ? cpf : `${cpf.replace(/\D/g, '')}@7site.com.br`;
-            
-            auth.signInWithEmailAndPassword(email, senha)
-                .then(function(cred) {
-                    const cpfLogado = cred.user.email.split('@')[0];
-                    db.collection('usuarios').doc(cpfLogado).get().then(function(doc) {
-                        let tipo = 'funcionario';
-                        if (doc.exists) {
-                            const d = doc.data();
-                            tipo = d.tipo_usuario;
-                            if (!tipo && d.nivel) {
-                                const nivel = parseInt(d.nivel, 10);
-                                if (nivel >= 3) tipo = 'superior';
-                                else if (nivel === 2) tipo = 'subordinado';
-                                else tipo = 'funcionario';
-                            }
-                        }
-                        window.location.href = tipo === 'funcionario' ? 'painel.html' : 'dashboard.html';
-                    });
-                })
-                .catch(function(err) {
-                    console.error(err);
-                    msgErro.style.display = 'block';
-                });
-        });
-    }
 
-    // ==========================================
-    // 8. PAINEL DO USUÁRIO
-    // ==========================================
-    const paginaPainel = document.querySelector('.painel-container');
-    if (paginaPainel) {
-        auth.onAuthStateChanged(function(user) {
-            if (user) {
-                const nomeTitulo = document.getElementById('nome-usuario');
-                const cpf = user.email.split('@')[0];
-                db.collection('usuarios').doc(cpf).get().then(function(doc) {
-                    if (doc.exists) {
-                        const d = doc.data();
-                        nomeTitulo.textContent = d.nome;
-                        let tipo = d.tipo_usuario;
-                        if (!tipo && d.nivel) {
-                            const nivel = parseInt(d.nivel, 10);
-                            tipo = nivel >= 2 ? 'subordinado' : 'funcionario';
-                        }
-                        if (tipo === 'subordinado' || tipo === 'superior' || d.setor === 'todos') {
-                            const cardErp = document.getElementById('card-erp');
-                            if (cardErp) cardErp.style.display = 'block';
-                        }
-                    } else {
-                        nomeTitulo.textContent = cpf;
-                    }
-                });
-            } else {
-                window.location.href = 'login.html';
-            }
-        });
-    }
 
 
     // ==========================================
