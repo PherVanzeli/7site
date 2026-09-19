@@ -2,115 +2,11 @@
 
 document.addEventListener('DOMContentLoaded', function() {
 
-    // ==========================================
-    // FUNÇÃO GLOBAL
-    // ==========================================
-    function maiusculo(valor) {
-        if (!valor || typeof valor !== 'string') return valor;
-        return valor.toUpperCase().trim();
-    }
 
     // ==========================================
     // REFERÊNCIAS GLOBAIS DO DOM
     // ==========================================
     const opDocumento = document.getElementById('op-documento');
-
-    // ==========================================
-    // 1. INJEÇÃO DE COMPONENTES MODULARES
-    // ==========================================
-    async function injetarComponente(url, elementoId) {
-        const elemento = document.getElementById(elementoId);
-        if (!elemento) return;
-        try {
-            const resposta = await fetch(url);
-            if (!resposta.ok) return;
-            const html = await resposta.text();
-            elemento.innerHTML = html;
-            if (elementoId === 'header-include') {
-                configurarMenuMobile();
-                atualizarMenuLogin();
-            }
-            if (elementoId === 'sidebar-include') {
-                marcarLinkAtivoSidebar();
-            }
-        } catch (erro) {
-            console.error('Erro ao injetar componente:', erro);
-        }
-    }
-
-    injetarComponente('components/header.html', 'header-include');
-    injetarComponente('components/footer.html', 'footer-include');
-    injetarComponente('components/sidebar.html', 'sidebar-include');
-
-    // ==========================================
-    // 2. MENU MOBILE E SUBMENU
-    // ==========================================
-    function configurarMenuMobile() {
-        const btnMenu = document.getElementById('btn-menu');
-        const menu = document.getElementById('menu');
-        if (btnMenu && menu) {
-            btnMenu.addEventListener('click', function() {
-                menu.classList.toggle('ativo');
-            });
-        }
-        const menuCdf = document.querySelector('.menu-cdf');
-        const linkCdf = document.querySelector('.menu-cdf-link');
-        if (menuCdf && linkCdf) {
-            linkCdf.addEventListener('click', function(e) {
-                if (window.innerWidth <= 768) {
-                    e.preventDefault();
-                    menuCdf.classList.toggle('aberto');
-                }
-            });
-        }
-        const setores = document.querySelectorAll('.sidebar-setor');
-        setores.forEach(function(setor) {
-            const link = setor.querySelector('.sidebar-setor-link');
-            if (link) {
-                link.addEventListener('click', function(e) {
-                    if (window.innerWidth <= 768) {
-                        e.preventDefault();
-                        setor.classList.toggle('aberto');
-                    }
-                });
-            }
-        });
-    }
-
-    // ==========================================
-    // 3. VISIBILIDADE DO MENU (LOGIN)
-    // ==========================================
-    function atualizarMenuLogin() {
-        const itensRestritos = document.querySelectorAll('.item-restrito');
-        const menuLogin = document.getElementById('menu-login');
-        if (typeof auth === 'undefined') return;
-        auth.onAuthStateChanged(function(user) {
-            if (user) {
-                itensRestritos.forEach(function(item) {
-                    if (item.querySelector('a[href="dashboard.html"]')) {
-                        item.style.display = 'block';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
-                if (menuLogin) {
-                    menuLogin.innerHTML = '<a href="#" class="btn-login" onclick="sairDoSistema()">Sair</a>';
-                }
-            } else {
-                itensRestritos.forEach(function(item) { item.style.display = 'none'; });
-                if (menuLogin) {
-                    menuLogin.innerHTML = '<a href="login.html" class="btn-login">Área do Funcionário</a>';
-                }
-            }
-        });
-    }
-
-    // ==========================================
-    // 4. LOGOUT
-    // ==========================================
-    window.sairDoSistema = function() {
-        auth.signOut().then(function() { window.location.href = 'login.html'; });
-    };
 
     // ==========================================
     // 5. CONTATO
@@ -212,88 +108,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ==========================================
-    // 9. PROTEÇÃO DE PÁGINAS (RBAC)
-    // ==========================================
-    const PERMISSOES = {
-        'producao.html': ['CDF', 'todos'],
-        'operacoes.html': ['CDF', 'todos'],
-        'fluxo.html': ['CDF', 'todos'],
-        'estoque.html': ['Administrativo', 'todos'],
-        'entrada-corte.html': ['Administrativo', 'todos'],
-        'expedicao.html': ['Administrativo', 'todos'],
-        'financeiro.html': ['Financeiro', 'todos'],
-        'admin.html': ['RH', 'todos'],
-        'pessoas.html': ['todos'],
-        'configuracoes.html': ['todos'],
-        'op.html': ['CDF', 'Administrativo', 'Financeiro', 'todos']
-    };
-    const PAGINAS_LIVRES = ['painel.html', 'dashboard.html'];
-
-    function verificarPermissaoPagina() {
-        const paginaAtual = window.location.pathname.split('/').pop() || 'index.html';
-        if (PAGINAS_LIVRES.includes(paginaAtual)) return;
-        if (!PERMISSOES[paginaAtual]) return;
-        
-        const setoresPermitidos = PERMISSOES[paginaAtual];
-        
-        auth.onAuthStateChanged(function(user) {
-            if (!user) { window.location.href = 'login.html'; return; }
-            const cpfLogado = user.email.split('@')[0];
-            db.collection('usuarios').doc(cpfLogado).get().then(function(doc) {
-                if (!doc.exists) { window.location.href = 'login.html'; return; }
-                const d = doc.data();
-                let setor = d.setor;
-                let tipo = d.tipo_usuario;
-                if (!tipo && d.nivel) {
-                    const nivelAntigo = parseInt(d.nivel, 10);
-                    if (nivelAntigo >= 4) { tipo = 'superior'; setor = 'todos'; }
-                    else if (nivelAntigo === 3) { tipo = 'superior'; setor = 'RH'; }
-                    else { tipo = 'funcionario'; setor = null; }
-                }
-                if (setoresPermitidos.includes(setor)) return;
-                alert('Acesso negado.');
-                window.location.href = 'painel.html';
-            });
-        });
-    }
-    verificarPermissaoPagina();
-
-    // ==========================================
-    // 10. MARCAR LINK ATIVO NA SIDEBAR
-    // ==========================================
-    function marcarLinkAtivoSidebar() {
-        const paginaAtual = window.location.pathname.split('/').pop() || 'index.html';
-        const links = document.querySelectorAll('.sidebar-menu a');
-        links.forEach(function(link) {
-            const href = link.getAttribute('href');
-            if (href === paginaAtual) {
-                link.classList.add('ativo');
-                const submenu = link.closest('.sidebar-submenu');
-                if (submenu) {
-                    const setor = submenu.closest('.sidebar-setor');
-                    if (setor) setor.classList.add('aberto');
-                }
-            }
-        });
-    }
-
-    // ==========================================
-    // 11. VALIDADOR DE CPF
-    // ==========================================
-    function validarCPF(cpf) {
-        cpf = cpf.replace(/\D/g, '');
-        if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
-        let soma = 0, resto;
-        for (let i = 1; i <= 9; i++) soma += parseInt(cpf.substring(i - 1, i)) * (11 - i);
-        resto = (soma * 10) % 11; if (resto === 10 || resto === 11) resto = 0;
-        if (resto !== parseInt(cpf.substring(9, 10))) return false;
-        soma = 0;
-        for (let i = 1; i <= 10; i++) soma += parseInt(cpf.substring(i - 1, i)) * (12 - i);
-        resto = (soma * 10) % 11; if (resto === 10 || resto === 11) resto = 0;
-        if (resto !== parseInt(cpf.substring(10, 11))) return false;
-        return true;
-    }
 
     // ==========================================
     // 12. CADASTRO DE FUNCIONÁRIOS
@@ -1587,7 +1401,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 const observacao = document.getElementById('motivo-observacao').value.trim();
                 const dadosSuperior = {
-                    cpf: cpfSup,
+                    cpf: cpf,
                     nome: d.nome
                 };
 
@@ -1679,13 +1493,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // 19.1 RENDERIZAÇÃO DO DOCUMENTO DA OP
     // ==========================================
      
-    function formatarTempo(segundos) {
-        if (segundos < 60) return segundos + 's';
-        const min = Math.floor(segundos / 60);
-        const seg = segundos % 60;
-        if (seg === 0) return min + 'min';
-        return `${min}min ${seg}s`;
-    }
 
     let podeExecutarOP = false;
 
