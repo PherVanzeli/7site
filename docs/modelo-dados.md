@@ -458,6 +458,106 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 
 ---
 
+### `recortes`
+
+**Função:** Cadastro de recortes (componentes físicos do corte) usados como insumo nas etapas do fluxograma.
+
+**Documento:** ID automático do Firestore.
+
+```json
+{
+  "nome": "DIANTEIRO",
+  "data_cadastro": "timestamp"
+}
+```
+
+**Campos:** `nome` (string, maiúsculo) · `data_cadastro` (timestamp).
+
+---
+
+### `modulos`
+
+**Função:** Blocos de montagem reutilizáveis (ex.: MANGA, GOLA) compostos por etapas. Servem de biblioteca para montar fluxogramas.
+
+**Documento:** ID automático do Firestore.
+
+```json
+{
+  "nome": "MANGA",
+  "descricao": "MÓDULO DE MANGA COM PUNHO",
+  "etapas": [
+    {
+      "nome_etapa": "APLICAR FAIXA NA MANGA",
+      "recorte": "MANGA",
+      "operacao": "APLICAR FAIXA",
+      "maquina": "RETA",
+      "equipamento": "NENHUM",
+      "tempo_segundos": 45,
+      "observacoes": "",
+      "permite_paralelo": false,
+      "insumos": [
+        { "tipo": "recorte", "nome": "DIANTEIRO", "quantidade": 2, "unidade": "UN" },
+        { "tipo": "aviamento", "nome": "LINHA 40 BRANCA", "quantidade": 0.20, "unidade": "MT" }
+      ]
+    }
+  ],
+  "data_cadastro": "timestamp",
+  "data_atualizacao": "timestamp"
+}
+```
+
+**Etapa — campos:**
+
+| Campo | Tipo | Descrição |
+| :--- | :--- | :--- |
+| `nome_etapa` | string | Nome curto usado no chão de fábrica |
+| `recorte` | string | Recorte principal da etapa |
+| `operacao` | string | Operação executada |
+| `maquina` | string | Máquina utilizada |
+| `equipamento` | string | Equipamento acoplado (`NENHUM` se vazio) |
+| `tempo_segundos` | number | Tempo estimado |
+| `permite_paralelo` | boolean | Permite execução em paralelo |
+| `insumos` | array | Insumos consumidos pela etapa |
+
+**Insumo (item de `insumos`):**
+
+| Campo | Tipo | Descrição |
+| :--- | :--- | :--- |
+| `tipo` | string | `recorte` ou `aviamento` |
+| `nome` | string | Nome do insumo (maiúsculo) |
+| `quantidade` | number | Quantidade por peça (fração permitida) |
+| `unidade` | string | `UN`, `MT`, `KG`, `ROLO` |
+
+> **Nota:** `insumos` substitui os antigos campos `insumo_tipo`/`insumo_nome`/`insumo_quantidade`/`insumo_unidade`, mantidos apenas para leitura de dados legados (via `normalizarInsumos`).
+
+---
+
+### `fluxogramas`
+
+**Função:** Roteiro técnico completo de um modelo — snapshot dos módulos e etapas no momento do salvamento.
+
+**Documento:** ID automático do Firestore.
+
+```json
+{
+  "nome": "MACACÃO NR10",
+  "categoria": "EPI",
+  "variacao": "PADRÃO",
+  "modulos": [
+    { "modulo_id": "docId", "modulo_nome": "MANGA", "etapas": [ "..." ] }
+  ],
+  "total_tempo_segundos": 120,
+  "total_modulos": 1,
+  "total_operacoes": 3,
+  "data_cadastro": "timestamp",
+  "data_atualizacao": "timestamp"
+}
+```
+
+**Campos:** `nome` (string) · `categoria` (string) · `variacao` (string) · `modulos` (array com `modulo_id`, `modulo_nome`, `etapas`) · `total_tempo_segundos` (number) · `total_modulos` (number) · `total_operacoes` (number) · `data_cadastro`/`data_atualizacao` (timestamp).
+
+---
+
 ## Coleções Planejadas (Fase Futura)
 
 | Coleção | Função |
