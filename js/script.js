@@ -668,77 +668,6 @@ document.addEventListener('DOMContentLoaded', function() {
         listarPessoas();
     }
 
-    // ==========================================
-    // 16. MÓDULO DE OPERAÇÕES
-    // ==========================================
-    const formOperacao = document.getElementById('form-operacao');
-    if (formOperacao) {
-        formOperacao.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const codigoInput = document.getElementById('codigo-operacao').value.trim();
-            const nome = document.getElementById('nome-operacao').value.trim();
-            if (!nome) { alert('Digite o nome da operação.'); return; }
-            
-            const codigo = codigoInput || 'OP-' + Date.now().toString().slice(-6);
-            const botao = formOperacao.querySelector('.btn-producao');
-            botao.textContent = 'Cadastrando...';
-            botao.disabled = true;
-            
-            db.collection('operacoes').add({
-                codigo: maiusculo(codigo),
-                nome: maiusculo(nome),
-                data_cadastro: firebase.firestore.FieldValue.serverTimestamp()
-            })
-            .then(function() {
-                alert('✅ Operação cadastrada!');
-                formOperacao.reset();
-                botao.textContent = 'Cadastrar Operação';
-                botao.disabled = false;
-                listarOperacoes();
-            })
-            .catch(function(erro) {
-                console.error('Erro:', erro);
-                alert('❌ Erro ao cadastrar.');
-                botao.textContent = 'Cadastrar Operação';
-                botao.disabled = false;
-            });
-        });
-    }
-
-    window.listarOperacoes = function() {
-        const lista = document.getElementById('lista-operacoes');
-        if (!lista) return;
-        lista.innerHTML = '<p class="texto-placeholder">Carregando operações...</p>';
-        
-        db.collection('operacoes').orderBy('nome').get().then(function(snapshot) {
-            if (snapshot.empty) {
-                lista.innerHTML = '<p class="texto-placeholder">Nenhuma operação cadastrada.</p>';
-                return;
-            }
-            let html = '<table class="tabela-estoque"><thead><tr><th>Código</th><th>Nome</th><th>Ações</th></tr></thead><tbody>';
-            snapshot.forEach(function(doc) {
-                const d = doc.data();
-                html += `<tr>
-                    <td>${d.codigo}</td>
-                    <td>${d.nome}</td>
-                    <td><button class="btn-excluir" onclick="excluirOperacao('${doc.id}')">🗑️</button></td>
-                </tr>`;
-            });
-            html += '</tbody></table>';
-            lista.innerHTML = html;
-        });
-    };
-
-    window.excluirOperacao = function(id) {
-        if (!confirm('Tem certeza que deseja excluir esta operação?')) return;
-        db.collection('operacoes').doc(id).delete()
-            .then(function() { alert('✅ Operação excluída!'); listarOperacoes(); })
-            .catch(function(erro) { console.error(erro); });
-    };
-
-    if (window.location.pathname.includes('operacoes')) {
-        listarOperacoes();
-    }
 
     // ==========================================
     // 17. MÓDULO FINANCEIRO
@@ -1651,58 +1580,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return `<button type="button" class="btn-iniciar-operacao" onclick="iniciarOperacao(${moduloIdx}, ${etapaIdx})">▶️ Iniciar</button>`;
     }
 
-    // ==========================================
-    // 20. HOME DO ERP (DASHBOARD POR SETOR)
-    // ==========================================
-    const erpAtalhos = document.getElementById('erp-atalhos');
-    if (erpAtalhos) {
-        auth.onAuthStateChanged(function(user) {
-            if (!user) { window.location.href = 'login.html'; return; }
-            const cpfLogado = user.email.split('@')[0];
-            db.collection('usuarios').doc(cpfLogado).get().then(function(doc) {
-                if (!doc.exists) { window.location.href = 'login.html'; return; }
-                const d = doc.data();
-                let setor = d.setor;
-                let tipo = d.tipo_usuario;
-                
-                if (!tipo && d.nivel) {
-                    const n = parseInt(d.nivel, 10);
-                    if (n >= 4) { tipo = 'superior'; setor = 'todos'; }
-                    else if (n === 3) { tipo = 'superior'; setor = 'RH'; }
-                    else { tipo = 'funcionario'; setor = null; }
-                }
-                
-                document.getElementById('nome-erp').textContent = d.nome;
-                let info = `${d.cargo}`;
-                if (setor && setor !== 'todos') info += ` • Setor: ${setor}`;
-                if (setor === 'todos') info += ` • Mestre`;
-                document.getElementById('info-erp').textContent = info;
-                
-                let html = '';
-                if (setor === 'todos' || setor === 'CDF') {
-                    html += `<a href="producao.html" class="card-atalho"><span class="icone-atalho">⚙️</span><h3>Produção</h3><p>Gerar OPs e controlar o chão de fábrica</p></a>`;
-                }
-                if (setor === 'todos' || setor === 'Administrativo') {
-                    html += `<a href="entrada-corte.html" class="card-atalho"><span class="icone-atalho">📥</span><h3>Entrada de Corte</h3><p>Registrar NF e gerar OP</p></a>`;
-                    html += `<a href="estoque.html" class="card-atalho"><span class="icone-atalho">📦</span><h3>Estoque</h3><p>Itens internos e externos</p></a>`;
-                }
-                if (setor === 'todos' || setor === 'Financeiro') {
-                    html += `<a href="financeiro.html" class="card-atalho"><span class="icone-atalho">💰</span><h3>Financeiro</h3><p>Contas a pagar e receber</p></a>`;
-                }
-                if (setor === 'todos' || setor === 'RH') {
-                    html += `<a href="admin.html" class="card-atalho"><span class="icone-atalho">🔐</span><h3>Sala do RH</h3><p>Gerenciar usuários e permissões</p></a>`;
-                }
-                if (tipo === 'superior' || setor === 'todos') {
-                    html += `<a href="pessoas.html" class="card-atalho"><span class="icone-atalho">👤</span><h3>Pessoas</h3><p>Cadastro de pessoas físicas e jurídicas</p></a>`;
-                }
-                html += `<a href="painel.html" class="card-atalho"><span class="icone-atalho">📄</span><h3>Meu Painel</h3><p>Holerites, atestados e avisos</p></a>`;
-                if (setor === 'todos') {
-                    html += `<a href="configuracoes.html" class="card-atalho"><span class="icone-atalho">⚙️</span><h3>Configurações</h3><p>Dados da empresa e preferências</p></a>`;
-                }
-                erpAtalhos.innerHTML = html;
-            });
-        });
-    }
 
     // ==========================================
     // 21. ENTRADA DE CORTE — FORNECEDOR (VIA CNPJ)
@@ -2320,50 +2197,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ==========================================
-    // 24. PRODUÇÃO — LISTAGEM DE OPs
-    // ==========================================
-    window.carregarOPs = function() {
-        const lista = document.getElementById('lista-ops');
-        if (!lista) return;
-        
-        lista.innerHTML = '<p class="texto-placeholder">Carregando OPs...</p>';
-        
-        db.collection('producao').orderBy('data_entrada_producao', 'desc').get().then(function(snapshot) {
-            if (snapshot.empty) {
-                lista.innerHTML = '<p class="texto-placeholder">Nenhuma OP gerada ainda.</p>';
-                return;
-            }
-            
-            let html = '<table class="tabela-estoque"><thead><tr><th>Lote</th><th>Modelo</th><th>Descrição</th><th>Qtd</th><th>Status</th><th>Ações</th></tr></thead><tbody>';
-            snapshot.forEach(function(doc) {
-                const d = doc.data();
-                const statusLabel = {
-                    'aguardando_fluxograma': '🧠 Aguardando Fluxograma',
-                    'em_producao': '⚙️ Em Produção',
-                    'aguardando_expedicao': '📦 Aguardando Expedição',
-                    'finalizado': '✅ Finalizado'
-                }[d.status] || d.status;
-                
-                html += `<tr>
-                    <td>${d.lote}</td>
-                    <td>${d.modelo || '—'}</td>
-                    <td>${d.descricao}</td>
-                    <td>${d.quantidade_total}</td>
-                    <td>${statusLabel}</td>
-                    <td>
-                        <a href="op.html?id=${doc.id}" class="btn-acao-op">📄 Ver</a>
-                    </td>
-                </tr>`;
-            });
-            html += '</tbody></table>';
-            lista.innerHTML = html;
-        });
-    };
-
-    if (window.location.pathname.includes('producao')) {
-        carregarOPs();
-    }
 
     // ==========================================
     // 25. VINCULAR FLUXOGRAMA À OP
