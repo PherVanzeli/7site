@@ -11,6 +11,7 @@
     "maiusculo": "readonly",
     "validarCPF": "readonly",
     "formatarTempo": "readonly",
+    "normalizarInsumos": "readonly",
     "listarFuncionarios": "readonly",
     "listarEstoque": "readonly",
     "consultarCNPJ": "readonly",

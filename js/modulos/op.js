@@ -757,10 +757,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                         equipamento: e.equipamento || 'NENHUM',
                                         tempo_segundos: e.tempo_segundos || 0,
                                         observacoes: e.observacoes || '',
-                                        insumo_tipo: e.insumo_tipo || 'nenhum',
-                                        insumo_nome: e.insumo_nome || '',
-                                        insumo_quantidade: e.insumo_quantidade || 0,
-                                        insumo_unidade: e.insumo_unidade || 'UN',
+                                        insumos: normalizarInsumos(e),
                                         status: 'pendente',
                                         data_inicio: null,
                                         data_fim: null

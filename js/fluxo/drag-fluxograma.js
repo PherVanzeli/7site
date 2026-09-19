@@ -551,19 +551,21 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('etapa-tempo').value = etapa.tempo_segundos || 30;
         document.getElementById('etapa-equipamento').value = etapa.equipamento && etapa.equipamento !== 'NENHUM' ? etapa.equipamento : '';
         document.getElementById('etapa-observacoes').value = etapa.observacoes || '';
-        document.getElementById('etapa-insumo-tipo').value = etapa.insumo_tipo || '';
-        document.getElementById('etapa-insumo-nome').value = etapa.insumo_nome || '';
-        document.getElementById('etapa-insumo-qtd').value = etapa.insumo_quantidade || '';
-        document.getElementById('etapa-insumo-unidade').value = etapa.insumo_unidade || 'UN';
+        const insumos = normalizarInsumos(etapa);
+        const insumo = insumos[0] || {};
+        document.getElementById('etapa-insumo-tipo').value = insumo.tipo || '';
+        document.getElementById('etapa-insumo-nome').value = insumo.nome || '';
+        document.getElementById('etapa-insumo-qtd').value = insumo.quantidade || '';
+        document.getElementById('etapa-insumo-unidade').value = insumo.unidade || 'UN';
 
         popularDatalist('lista-recortes-etapa', cacheDatalists.recortes);
         popularDatalist('lista-operacoes-etapa', cacheDatalists.operacoes);
         popularDatalist('lista-maquinas-etapa', cacheDatalists.maquinas);
         popularDatalist('lista-equipamentos-etapa', cacheDatalists.equipamentos);
 
-        if (etapa.insumo_tipo === 'recorte') {
+        if (insumo.tipo === 'recorte') {
             popularDatalist('lista-insumos-etapa', cacheDatalists.recortes);
-        } else if (etapa.insumo_tipo === 'aviamento') {
+        } else if (insumo.tipo === 'aviamento') {
             popularDatalist('lista-insumos-etapa', cacheDatalists.aviamentos);
         } else {
             popularDatalist('lista-insumos-etapa', []);
@@ -633,10 +635,9 @@ document.addEventListener('DOMContentLoaded', function() {
             tempo_segundos: tempo,
             observacoes: observacoes,
             permite_paralelo: false,
-            insumo_tipo: insumoTipo || 'nenhum',
-            insumo_nome: insumoNome || '',
-            insumo_quantidade: insumoQtd,
-            insumo_unidade: insumoUnidade
+            insumos: (insumoTipo && insumoNome)
+                ? [{ tipo: insumoTipo, nome: insumoNome, quantidade: insumoQtd, unidade: insumoUnidade }]
+                : []
         };
 
         const etapasAtualizadas = [...(modulo.etapas || []), novaEtapa];
@@ -708,10 +709,9 @@ document.addEventListener('DOMContentLoaded', function() {
             tempo_segundos: tempo,
             observacoes: observacoes,
             permite_paralelo: etapasAtualizadas[index].permite_paralelo || false,
-            insumo_tipo: insumoTipo || 'nenhum',
-            insumo_nome: insumoNome || '',
-            insumo_quantidade: insumoQtd,
-            insumo_unidade: insumoUnidade
+            insumos: (insumoTipo && insumoNome)
+                ? [{ tipo: insumoTipo, nome: insumoNome, quantidade: insumoQtd, unidade: insumoUnidade }]
+                : []
         };
 
         db.collection('modulos').doc(moduloId).update({

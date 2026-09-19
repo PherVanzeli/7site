@@ -34,3 +34,17 @@ window.formatarTempo = function(segundos) {
     return `${min}min ${seg}s`;
 };
 window.SITE.utils.formatarTempo = window.formatarTempo;
+
+window.normalizarInsumos = function(etapa) {
+    if (Array.isArray(etapa.insumos)) return etapa.insumos;
+    if (etapa.insumo_tipo && etapa.insumo_tipo !== 'nenhum') {
+        return [{
+            tipo: etapa.insumo_tipo,
+            nome: etapa.insumo_nome || '',
+            quantidade: etapa.insumo_quantidade || 0,
+            unidade: etapa.insumo_unidade || 'UN'
+        }];
+    }
+    return [];
+};
+window.SITE.utils.normalizarInsumos = window.normalizarInsumos;
