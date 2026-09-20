@@ -611,19 +611,58 @@ document.addEventListener('DOMContentLoaded', function() {
             updates.data_saida_producao = firebase.firestore.FieldValue.serverTimestamp();
         }
 
-        db.collection('producao').doc(opAtual.id).update(updates)
-            .then(function() {
-                if (tudoConcluido) {
-                    alert('✅ Todas as operações foram concluídas! A OP está finalizada.');
-                    window.location.reload();
-                } else {
-                    renderizarOP(opAtual, opAtual.id);
-                }
+        // Baixa de estoque dos insumos internos consumidos pela etapa
+        const qtdPecas = opAtual.quantidade_total || 0;
+        const baixas = normalizarInsumos(etapa)
+            .filter(function(i) {
+                return i.item_id && i.estoque_categoria === 'interno' && (i.quantidade || 0) > 0;
             })
-            .catch(function(erro) {
-                console.error('Erro ao concluir operação:', erro);
-                alert('❌ Erro ao concluir operação.');
+            .map(function(i) {
+                return { id: i.item_id, nome: i.nome, baixa: i.quantidade * qtdPecas };
             });
+
+        Promise.all(baixas.map(function(b) {
+            return db.collection('estoque').doc(b.id).get();
+        })).then(function(docs) {
+            const batch = db.batch();
+            const avisos = [];
+
+            docs.forEach(function(doc, idx) {
+                const b = baixas[idx];
+                if (!doc.exists) {
+                    avisos.push(b.nome + ' (não encontrado no estoque)');
+                    return;
+                }
+                const atual = doc.data().quantidade_atual || 0;
+                if (b.baixa > atual) {
+                    avisos.push(b.nome + ' (saldo insuficiente: ' + atual + ' < ' + b.baixa + ')');
+                }
+                batch.update(doc.ref, {
+                    quantidade_atual: Math.max(0, atual - b.baixa),
+                    data_atualizacao: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            });
+
+            batch.update(db.collection('producao').doc(opAtual.id), updates);
+            return batch.commit().then(function() { return avisos; });
+        }).then(function(avisos) {
+            if (tudoConcluido) {
+                if (avisos.length) {
+                    alert('✅ OP finalizada, com avisos de estoque:\n- ' + avisos.join('\n- '));
+                } else {
+                    alert('✅ Todas as operações foram concluídas! A OP está finalizada.');
+                }
+                window.location.reload();
+            } else {
+                if (avisos.length) {
+                    alert('⚠️ Etapa concluída, com avisos de estoque:\n- ' + avisos.join('\n- '));
+                }
+                renderizarOP(opAtual, opAtual.id);
+            }
+        }).catch(function(erro) {
+            console.error('Erro ao concluir operação:', erro);
+            alert('❌ Erro ao concluir operação.');
+        });
     };
 
     // Helper: renderiza botões de ação da etapa conforme status
