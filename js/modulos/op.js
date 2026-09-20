@@ -561,8 +561,43 @@ document.addEventListener('DOMContentLoaded', function() {
     // 19.2 EXECUÇÃO DA OP — INICIAR / CONCLUIR OPERAÇÃO
     // ==========================================
 
+    // Ponto único de captura de eventos da etapa (manual agora; qr/sensor/robot no futuro)
+    function registrarEventoEtapa(etapa, tipo, fonte, maquinaReal, motivo) {
+        if (!etapa) return;
+        const agora = new Date().toISOString();
+        const user = firebase.auth().currentUser;
+        const op = operadorLogado || (user ? { cpf: user.email.split('@')[0], nome: user.email.split('@')[0] } : { cpf: null, nome: null });
+
+        if (!Array.isArray(etapa.eventos)) etapa.eventos = [];
+
+        etapa.eventos.push({
+            tipo: tipo,
+            operador_cpf: op.cpf,
+            operador_nome: op.nome,
+            timestamp: agora,
+            maquina_real: maquinaReal || etapa.maquina_real || etapa.maquina || null,
+            fonte: fonte || 'manual',
+            motivo: motivo || null
+        });
+
+        if (tipo === 'iniciada' || tipo === 'retomada') {
+            etapa.status = 'em_andamento';
+            if (!etapa.data_inicio) etapa.data_inicio = agora;
+            etapa.operador_cpf = op.cpf;
+            etapa.operador_nome = op.nome;
+            etapa.maquina_real = maquinaReal || etapa.maquina || null;
+        } else if (tipo === 'concluida') {
+            etapa.status = 'concluida';
+            etapa.data_fim = agora;
+            etapa.operador_fim_cpf = op.cpf;
+            etapa.operador_fim_nome = op.nome;
+        }
+        // 'pausada' / 'retrabalho': apenas registram em eventos[] (mantêm status, datas e operador_*)
+        etapa.fonte = fonte || 'manual';
+    }
+
     window.iniciarOperacao = function(moduloIdx, etapaIdx) {
-        if (!opAtual || !podeExecutarOP) return;
+        if (!opAtual || !podeExecutarEtapa) return;
 
         const modulos = opAtual.modulos_fluxograma || [];
         const modulo = modulos[moduloIdx];
@@ -571,8 +606,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (etapa.status === 'em_andamento' || etapa.status === 'concluida') return;
 
-        etapa.status = 'em_andamento';
-        etapa.data_inicio = new Date().toISOString();
+        const tipoEvento = etapa.data_inicio ? 'retomada' : 'iniciada';
+        registrarEventoEtapa(etapa, tipoEvento, 'manual', etapa.maquina, null);
 
         const updates = { modulos_fluxograma: modulos };
 
@@ -599,7 +634,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     window.concluirOperacao = function(moduloIdx, etapaIdx) {
-        if (!opAtual || !podeExecutarOP) return;
+        if (!opAtual || !podeExecutarEtapa) return;
 
         const modulos = opAtual.modulos_fluxograma || [];
         const modulo = modulos[moduloIdx];
@@ -608,8 +643,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (etapa.status === 'concluida') return;
 
-        etapa.status = 'concluida';
-        etapa.data_fim = new Date().toISOString();
+        registrarEventoEtapa(etapa, 'concluida', 'manual', null, null);
 
         const updates = { modulos_fluxograma: modulos };
 
@@ -680,6 +714,32 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     };
 
+    window.pausarOperacao = function(moduloIdx, etapaIdx) {
+        if (!opAtual || !podeExecutarEtapa) return;
+
+        const modulos = opAtual.modulos_fluxograma || [];
+        const modulo = modulos[moduloIdx];
+        const etapa = modulo && modulo.etapas ? modulo.etapas[etapaIdx] : null;
+        if (!etapa) return;
+
+        if (etapa.status !== 'em_andamento') return;
+
+        const motivo = prompt('Motivo da pausa (opcional):');
+        if (motivo === null) return; // operador cancelou → aborta
+
+        registrarEventoEtapa(etapa, 'pausada', 'manual', null, motivo || null);
+        etapa.status = 'pendente';
+
+        db.collection('producao').doc(opAtual.id).update({ modulos_fluxograma: modulos })
+            .then(function() {
+                renderizarOP(opAtual, opAtual.id);
+            })
+            .catch(function(erro) {
+                console.error('Erro ao pausar operação:', erro);
+                alert('❌ Erro ao pausar operação.');
+            });
+    };
+
     // Helper: renderiza botões de ação da etapa conforme status
     function renderizarBotoesEtapa(moduloIdx, etapaIdx, etapa) {
         const status = etapa.status || 'pendente';
@@ -692,11 +752,12 @@ document.addEventListener('DOMContentLoaded', function() {
             return `
                 <span class="status-andamento-selo">EM ANDAMENTO</span>
                 <button type="button" class="btn-concluir-operacao" onclick="concluirOperacao(${moduloIdx}, ${etapaIdx})">✅ Concluir</button>
+                <button type="button" class="btn-pausar-operacao" onclick="pausarOperacao(${moduloIdx}, ${etapaIdx})">⏸️ Pausar</button>
             `;
         }
 
         // pendente
-        if (!podeExecutarOP) return '';
+        if (!podeExecutarEtapa) return '';
         return `<button type="button" class="btn-iniciar-operacao" onclick="iniciarOperacao(${moduloIdx}, ${etapaIdx})">▶️ Iniciar</button>`;
     }
 

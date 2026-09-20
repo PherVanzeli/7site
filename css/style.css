@@ -4128,6 +4128,25 @@ input[list] {
     background-color: #1B5E20;
 }
 
+/* Botão Pausar */
+.btn-pausar-operacao {
+    background-color: #6c757d;
+    color: #fff;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+    font-family: var(--fonte-textos);
+}
+
+.btn-pausar-operacao:hover {
+    background-color: #5a6268;
+}
+
 /* Selo Concluída */
 .status-concluida-selo {
     font-size: 12px;
