@@ -421,6 +421,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="op-info-item"><strong>Quantidade Total:</strong> ${d.quantidade_total} peças</div>
                 <div class="op-info-item"><strong>Encarregado:</strong> ${d.encarregado || '—'}</div>
                 <div class="op-info-item"><strong>Entrada:</strong> ${dataEntrada}</div>
+                <div class="op-info-item"><strong>Saída:</strong> ${dataSaida}</div>
             </div>
             
             <h3 class="op-subtitulo">Recortes</h3>
