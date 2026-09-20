@@ -373,6 +373,9 @@ document.addEventListener('DOMContentLoaded', function() {
      
 
     let podeExecutarOP = false;
+    let podeExecutarEtapa = false;
+    let operadorLogado = null;
+    let avisoPermissao = null;
 
     function verificarPermissaoEdicao(d) {
         const statusBloqueados = ['faturado', 'recebido_parcial', 'recebido_total'];
@@ -382,16 +385,27 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!user) return;
             const cpf = user.email.split('@')[0];
             db.collection('usuarios').doc(cpf).get().then(function(doc) {
-                if (!doc.exists) return;
-                const u = doc.data();
-                const setor = u.setor;
+                const u = doc.exists ? doc.data() : null;
+
+                if (!u || u.ativo === false) {
+                    // D5 — cadastro incompleto/inativo não executa etapas
+                    podeExecutarEtapa = false;
+                    avisoPermissao = 'Seu cadastro está incompleto ou inativo. Procure o RH para liberar a execução de etapas.';
+                } else {
+                    podeExecutarEtapa = true;
+                    avisoPermissao = null;
+                    operadorLogado = { cpf: u.cpf || cpf, nome: maiusculo(u.nome) };
+                }
+
+                const setor = u && u.setor;
                 if (setor === 'CDF' || setor === 'Administrativo' || setor === 'todos') {
                     document.getElementById('op-acoes-edicao').style.display = 'block';
                     podeExecutarOP = true;
-                    // Re-renderiza para mostrar os botões de execução
-                    if (opAtual) {
-                        renderizarOP(opAtual, opAtual.id);
-                    }
+                }
+
+                // Re-renderiza para mostrar os botões de execução
+                if (opAtual) {
+                    renderizarOP(opAtual, opAtual.id);
                 }
             });
         });
@@ -410,6 +424,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }[d.status] || d.status;
 
         let html = `
+            ${avisoPermissao ? `<div class="aviso-rh"><strong>⚠️</strong> ${avisoPermissao}</div>` : ''}
             <div class="op-cabecalho-doc">
                 <h2>OP Nº ${id.slice(0, 6).toUpperCase()}</h2>
                 <span class="status-op status-em-producao">${statusLabel}</span>
