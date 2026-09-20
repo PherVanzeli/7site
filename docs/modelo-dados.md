@@ -390,6 +390,67 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 
 **Índice recomendado:** `status` + `data_entrada_producao`.
 
+**Etapa da OP (`modulos_fluxograma[].etapas[]`):**
+
+```json
+{
+  "nome_etapa": "APLICAR FAIXA NA MANGA",
+  "recorte": "MANGA",
+  "operacao": "APLICAR FAIXA",
+  "maquina": "RETA",
+  "equipamento": "NENHUM",
+  "tempo_segundos": 45,
+  "insumos": [ "..." ],
+
+  "status": "em_andamento",
+  "data_inicio": "timestamp",
+  "data_fim": null,
+
+  "operador_cpf": "12345678900",
+  "operador_nome": "JOÃO DA SILVA",
+  "operador_fim_cpf": null,
+  "operador_fim_nome": null,
+  "maquina_real": "RETA",
+  "fonte": "manual",
+
+  "eventos": [
+    {
+      "tipo": "iniciada",
+      "operador_cpf": "12345678900",
+      "operador_nome": "JOÃO DA SILVA",
+      "timestamp": "2026-09-20T14:30:00.000Z",
+      "maquina_real": "RETA",
+      "fonte": "manual",
+      "motivo": null
+    }
+  ]
+}
+```
+
+**Status da etapa:** `pendente` · `em_andamento` · `concluida`.
+
+**Campos de autoria:**
+
+| Campo | Tipo | Descrição |
+| :--- | :--- | :--- |
+| `operador_cpf` / `operador_nome` | string/null | Quem **assumiu** a etapa (evento `iniciada`/`retomada`) |
+| `operador_fim_cpf` / `operador_fim_nome` | string/null | Quem **concluiu** (evento `concluida`) |
+| `maquina_real` | string/null | Máquina usada de fato (default = `maquina` planejada) |
+| `fonte` | string | `manual` · `qr` · `sensor` · `robot` — como o evento foi capturado |
+
+**Evento (`eventos[]`) — log completo:**
+
+| Campo | Tipo | Descrição |
+| :--- | :--- | :--- |
+| `tipo` | string | `iniciada` · `pausada` · `retomada` · `concluida` · `retrabalho` |
+| `operador_cpf` / `operador_nome` | string/null | Quem gerou o evento |
+| `timestamp` | string | Momento do evento |
+| `maquina_real` | string/null | Máquina no momento do evento |
+| `fonte` | string | `manual` · `qr` · `sensor` · `robot` |
+| `motivo` | string/null | Motivo (para `pausada`/`retrabalho`) |
+
+> **Nota:** os campos planos (`status`, `operador_*`, `data_inicio`, `data_fim`) são um **cache do último evento**; `eventos[]` preserva o histórico completo. Etapas de OPs antigas não têm esses campos — a leitura é defensiva (`|| null`).
+
 ---
 
 
@@ -531,6 +592,8 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 | `estoque_categoria` | string/null | `interno` ou `externo` do item correspondente |
 
 > **Nota:** `insumos` substitui os antigos campos `insumo_tipo`/`insumo_nome`/`insumo_quantidade`/`insumo_unidade`, mantidos apenas para leitura de dados legados (via `normalizarInsumos`).
+
+> **Nota:** as etapas da biblioteca (`modulos.etapas[]`) **não** têm campos de runtime (`status`, `data_inicio`, `data_fim`, `operador_*`, `fonte`, `eventos[]`). Eles são adicionados quando o fluxograma é vinculado à OP — ver `producao.modulos_fluxograma[].etapas[]`.
 
 ---
 
