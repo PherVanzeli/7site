@@ -606,7 +606,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         if (tudoConcluido) {
-            updates.status = 'finalizado';
+            updates.status = 'aguardando_expedicao';
             updates.data_fim_execucao = firebase.firestore.FieldValue.serverTimestamp();
             updates.data_saida_producao = firebase.firestore.FieldValue.serverTimestamp();
         }
@@ -648,9 +648,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }).then(function(avisos) {
             if (tudoConcluido) {
                 if (avisos.length) {
-                    alert('✅ OP finalizada, com avisos de estoque:\n- ' + avisos.join('\n- '));
+                    alert('✅ OP concluída, aguardando expedição, com avisos de estoque:\n- ' + avisos.join('\n- '));
                 } else {
-                    alert('✅ Todas as operações foram concluídas! A OP está finalizada.');
+                    alert('✅ Todas as operações foram concluídas! A OP está aguardando expedição.');
                 }
                 window.location.reload();
             } else {

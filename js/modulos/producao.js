@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const d = doc.data();
                 total++;
                 if (d.status === 'em_producao') emProducao++;
-                else if (d.status === 'finalizado') finalizadas++;
+                else if (d.status === 'aguardando_expedicao' || d.status === 'finalizado') finalizadas++;
 
                 const statusLabel = {
                     'aguardando_fluxograma': '🧠 Aguardando Fluxograma',
