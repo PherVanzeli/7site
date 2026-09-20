@@ -354,7 +354,8 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
   "quantidade_refugada": 0,
   "quantidade_sobra": 0,
   "data_entrada_producao": "timestamp",
-  "data_saida_producao": null
+  "data_saida_producao": null,
+  "data_despacho": null
 }
 ```
 
@@ -375,18 +376,17 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 | `quantidade_refugada` | number | Peças com defeito |
 | `quantidade_sobra` | number | Peças não expedidas |
 | `data_entrada_producao` | timestamp | Início |
-| `data_saida_producao` | timestamp/null | Fim |
+| `data_saida_producao` | timestamp/null | Fim da produção (quando o CDF conclui todas as etapas) |
+| `data_despacho` | timestamp/null | Saída da fábrica (quando a expedição autoriza) |
 
 **Status possíveis:**
 
-- `aguardando_fluxograma`
-- `em_producao`
-- `aguardando_expedicao`
-- `aprovacao_pendente`
-- `aguardando_financeiro`
-- `faturado`
-- `recebido_parcial`
-- `recebido_total`
+- `aguardando_fluxograma` — sem fluxograma vinculado
+- `em_producao` — CDF executando as etapas
+- `aguardando_expedicao` — produção concluída, aguardando despacho
+- `finalizado` — expedição autorizou a saída
+- `faturado` — financeiro faturou
+- `recebido_parcial` / `recebido_total` — recebimento
 
 **Índice recomendado:** `status` + `data_entrada_producao`.
 
@@ -527,6 +527,8 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 | `nome` | string | Nome do insumo (maiúsculo) |
 | `quantidade` | number | Quantidade por peça (fração permitida) |
 | `unidade` | string | `UN`, `MT`, `KG`, `ROLO` |
+| `item_id` | string/null | ID do item no `estoque` (para baixa automática) |
+| `estoque_categoria` | string/null | `interno` ou `externo` do item correspondente |
 
 > **Nota:** `insumos` substitui os antigos campos `insumo_tipo`/`insumo_nome`/`insumo_quantidade`/`insumo_unidade`, mantidos apenas para leitura de dados legados (via `normalizarInsumos`).
 
