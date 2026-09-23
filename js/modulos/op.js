@@ -893,7 +893,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 : `Fluxograma vinculado: "${fluxo.nome}"`
                         });
 
-                        return db.collection('producao').doc(opId).update({
+                        const atualizacoesOP = {
                             fluxograma_id: fluxogramaId,
                             fluxograma_nome: fluxo.nome,
                             modulos_fluxograma: modulosOP,
@@ -901,7 +901,12 @@ document.addEventListener('DOMContentLoaded', function() {
                             status: 'em_producao',
                             data_entrada_producao: opData.data_entrada_producao || firebase.firestore.FieldValue.serverTimestamp(),
                             historico: historico
-                        });
+                        };
+
+                        return window.SITE.estoque.reservarAviamentosOP(opId, opData)
+                            .then(function() {
+                                return db.collection('producao').doc(opId).update(atualizacoesOP);
+                            });
                     })
                     .then(function() {
                         alert('✅ Fluxograma vinculado com sucesso!');

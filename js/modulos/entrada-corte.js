@@ -439,6 +439,7 @@ document.addEventListener('DOMContentLoaded', function() {
             db.collection('estoque').add({
                 codigo: 'EST-' + Date.now().toString().slice(-6),
                 categoria: 'externo',
+                propriedade: 'fornecedor',
                 nome: nomeMaiusculo,
                 material: material,
                 cor: cor,
@@ -510,6 +511,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                 const atual = doc.data().quantidade_atual || 0;
                                 return doc.ref.update({
                                     quantidade_atual: atual + av.quantidade,
+                                    quantidade_reservada: doc.data().quantidade_reservada || 0,
+                                    propriedade: doc.data().propriedade || 'fornecedor',
                                     data_atualizacao: firebase.firestore.FieldValue.serverTimestamp()
                                 });
                             }
@@ -518,12 +521,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     return db.collection('estoque').add({
                         codigo: 'EST-' + Date.now().toString().slice(-6) + Math.floor(Math.random() * 100),
                         categoria: 'externo',
+                        propriedade: 'fornecedor',
                         nome: av.nome,
                         material: av.material || 'N/A',
                         cor: av.cor || 'N/A',
                         tamanho: av.tamanho || 'N/A',
                         unidade: av.unidade,
                         quantidade_atual: av.quantidade,
+                        quantidade_reservada: 0,
                         observacoes: '',
                         data_cadastro: firebase.firestore.FieldValue.serverTimestamp(),
                         data_atualizacao: firebase.firestore.FieldValue.serverTimestamp()

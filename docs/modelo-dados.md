@@ -113,6 +113,7 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 {
   "codigo": "EST-483920",
   "categoria": "interno",
+  "propriedade": "confeccao",
   "nome": "LINHA 40 BRANCA",
   "material": "POLIÉSTER",
   "cor": "BRANCA",
@@ -120,6 +121,7 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
   "unidade": "ROLO",
   "observacoes": "",
   "quantidade_atual": 20,
+  "quantidade_reservada": 0,
   "quantidade_minima": 5,
   "preco_custo_atual": 8.50,
   "fornecedor_habitual": "AVIAMENTOS SILVA",
@@ -134,20 +136,41 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 | :--- | :--- | :--- |
 | `codigo` | string | Código gerado automaticamente (`EST-` + timestamp) |
 | `categoria` | string | `interno` ou `externo` |
+| `propriedade` | string | `confeccao` para item comprado pela confecção ou `fornecedor` para item enviado pelo fornecedor |
 | `nome` | string | Nome do item (maiúsculo) |
 | `material` | string | Material (maiúsculo) — `N/A` se vazio |
 | `cor` | string | Cor (maiúsculo) — `N/A` se vazio |
 | `tamanho` | string | Tamanho/dimensão (maiúsculo) — `N/A` se vazio |
 | `unidade` | string | UNIDADE, ROLO, CAIXA, METRO, KG, DÚZIA |
 | `observacoes` | string | Campo livre |
-| `quantidade_atual` | number | Saldo em estoque (só interno) |
+| `quantidade_atual` | number | Saldo disponível para uso; também é mantido para aviamentos externos recebidos com o corte |
+| `quantidade_reservada` | number | Saldo já comprometido com OPs em produção |
 | `quantidade_minima` | number | Alerta de reposição (só interno) |
 | `preco_custo_atual` | number | Último preço pago (só interno) |
 | `fornecedor_habitual` | string | Fornecedor padrão (só interno) |
 | `data_cadastro` | timestamp | Criação |
 | `data_atualizacao` | timestamp | Última edição |
 
-> **Nota:** Itens externos **não têm** `quantidade_atual`, `quantidade_minima`, `preco_custo_atual` nem `fornecedor_habitual`.
+> **Nota:** Itens externos não têm `quantidade_minima`, `preco_custo_atual` nem `fornecedor_habitual`. Eles possuem `quantidade_atual` quando foram recebidos com um corte, pois precisam ser conferidos e reservados para a OP, embora permaneçam como propriedade do fornecedor.
+
+> **Atualização v9.1:** itens externos recebidos com o corte também possuem `quantidade_atual`, pois são controlados para conferência e consumo, mas sua `propriedade` é `fornecedor`. A reserva de aviamentos no início da produção reduz o saldo disponível, incrementa `quantidade_reservada` e cria um registro em `movimentacoes_estoque`.
+
+### `movimentacoes_estoque`
+
+**Função:** Histórico das reservas e futuras entradas, baixas, devoluções e ajustes do estoque.
+
+```json
+{
+  "estoque_id": "docIdEstoque",
+  "op_id": "docIdProducao",
+  "tipo": "reserva_producao",
+  "quantidade": 400,
+  "unidade": "UN",
+  "propriedade_item": "fornecedor",
+  "usuario_cpf": "12345678900",
+  "data_movimentacao": "timestamp"
+}
+```
 
 **Índice recomendado:** `categoria` + `nome`.
 
