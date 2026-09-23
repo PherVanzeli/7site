@@ -113,6 +113,7 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 {
   "codigo": "EST-483920",
   "categoria": "interno",
+  "propriedade": "confeccao",
   "nome": "LINHA 40 BRANCA",
   "material": "POLIÉSTER",
   "cor": "BRANCA",
@@ -120,6 +121,7 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
   "unidade": "ROLO",
   "observacoes": "",
   "quantidade_atual": 20,
+  "quantidade_reservada": 0,
   "quantidade_minima": 5,
   "preco_custo_atual": 8.50,
   "fornecedor_habitual": "AVIAMENTOS SILVA",
@@ -134,20 +136,41 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 | :--- | :--- | :--- |
 | `codigo` | string | Código gerado automaticamente (`EST-` + timestamp) |
 | `categoria` | string | `interno` ou `externo` |
+| `propriedade` | string | `confeccao` para item comprado pela confecção ou `fornecedor` para item enviado pelo fornecedor |
 | `nome` | string | Nome do item (maiúsculo) |
 | `material` | string | Material (maiúsculo) — `N/A` se vazio |
 | `cor` | string | Cor (maiúsculo) — `N/A` se vazio |
 | `tamanho` | string | Tamanho/dimensão (maiúsculo) — `N/A` se vazio |
 | `unidade` | string | UNIDADE, ROLO, CAIXA, METRO, KG, DÚZIA |
 | `observacoes` | string | Campo livre |
-| `quantidade_atual` | number | Saldo em estoque (só interno) |
+| `quantidade_atual` | number | Saldo disponível para uso; também é mantido para aviamentos externos recebidos com o corte |
+| `quantidade_reservada` | number | Saldo já comprometido com OPs em produção |
 | `quantidade_minima` | number | Alerta de reposição (só interno) |
 | `preco_custo_atual` | number | Último preço pago (só interno) |
 | `fornecedor_habitual` | string | Fornecedor padrão (só interno) |
 | `data_cadastro` | timestamp | Criação |
 | `data_atualizacao` | timestamp | Última edição |
 
-> **Nota:** Itens externos **não têm** `quantidade_atual`, `quantidade_minima`, `preco_custo_atual` nem `fornecedor_habitual`.
+> **Nota:** Itens externos não têm `quantidade_minima`, `preco_custo_atual` nem `fornecedor_habitual`. Eles possuem `quantidade_atual` quando foram recebidos com um corte, pois precisam ser conferidos e reservados para a OP, embora permaneçam como propriedade do fornecedor.
+
+> **Atualização v9.1:** itens externos recebidos com o corte também possuem `quantidade_atual`, pois são controlados para conferência e consumo, mas sua `propriedade` é `fornecedor`. A reserva de aviamentos no início da produção reduz o saldo disponível, incrementa `quantidade_reservada` e cria um registro em `movimentacoes_estoque`.
+
+### `movimentacoes_estoque`
+
+**Função:** Histórico das reservas e futuras entradas, baixas, devoluções e ajustes do estoque.
+
+```json
+{
+  "estoque_id": "docIdEstoque",
+  "op_id": "docIdProducao",
+  "tipo": "reserva_producao",
+  "quantidade": 400,
+  "unidade": "UN",
+  "propriedade_item": "fornecedor",
+  "usuario_cpf": "12345678900",
+  "data_movimentacao": "timestamp"
+}
+```
 
 **Índice recomendado:** `categoria` + `nome`.
 
@@ -243,7 +266,7 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 
 ---
 
-### 5. `maquinas`
+### 6. `maquinas`
 
 **Função:** Cadastro de máquinas disponíveis na fábrica.
 
@@ -265,7 +288,7 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 
 ---
 
-### 6. `equipamentos`
+### 7. `equipamentos`
 
 **Função:** Cadastro de aparelhos acopláveis às máquinas.
 
@@ -287,7 +310,7 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 
 ---
 
-### 7. `modos_execucao`
+### 8. `modos_execucao`
 
 **Função:** Cadastro de modos de execução (Tradicional, Automatizada, Manual).
 
@@ -309,9 +332,11 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 
 ---
 
-### 8. `setores_execucao`
+### 9. `setores_execucao`
 
 **Função:** Cadastro de setores onde operações são executadas.
+
+> **Nota:** coleção **não usada pelo código** atualmente (mantida para evolução futura).
 
 **Documento:** ID automático do Firestore.
 
@@ -331,7 +356,7 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 
 ---
 
-### 9. `producao`
+### 10. `producao`
 
 **Função:** Ordens de Produção (OPs) geradas a partir das entradas de corte.
 
@@ -339,22 +364,30 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 
 ```json
 {
-  "estoque_id": "abc123",
-  "lote": "NF 12345",
+  "entrada_id": "docIdEntradaCorte",
+  "lote": "OC-2026-001",
   "descricao": "CALÇA MASCULINA SARJA CHINO",
+  "modelo": "RL-9001",
   "quantidade_total": 400,
-  "aviamentos": [
-    { "id": "xyz", "nome": "ZÍPER METAL PRETO 15CM", "quantidade": 400 }
+  "recortes": [
+    { "nome": "DIANTEIRO", "qtd_por_peca": 2 }
   ],
+  "aviamentos_externos": [
+    { "item_id": "docIdEstoque", "nome": "ZÍPER METAL PRETO 15CM", "quantidade": 400, "unidade": "UN" }
+  ],
+  "aviamentos_internos_reservados": [],
   "fluxograma_id": null,
-  "operacoes_executadas": [],
-  "encarregado": "JOÃO DA SILVA",
+  "fluxograma_nome": null,
+  "modulos_fluxograma": [],
+  "progresso": 0,
+  "encarregado": "",
   "status": "aguardando_fluxograma",
-  "quantidade_finalizada": 0,
-  "quantidade_refugada": 0,
-  "quantidade_sobra": 0,
-  "data_entrada_producao": "timestamp",
-  "data_saida_producao": null
+  "data_entrada_producao": null,
+  "data_inicio_execucao": null,
+  "data_fim_execucao": null,
+  "data_saida_producao": null,
+  "data_despacho": null,
+  "historico": []
 }
 ```
 
@@ -362,33 +395,100 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 
 | Campo | Tipo | Descrição |
 | :--- | :--- | :--- |
-| `estoque_id` | string | Referência à entrada de corte |
-| `lote` | string | Lote/NF de origem |
+| `entrada_id` | string | Referência a `entradas_corte/{id}` (origem do corte) |
+| `lote` | string | Lote/OC de origem |
 | `descricao` | string | Descrição da peça |
+| `modelo` | string | Código do modelo |
 | `quantidade_total` | number | Total de peças |
-| `aviamentos` | array | Lista de aviamentos vinculados |
-| `fluxograma_id` | string/null | Fluxograma escolhido pelo CDF |
-| `operacoes_executadas` | array | Operações e seus status |
+| `recortes` | array | Recortes do corte (`nome`, `qtd_por_peca`) — editáveis na OP |
+| `aviamentos_externos` | array | Aviamentos vinculados (`item_id`, `nome`, `quantidade`, `unidade`) |
+| `aviamentos_internos_reservados` | array | Previsto, não usado |
+| `fluxograma_id` | string/null | Fluxograma vinculado |
+| `fluxograma_nome` | string/null | Nome do fluxograma (cache) |
+| `modulos_fluxograma` | array | Snapshot dos módulos/etapas em execução — ver "Etapa da OP" |
+| `progresso` | number | Progresso da OP |
 | `encarregado` | string | Encarregado responsável |
 | `status` | string | Status atual da OP |
-| `quantidade_finalizada` | number | Peças prontas |
-| `quantidade_refugada` | number | Peças com defeito |
-| `quantidade_sobra` | number | Peças não expedidas |
-| `data_entrada_producao` | timestamp | Início |
-| `data_saida_producao` | timestamp/null | Fim |
+| `data_entrada_producao` | timestamp/null | Início da produção (ao vincular fluxograma) |
+| `data_inicio_execucao` | timestamp/null | Primeira etapa iniciada |
+| `data_fim_execucao` | timestamp/null | Última etapa concluída |
+| `data_saida_producao` | timestamp/null | Fim da produção (quando o CDF conclui todas as etapas) |
+| `data_despacho` | timestamp/null | Saída da fábrica (quando a expedição autoriza) |
+| `historico` | array | `{ data, usuario_cpf, acao, detalhes, autorizacao }` |
+
+> **Legado (gravado mas não lido):** `operacoes_executadas`, `quantidade_finalizada`, `quantidade_refugada`, `quantidade_sobra`.
 
 **Status possíveis:**
 
-- `aguardando_fluxograma`
-- `em_producao`
-- `aguardando_expedicao`
-- `aprovacao_pendente`
-- `aguardando_financeiro`
-- `faturado`
-- `recebido_parcial`
-- `recebido_total`
+- `aguardando_fluxograma` — sem fluxograma vinculado
+- `em_producao` — CDF executando as etapas
+- `aguardando_expedicao` — produção concluída, aguardando despacho
+- `finalizado` — expedição autorizou a saída
+- `faturado` — financeiro faturou
+- `recebido_parcial` / `recebido_total` — recebimento
 
 **Índice recomendado:** `status` + `data_entrada_producao`.
+
+**Etapa da OP (`modulos_fluxograma[].etapas[]`):**
+
+```json
+{
+  "nome_etapa": "APLICAR FAIXA NA MANGA",
+  "recorte": "MANGA",
+  "operacao": "APLICAR FAIXA",
+  "maquina": "RETA",
+  "equipamento": "NENHUM",
+  "tempo_segundos": 45,
+  "insumos": [ "..." ],
+
+  "status": "em_andamento",
+  "data_inicio": "timestamp",
+  "data_fim": null,
+
+  "operador_cpf": "12345678900",
+  "operador_nome": "JOÃO DA SILVA",
+  "operador_fim_cpf": null,
+  "operador_fim_nome": null,
+  "maquina_real": "RETA",
+  "fonte": "manual",
+
+  "eventos": [
+    {
+      "tipo": "iniciada",
+      "operador_cpf": "12345678900",
+      "operador_nome": "JOÃO DA SILVA",
+      "timestamp": "2026-09-20T14:30:00.000Z",
+      "maquina_real": "RETA",
+      "fonte": "manual",
+      "motivo": null
+    }
+  ]
+}
+```
+
+**Status da etapa:** `pendente` · `em_andamento` · `concluida`.
+
+**Campos de autoria:**
+
+| Campo | Tipo | Descrição |
+| :--- | :--- | :--- |
+| `operador_cpf` / `operador_nome` | string/null | Quem **assumiu** a etapa (evento `iniciada`/`retomada`) |
+| `operador_fim_cpf` / `operador_fim_nome` | string/null | Quem **concluiu** (evento `concluida`) |
+| `maquina_real` | string/null | Máquina usada de fato (default = `maquina` planejada) |
+| `fonte` | string | `manual` · `qr` · `sensor` · `robot` — como o evento foi capturado |
+
+**Evento (`eventos[]`) — log completo:**
+
+| Campo | Tipo | Descrição |
+| :--- | :--- | :--- |
+| `tipo` | string | `iniciada` · `pausada` · `retomada` · `concluida` · `retrabalho` |
+| `operador_cpf` / `operador_nome` | string/null | Quem gerou o evento |
+| `timestamp` | string | Momento do evento |
+| `maquina_real` | string/null | Máquina no momento do evento |
+| `fonte` | string | `manual` · `qr` · `sensor` · `robot` |
+| `motivo` | string/null | Motivo (para `pausada`/`retrabalho`) |
+
+> **Nota:** os campos planos (`status`, `operador_*`, `data_inicio`, `data_fim`) são um **cache do último evento**; `eventos[]` preserva o histórico completo. Etapas de OPs antigas não têm esses campos — a leitura é defensiva (`|| null`).
 
 ---
 
@@ -428,7 +528,7 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 **Índice recomendado:** `status` + `data_vencimento`.
 
 ---
-### 11. `configuracoes`
+### 12. `configuracoes`
 
 **Função:** Dados da empresa e preferências do sistema. Usa dois documentos fixos.
 
@@ -458,7 +558,7 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 
 ---
 
-### `recortes`
+### 13. `recortes`
 
 **Função:** Cadastro de recortes (componentes físicos do corte) usados como insumo nas etapas do fluxograma.
 
@@ -475,7 +575,7 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 
 ---
 
-### `modulos`
+### 14. `modulos`
 
 **Função:** Blocos de montagem reutilizáveis (ex.: MANGA, GOLA) compostos por etapas. Servem de biblioteca para montar fluxogramas.
 
@@ -527,12 +627,16 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 | `nome` | string | Nome do insumo (maiúsculo) |
 | `quantidade` | number | Quantidade por peça (fração permitida) |
 | `unidade` | string | `UN`, `MT`, `KG`, `ROLO` |
+| `item_id` | string/null | ID do item no `estoque` (para baixa automática) |
+| `estoque_categoria` | string/null | `interno` ou `externo` do item correspondente |
 
 > **Nota:** `insumos` substitui os antigos campos `insumo_tipo`/`insumo_nome`/`insumo_quantidade`/`insumo_unidade`, mantidos apenas para leitura de dados legados (via `normalizarInsumos`).
 
+> **Nota:** as etapas da biblioteca (`modulos.etapas[]`) **não** têm campos de runtime (`status`, `data_inicio`, `data_fim`, `operador_*`, `fonte`, `eventos[]`). Eles são adicionados quando o fluxograma é vinculado à OP — ver `producao.modulos_fluxograma[].etapas[]`.
+
 ---
 
-### `fluxogramas`
+### 15. `fluxogramas`
 
 **Função:** Roteiro técnico completo de um modelo — snapshot dos módulos e etapas no momento do salvamento.
 
@@ -562,10 +666,8 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 
 | Coleção | Função |
 | :--- | :--- |
-| `fluxogramas` | Roteiros técnicos por modelo (recorte + operação + máquina + tempo) |
 | `movimentacoes` | Histórico de entradas e saídas de estoque |
 | `recebimentos` | Registros de recebimento parcial de OPs faturadas |
-| `recortes` | *(ou embutidos na entrada de corte)* Componentes físicos |
 
 ---
 
@@ -573,11 +675,13 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 
 | Relação | Como se dá |
 | :--- | :--- |
-| `producao.estoque_id` → `estoque.{id}` | Uma OP nasce de uma entrada de corte |
+| `producao.entrada_id` → `entradas_corte.{id}` | Uma OP nasce de uma entrada de corte (bidirecional: `entradas_corte.op_id` → `producao.{id}`) |
 | `producao.fluxograma_id` → `fluxogramas.{id}` | Uma OP usa um fluxograma |
-| `usuarios.setor` → `setores_execucao.nome` | Um usuário pertence a um setor |
+| `producao.aviamentos_externos[].item_id` → `estoque.{id}` | Aviamentos vinculados vêm do estoque |
+| `producao.modulos_fluxograma[].etapas[].insumos[].item_id` → `estoque.{id}` | Insumos das etapas (baixa automática) |
+| `modulos.etapas[].insumos[].item_id` → `estoque.{id}` | Insumos da biblioteca de módulos |
+| `entradas_corte.fornecedor_id` → `pessoas.{id}` | Fornecedor do corte |
 | `estoque.fornecedor_habitual` → `pessoas.nome` | Um item tem um fornecedor padrão |
-| `producao.aviamentos[].id` → `estoque.{id}` | Aviamentos usados vêm do estoque |
 
 ---
 

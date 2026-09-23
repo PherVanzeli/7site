@@ -52,6 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const item = {
                 codigo: codigo,
                 categoria: categoria,
+                propriedade: categoria === 'externo' ? 'fornecedor' : 'confeccao',
                 nome: maiusculo(nome),
                 material: maiusculo(material) || 'N/A',
                 cor: maiusculo(cor) || 'N/A',
@@ -64,6 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (categoria === 'interno') {
                 item.quantidade_atual = quantidadeAtual;
+                item.quantidade_reservada = 0;
                 item.quantidade_minima = quantidadeMinima;
                 item.preco_custo_atual = precoCusto;
                 item.fornecedor_habitual = maiusculo(fornecedorHabitual) || '';
@@ -124,10 +126,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     return;
                 }
 
-                let html = '<table class="tabela-estoque"><thead><tr><th>Código</th><th>Nome</th><th>Categoria</th><th>Unidade</th><th>Saldo</th><th>Preço Custo</th><th>Ações</th></tr></thead><tbody>';
+                let html = '<table class="tabela-estoque"><thead><tr><th>Código</th><th>Nome</th><th>Categoria</th><th>Propriedade</th><th>Unidade</th><th>Saldo</th><th>Preço Custo</th><th>Ações</th></tr></thead><tbody>';
 
                 itens.forEach(function(d) {
                     const badge = `<span class="badge-categoria ${d.categoria}">${d.categoria === 'interno' ? 'Interno' : 'Externo'}</span>`;
+                    const propriedade = d.propriedade ||
+                        (d.categoria === 'externo' ? 'fornecedor' : 'confeccao');
 
                     let saldoHTML = '—';
                     let precoHTML = '—';
@@ -154,6 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <td>${d.codigo || '—'}</td>
                         <td>${d.nome}</td>
                         <td>${badge}</td>
+                        <td>${propriedade === 'fornecedor' ? 'Fornecedor' : 'Confecção'}</td>
                         <td>${d.unidade}</td>
                         <td>${saldoHTML}</td>
                         <td>${precoHTML}</td>

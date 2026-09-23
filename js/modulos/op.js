@@ -373,6 +373,9 @@ document.addEventListener('DOMContentLoaded', function() {
      
 
     let podeExecutarOP = false;
+    let podeExecutarEtapa = false;
+    let operadorLogado = null;
+    let avisoPermissao = null;
 
     function verificarPermissaoEdicao(d) {
         const statusBloqueados = ['faturado', 'recebido_parcial', 'recebido_total'];
@@ -382,16 +385,27 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!user) return;
             const cpf = user.email.split('@')[0];
             db.collection('usuarios').doc(cpf).get().then(function(doc) {
-                if (!doc.exists) return;
-                const u = doc.data();
-                const setor = u.setor;
+                const u = doc.exists ? doc.data() : null;
+
+                if (!u || u.ativo === false) {
+                    // D5 — cadastro incompleto/inativo não executa etapas
+                    podeExecutarEtapa = false;
+                    avisoPermissao = 'Seu cadastro está incompleto ou inativo. Procure o RH para liberar a execução de etapas.';
+                } else {
+                    podeExecutarEtapa = true;
+                    avisoPermissao = null;
+                    operadorLogado = { cpf: u.cpf || cpf, nome: maiusculo(u.nome) };
+                }
+
+                const setor = u && u.setor;
                 if (setor === 'CDF' || setor === 'Administrativo' || setor === 'todos') {
                     document.getElementById('op-acoes-edicao').style.display = 'block';
                     podeExecutarOP = true;
-                    // Re-renderiza para mostrar os botões de execução
-                    if (opAtual) {
-                        renderizarOP(opAtual, opAtual.id);
-                    }
+                }
+
+                // Re-renderiza para mostrar os botões de execução
+                if (opAtual) {
+                    renderizarOP(opAtual, opAtual.id);
                 }
             });
         });
@@ -410,6 +424,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }[d.status] || d.status;
 
         let html = `
+            ${avisoPermissao ? `<div class="aviso-rh"><strong>⚠️</strong> ${avisoPermissao}</div>` : ''}
             <div class="op-cabecalho-doc">
                 <h2>OP Nº ${id.slice(0, 6).toUpperCase()}</h2>
                 <span class="status-op status-em-producao">${statusLabel}</span>
@@ -421,6 +436,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="op-info-item"><strong>Quantidade Total:</strong> ${d.quantidade_total} peças</div>
                 <div class="op-info-item"><strong>Encarregado:</strong> ${d.encarregado || '—'}</div>
                 <div class="op-info-item"><strong>Entrada:</strong> ${dataEntrada}</div>
+                <div class="op-info-item"><strong>Saída:</strong> ${dataSaida}</div>
             </div>
             
             <h3 class="op-subtitulo">Recortes</h3>
@@ -545,8 +561,43 @@ document.addEventListener('DOMContentLoaded', function() {
     // 19.2 EXECUÇÃO DA OP — INICIAR / CONCLUIR OPERAÇÃO
     // ==========================================
 
+    // Ponto único de captura de eventos da etapa (manual agora; qr/sensor/robot no futuro)
+    function registrarEventoEtapa(etapa, tipo, fonte, maquinaReal, motivo) {
+        if (!etapa) return;
+        const agora = new Date().toISOString();
+        const user = firebase.auth().currentUser;
+        const op = operadorLogado || (user ? { cpf: user.email.split('@')[0], nome: user.email.split('@')[0] } : { cpf: null, nome: null });
+
+        if (!Array.isArray(etapa.eventos)) etapa.eventos = [];
+
+        etapa.eventos.push({
+            tipo: tipo,
+            operador_cpf: op.cpf,
+            operador_nome: op.nome,
+            timestamp: agora,
+            maquina_real: maquinaReal || etapa.maquina_real || etapa.maquina || null,
+            fonte: fonte || 'manual',
+            motivo: motivo || null
+        });
+
+        if (tipo === 'iniciada' || tipo === 'retomada') {
+            etapa.status = 'em_andamento';
+            if (!etapa.data_inicio) etapa.data_inicio = agora;
+            etapa.operador_cpf = op.cpf;
+            etapa.operador_nome = op.nome;
+            etapa.maquina_real = maquinaReal || etapa.maquina || null;
+        } else if (tipo === 'concluida') {
+            etapa.status = 'concluida';
+            etapa.data_fim = agora;
+            etapa.operador_fim_cpf = op.cpf;
+            etapa.operador_fim_nome = op.nome;
+        }
+        // 'pausada' / 'retrabalho': apenas registram em eventos[] (mantêm status, datas e operador_*)
+        etapa.fonte = fonte || 'manual';
+    }
+
     window.iniciarOperacao = function(moduloIdx, etapaIdx) {
-        if (!opAtual || !podeExecutarOP) return;
+        if (!opAtual || !podeExecutarEtapa) return;
 
         const modulos = opAtual.modulos_fluxograma || [];
         const modulo = modulos[moduloIdx];
@@ -555,8 +606,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (etapa.status === 'em_andamento' || etapa.status === 'concluida') return;
 
-        etapa.status = 'em_andamento';
-        etapa.data_inicio = new Date().toISOString();
+        const tipoEvento = etapa.data_inicio ? 'retomada' : 'iniciada';
+        registrarEventoEtapa(etapa, tipoEvento, 'manual', etapa.maquina, null);
 
         const updates = { modulos_fluxograma: modulos };
 
@@ -583,7 +634,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     window.concluirOperacao = function(moduloIdx, etapaIdx) {
-        if (!opAtual || !podeExecutarOP) return;
+        if (!opAtual || !podeExecutarEtapa) return;
 
         const modulos = opAtual.modulos_fluxograma || [];
         const modulo = modulos[moduloIdx];
@@ -592,8 +643,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (etapa.status === 'concluida') return;
 
-        etapa.status = 'concluida';
-        etapa.data_fim = new Date().toISOString();
+        registrarEventoEtapa(etapa, 'concluida', 'manual', null, null);
 
         const updates = { modulos_fluxograma: modulos };
 
@@ -605,23 +655,88 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         if (tudoConcluido) {
-            updates.status = 'finalizado';
+            updates.status = 'aguardando_expedicao';
             updates.data_fim_execucao = firebase.firestore.FieldValue.serverTimestamp();
             updates.data_saida_producao = firebase.firestore.FieldValue.serverTimestamp();
         }
 
-        db.collection('producao').doc(opAtual.id).update(updates)
-            .then(function() {
-                if (tudoConcluido) {
-                    alert('✅ Todas as operações foram concluídas! A OP está finalizada.');
-                    window.location.reload();
-                } else {
-                    renderizarOP(opAtual, opAtual.id);
+        // Baixa de estoque dos insumos internos consumidos pela etapa
+        const qtdPecas = opAtual.quantidade_total || 0;
+        const baixas = normalizarInsumos(etapa)
+            .filter(function(i) {
+                return i.item_id && i.estoque_categoria === 'interno' && (i.quantidade || 0) > 0;
+            })
+            .map(function(i) {
+                return { id: i.item_id, nome: i.nome, baixa: i.quantidade * qtdPecas };
+            });
+
+        Promise.all(baixas.map(function(b) {
+            return db.collection('estoque').doc(b.id).get();
+        })).then(function(docs) {
+            const batch = db.batch();
+            const avisos = [];
+
+            docs.forEach(function(doc, idx) {
+                const b = baixas[idx];
+                if (!doc.exists) {
+                    avisos.push(b.nome + ' (não encontrado no estoque)');
+                    return;
                 }
+                const atual = doc.data().quantidade_atual || 0;
+                if (b.baixa > atual) {
+                    avisos.push(b.nome + ' (saldo insuficiente: ' + atual + ' < ' + b.baixa + ')');
+                }
+                batch.update(doc.ref, {
+                    quantidade_atual: Math.max(0, atual - b.baixa),
+                    data_atualizacao: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            });
+
+            batch.update(db.collection('producao').doc(opAtual.id), updates);
+            return batch.commit().then(function() { return avisos; });
+        }).then(function(avisos) {
+            if (tudoConcluido) {
+                if (avisos.length) {
+                    alert('✅ OP concluída, aguardando expedição, com avisos de estoque:\n- ' + avisos.join('\n- '));
+                } else {
+                    alert('✅ Todas as operações foram concluídas! A OP está aguardando expedição.');
+                }
+                window.location.reload();
+            } else {
+                if (avisos.length) {
+                    alert('⚠️ Etapa concluída, com avisos de estoque:\n- ' + avisos.join('\n- '));
+                }
+                renderizarOP(opAtual, opAtual.id);
+            }
+        }).catch(function(erro) {
+            console.error('Erro ao concluir operação:', erro);
+            alert('❌ Erro ao concluir operação.');
+        });
+    };
+
+    window.pausarOperacao = function(moduloIdx, etapaIdx) {
+        if (!opAtual || !podeExecutarEtapa) return;
+
+        const modulos = opAtual.modulos_fluxograma || [];
+        const modulo = modulos[moduloIdx];
+        const etapa = modulo && modulo.etapas ? modulo.etapas[etapaIdx] : null;
+        if (!etapa) return;
+
+        if (etapa.status !== 'em_andamento') return;
+
+        const motivo = prompt('Motivo da pausa (opcional):');
+        if (motivo === null) return; // operador cancelou → aborta
+
+        registrarEventoEtapa(etapa, 'pausada', 'manual', null, motivo || null);
+        etapa.status = 'pendente';
+
+        db.collection('producao').doc(opAtual.id).update({ modulos_fluxograma: modulos })
+            .then(function() {
+                renderizarOP(opAtual, opAtual.id);
             })
             .catch(function(erro) {
-                console.error('Erro ao concluir operação:', erro);
-                alert('❌ Erro ao concluir operação.');
+                console.error('Erro ao pausar operação:', erro);
+                alert('❌ Erro ao pausar operação.');
             });
     };
 
@@ -637,11 +752,12 @@ document.addEventListener('DOMContentLoaded', function() {
             return `
                 <span class="status-andamento-selo">EM ANDAMENTO</span>
                 <button type="button" class="btn-concluir-operacao" onclick="concluirOperacao(${moduloIdx}, ${etapaIdx})">✅ Concluir</button>
+                <button type="button" class="btn-pausar-operacao" onclick="pausarOperacao(${moduloIdx}, ${etapaIdx})">⏸️ Pausar</button>
             `;
         }
 
         // pendente
-        if (!podeExecutarOP) return '';
+        if (!podeExecutarEtapa) return '';
         return `<button type="button" class="btn-iniciar-operacao" onclick="iniciarOperacao(${moduloIdx}, ${etapaIdx})">▶️ Iniciar</button>`;
     }
 
@@ -777,7 +893,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 : `Fluxograma vinculado: "${fluxo.nome}"`
                         });
 
-                        return db.collection('producao').doc(opId).update({
+                        const atualizacoesOP = {
                             fluxograma_id: fluxogramaId,
                             fluxograma_nome: fluxo.nome,
                             modulos_fluxograma: modulosOP,
@@ -785,7 +901,12 @@ document.addEventListener('DOMContentLoaded', function() {
                             status: 'em_producao',
                             data_entrada_producao: opData.data_entrada_producao || firebase.firestore.FieldValue.serverTimestamp(),
                             historico: historico
-                        });
+                        };
+
+                        return window.SITE.estoque.reservarAviamentosOP(opId, opData)
+                            .then(function() {
+                                return db.collection('producao').doc(opId).update(atualizacoesOP);
+                            });
                     })
                     .then(function() {
                         alert('✅ Fluxograma vinculado com sucesso!');

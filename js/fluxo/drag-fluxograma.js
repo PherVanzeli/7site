@@ -22,7 +22,8 @@ document.addEventListener('DOMContentLoaded', function() {
         operacoes: [],
         maquinas: [],
         equipamentos: [],
-        aviamentos: []
+        aviamentos: [],
+        estoqueMap: []
     };
 
     // ==========================================
@@ -56,17 +57,25 @@ document.addEventListener('DOMContentLoaded', function() {
         db.collection('estoque').get()
             .then(function(snap) {
                 cacheDatalists.aviamentos = [];
+                cacheDatalists.estoqueMap = [];
                 snap.forEach(function(doc) {
                     const d = doc.data();
                     const nomeCompleto = [d.nome, d.material, d.cor, d.tamanho]
                         .filter(v => v && v !== 'N/A')
-                        .join(' ');
+                        .join(' ')
+                        .toUpperCase();
                     cacheDatalists.aviamentos.push(nomeCompleto);
+                    cacheDatalists.estoqueMap.push({
+                        id: doc.id,
+                        nome: nomeCompleto,
+                        categoria: d.categoria
+                    });
                 });
             })
             .catch(function(erro) {
                 console.error('Erro ao carregar aviamentos:', erro);
                 cacheDatalists.aviamentos = [];
+                cacheDatalists.estoqueMap = [];
             });
     }
 
@@ -777,7 +786,17 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!tipo && !nome) continue;
             if (tipo && !nome) { alert('Informe o nome do insumo da linha ' + (i + 1) + '.'); return null; }
             if (tipo && qtd <= 0) { alert('Informe a quantidade do insumo da linha ' + (i + 1) + '.'); return null; }
-            insumos.push({ tipo: tipo, nome: nome, quantidade: qtd, unidade: unidade });
+            const itemEstoque = (cacheDatalists.estoqueMap || []).find(function(item) {
+                return item.nome === nome;
+            });
+            insumos.push({
+                tipo: tipo,
+                nome: nome,
+                quantidade: qtd,
+                unidade: unidade,
+                item_id: itemEstoque ? itemEstoque.id : null,
+                estoque_categoria: itemEstoque ? itemEstoque.categoria : null
+            });
         }
         return insumos;
     }
