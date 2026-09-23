@@ -10,6 +10,82 @@ window.SITE.estoque.propriedadePorCategoria = function(categoria) {
     return categoria === 'externo' ? 'fornecedor' : 'confeccao';
 };
 
+window.SITE.estoque.consumirInsumosEtapa = function(opId, etapa, quantidadePecas) {
+    const itens = (Array.isArray(etapa.insumos) ? etapa.insumos : [])
+        .filter(function(item) {
+            return item.item_id &&
+                item.estoque_categoria === 'interno' &&
+                Number(item.quantidade) > 0;
+        })
+        .reduce(function(acumulado, item) {
+            if (!acumulado[item.item_id]) {
+                acumulado[item.item_id] = {
+                    item_id: item.item_id,
+                    nome: item.nome || '',
+                    unidade: item.unidade || 'UN',
+                    quantidade: 0
+                };
+            }
+            acumulado[item.item_id].quantidade +=
+                Number(item.quantidade) * Number(quantidadePecas || 0);
+            return acumulado;
+        }, {});
+
+    const itensParaConsumir = Object.keys(itens).map(function(itemId) {
+        return itens[itemId];
+    }).filter(function(item) {
+        return item.quantidade > 0;
+    });
+
+    if (itensParaConsumir.length === 0) {
+        return Promise.resolve();
+    }
+
+    return db.runTransaction(function(transaction) {
+        return Promise.all(itensParaConsumir.map(function(item) {
+            return transaction.get(db.collection('estoque').doc(item.item_id));
+        })).then(function(docs) {
+            docs.forEach(function(doc, index) {
+                const item = itensParaConsumir[index];
+                if (!doc.exists) {
+                    throw new Error('Insumo não encontrado no estoque: ' + item.nome);
+                }
+
+                const dados = doc.data();
+                const saldo = Number(dados.quantidade_atual) || 0;
+                if (saldo < item.quantidade) {
+                    throw new Error(
+                        'Saldo insuficiente para ' + (dados.nome || item.nome) +
+                        ': disponível ' + saldo + ' ' + (dados.unidade || item.unidade) +
+                        ', necessário ' + item.quantidade + ' ' + item.unidade + '.'
+                    );
+                }
+
+                transaction.update(doc.ref, {
+                    quantidade_atual: saldo - item.quantidade,
+                    propriedade: dados.propriedade ||
+                        window.SITE.estoque.propriedadePorCategoria(dados.categoria),
+                    data_atualizacao: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                transaction.set(db.collection('movimentacoes_estoque').doc(), {
+                    estoque_id: doc.id,
+                    op_id: opId,
+                    tipo: 'consumo_etapa',
+                    quantidade: item.quantidade,
+                    unidade: dados.unidade || item.unidade,
+                    propriedade_item: dados.propriedade ||
+                        window.SITE.estoque.propriedadePorCategoria(dados.categoria),
+                    usuario_cpf: firebase.auth().currentUser
+                        ? firebase.auth().currentUser.email.split('@')[0]
+                        : null,
+                    data_movimentacao: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            });
+        });
+    });
+};
+
 window.SITE.estoque.reservarAviamentosOP = function(opId, opData) {
     const itens = (opData.aviamentos_externos || [])
         .filter(function(item) {

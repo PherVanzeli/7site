@@ -163,7 +163,7 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 {
   "estoque_id": "docIdEstoque",
   "op_id": "docIdProducao",
-  "tipo": "reserva_producao",
+  "tipo": "consumo_etapa",
   "quantidade": 400,
   "unidade": "UN",
   "propriedade_item": "fornecedor",
