@@ -660,8 +660,29 @@ document.addEventListener('DOMContentLoaded', function() {
             updates.data_saida_producao = firebase.firestore.FieldValue.serverTimestamp();
         }
 
+        let sobras = {};
+        if (tudoConcluido && opAtual.aviamentos_reservados &&
+            !opAtual.aviamentos_reservas_concluidas) {
+            for (let i = 0; i < opAtual.aviamentos_reservados.length; i++) {
+                const reserva = opAtual.aviamentos_reservados[i];
+                const resposta = prompt(
+                    'Informe a sobra de ' + reserva.nome +
+                    ' (reservado: ' + reserva.quantidade + ' ' + reserva.unidade + '):',
+                    '0'
+                );
+                if (resposta === null) return;
+
+                const sobra = Number(resposta.replace(',', '.'));
+                if (!Number.isFinite(sobra) || sobra < 0 || sobra > Number(reserva.quantidade)) {
+                    alert('Sobra inválida para ' + reserva.nome + '. A etapa não foi concluída.');
+                    return;
+                }
+                sobras[reserva.item_id] = sobra;
+            }
+        }
+
         const concluirEstoque = tudoConcluido
-            ? window.SITE.estoque.concluirReservasOP(opAtual.id)
+            ? window.SITE.estoque.concluirReservasOP(opAtual.id, sobras)
             : Promise.resolve();
 
         concluirEstoque.then(function() {

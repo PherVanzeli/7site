@@ -198,7 +198,7 @@ window.SITE.estoque.reservarAviamentosOP = function(opId, opData) {
     });
 };
 
-window.SITE.estoque.concluirReservasOP = function(opId) {
+window.SITE.estoque.concluirReservasOP = function(opId, sobras) {
     const opRef = db.collection('producao').doc(opId);
 
     return db.runTransaction(function(transaction) {
@@ -218,20 +218,26 @@ window.SITE.estoque.concluirReservasOP = function(opId) {
             })).then(function(docs) {
                 docs.forEach(function(doc, index) {
                     const reserva = reservas[index];
+                    const sobra = Number(sobras && sobras[reserva.item_id]) || 0;
+                    const quantidadeReservada = Number(reserva.quantidade) || 0;
                     if (!doc.exists) {
                         throw new Error('Aviamento reservado não encontrado no estoque: ' + reserva.nome);
+                    }
+                    if (sobra < 0 || sobra > quantidadeReservada) {
+                        throw new Error('Sobra inválida para ' + reserva.nome + '.');
                     }
 
                     const dados = doc.data();
                     const reservado = Number(dados.quantidade_reservada) || 0;
-                    if (reservado < Number(reserva.quantidade)) {
+                    if (reservado < quantidadeReservada) {
                         throw new Error(
                             'Reserva inconsistente para ' + (dados.nome || reserva.nome) + '.'
                         );
                     }
 
                     transaction.update(doc.ref, {
-                        quantidade_reservada: reservado - Number(reserva.quantidade),
+                        quantidade_atual: (Number(dados.quantidade_atual) || 0) + sobra,
+                        quantidade_reservada: reservado - quantidadeReservada,
                         data_atualizacao: firebase.firestore.FieldValue.serverTimestamp()
                     });
 
@@ -239,7 +245,7 @@ window.SITE.estoque.concluirReservasOP = function(opId) {
                         estoque_id: doc.id,
                         op_id: opId,
                         tipo: 'consumo_reserva',
-                        quantidade: Number(reserva.quantidade),
+                        quantidade: quantidadeReservada - sobra,
                         unidade: dados.unidade || reserva.unidade || 'UN',
                         propriedade_item: dados.propriedade ||
                             window.SITE.estoque.propriedadePorCategoria(dados.categoria),
@@ -248,6 +254,22 @@ window.SITE.estoque.concluirReservasOP = function(opId) {
                             : null,
                         data_movimentacao: firebase.firestore.FieldValue.serverTimestamp()
                     });
+
+                    if (sobra > 0) {
+                        transaction.set(db.collection('movimentacoes_estoque').doc(), {
+                            estoque_id: doc.id,
+                            op_id: opId,
+                            tipo: 'devolucao_sobra',
+                            quantidade: sobra,
+                            unidade: dados.unidade || reserva.unidade || 'UN',
+                            propriedade_item: dados.propriedade ||
+                                window.SITE.estoque.propriedadePorCategoria(dados.categoria),
+                            usuario_cpf: firebase.auth().currentUser
+                                ? firebase.auth().currentUser.email.split('@')[0]
+                                : null,
+                            data_movimentacao: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
                 });
 
                 transaction.update(opRef, {
