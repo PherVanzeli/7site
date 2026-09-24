@@ -281,3 +281,83 @@ window.SITE.estoque.concluirReservasOP = function(opId, sobras) {
         });
     });
 };
+
+window.SITE.estoque.cancelarOP = function(opId, motivo) {
+    const opRef = db.collection('producao').doc(opId);
+
+    return db.runTransaction(function(transaction) {
+        return transaction.get(opRef).then(function(opDoc) {
+            if (!opDoc.exists) {
+                throw new Error('OP não encontrada para cancelamento.');
+            }
+
+            const opData = opDoc.data();
+            const statusPermitidos = ['aguardando_fluxograma', 'em_producao'];
+            if (!statusPermitidos.includes(opData.status)) {
+                throw new Error('Esta OP não pode mais ser cancelada.');
+            }
+
+            if (opData.aviamentos_reservas_concluidas) {
+                throw new Error('As reservas desta OP já foram concluídas.');
+            }
+
+            const reservas = opData.aviamentos_reservados || [];
+            return Promise.all(reservas.map(function(item) {
+                return transaction.get(db.collection('estoque').doc(item.item_id));
+            })).then(function(docs) {
+                docs.forEach(function(doc, index) {
+                    const reserva = reservas[index];
+                    if (!doc.exists) {
+                        throw new Error('Aviamento reservado não encontrado: ' + reserva.nome);
+                    }
+
+                    const dados = doc.data();
+                    const reservado = Number(dados.quantidade_reservada) || 0;
+                    const quantidade = Number(reserva.quantidade) || 0;
+                    if (reservado < quantidade) {
+                        throw new Error('Reserva inconsistente para ' + reserva.nome + '.');
+                    }
+
+                    transaction.update(doc.ref, {
+                        quantidade_atual: (Number(dados.quantidade_atual) || 0) + quantidade,
+                        quantidade_reservada: reservado - quantidade,
+                        data_atualizacao: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                    transaction.set(db.collection('movimentacoes_estoque').doc(), {
+                        estoque_id: doc.id,
+                        op_id: opId,
+                        tipo: 'devolucao_cancelamento',
+                        quantidade: quantidade,
+                        unidade: dados.unidade || reserva.unidade || 'UN',
+                        propriedade_item: dados.propriedade ||
+                            window.SITE.estoque.propriedadePorCategoria(dados.categoria),
+                        motivo: motivo,
+                        usuario_cpf: firebase.auth().currentUser
+                            ? firebase.auth().currentUser.email.split('@')[0]
+                            : null,
+                        data_movimentacao: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                });
+
+                const historico = opData.historico || [];
+                historico.push({
+                    data: new Date(),
+                    usuario_cpf: firebase.auth().currentUser
+                        ? firebase.auth().currentUser.email.split('@')[0]
+                        : null,
+                    acao: 'cancelamento_op',
+                    detalhes: motivo
+                });
+
+                transaction.update(opRef, {
+                    status: 'cancelada',
+                    motivo_cancelamento: motivo,
+                    data_cancelamento: firebase.firestore.FieldValue.serverTimestamp(),
+                    aviamentos_reservas_liberadas: true,
+                    historico: historico
+                });
+            });
+        });
+    });
+};

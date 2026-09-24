@@ -172,7 +172,7 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 }
 ```
 
-**Tipos de movimentação:** `reserva_producao`, `consumo_etapa`, `consumo_reserva` e `devolucao_sobra`.
+**Tipos de movimentação:** `reserva_producao`, `consumo_etapa`, `consumo_reserva`, `devolucao_sobra` e `devolucao_cancelamento`.
 
 **Índice recomendado:** `categoria` + `nome`.
 
