@@ -375,6 +375,9 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
   "aviamentos_externos": [
     { "item_id": "docIdEstoque", "nome": "ZÍPER METAL PRETO 15CM", "quantidade": 400, "unidade": "UN" }
   ],
+  "aviamentos_baixados": true,
+  "aviamentos_reservados": [],
+  "aviamentos_reservas_concluidas": false,
   "aviamentos_internos_reservados": [],
   "fluxograma_id": null,
   "fluxograma_nome": null,
@@ -403,6 +406,9 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 | `recortes` | array | Recortes do corte (`nome`, `qtd_por_peca`) — editáveis na OP |
 | `aviamentos_externos` | array | Aviamentos vinculados (`item_id`, `nome`, `quantidade`, `unidade`) |
 | `aviamentos_internos_reservados` | array | Previsto, não usado |
+| `aviamentos_baixados` | boolean | Indica que os aviamentos externos foram reservados no início da produção |
+| `aviamentos_reservados` | array | Itens e quantidades reservados para esta OP |
+| `aviamentos_reservas_concluidas` | boolean | Indica que a reserva foi finalizada como consumo ao concluir a produção |
 | `fluxograma_id` | string/null | Fluxograma vinculado |
 | `fluxograma_nome` | string/null | Nome do fluxograma (cache) |
 | `modulos_fluxograma` | array | Snapshot dos módulos/etapas em execução — ver "Etapa da OP" |
