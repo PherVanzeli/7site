@@ -420,6 +420,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'em_producao': '⚙️ Em Produção',
             'aguardando_expedicao': '📦 Aguardando Expedição',
             'finalizado': '✅ Finalizada',
+            'cancelada': '⛔ Cancelada',
             'faturado': '💰 Faturada'
         }[d.status] || d.status;
 
@@ -438,6 +439,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="op-info-item"><strong>Entrada:</strong> ${dataEntrada}</div>
                 <div class="op-info-item"><strong>Saída:</strong> ${dataSaida}</div>
             </div>
+            ${podeExecutarOP && ['aguardando_fluxograma', 'em_producao'].includes(d.status)
+                ? `<div class="op-acoes-cancelamento">
+                    <button type="button" class="btn-secundario" onclick="cancelarOrdemProducao('${id}')">⛔ Cancelar OP</button>
+                </div>`
+                : ''}
             
             <h3 class="op-subtitulo">Recortes</h3>
             <table class="tabela-estoque">
@@ -552,6 +558,26 @@ document.addEventListener('DOMContentLoaded', function() {
         opDocumento.innerHTML = html;
     }
 
+    window.cancelarOrdemProducao = function(opId) {
+        const motivo = prompt('Informe o motivo do cancelamento da OP:');
+        if (motivo === null) return;
+        if (!motivo.trim()) {
+            alert('Informe um motivo para cancelar a OP.');
+            return;
+        }
+        if (!confirm('Cancelar esta OP e devolver integralmente os aviamentos reservados?')) return;
+
+        window.SITE.estoque.cancelarOP(opId, motivo.trim())
+            .then(function() {
+                alert('✅ OP cancelada e reservas devolvidas.');
+                window.location.reload();
+            })
+            .catch(function(erro) {
+                console.error('Erro ao cancelar OP:', erro);
+                alert('❌ Não foi possível cancelar a OP: ' + erro.message);
+            });
+    };
+
     function detalhesHistorico(h) {
         if (h.detalhes) return h.detalhes;
         return h.acao || 'Ação registrada';
@@ -660,8 +686,29 @@ document.addEventListener('DOMContentLoaded', function() {
             updates.data_saida_producao = firebase.firestore.FieldValue.serverTimestamp();
         }
 
+        let sobras = {};
+        if (tudoConcluido && opAtual.aviamentos_reservados &&
+            !opAtual.aviamentos_reservas_concluidas) {
+            for (let i = 0; i < opAtual.aviamentos_reservados.length; i++) {
+                const reserva = opAtual.aviamentos_reservados[i];
+                const resposta = prompt(
+                    'Informe a sobra de ' + reserva.nome +
+                    ' (reservado: ' + reserva.quantidade + ' ' + reserva.unidade + '):',
+                    '0'
+                );
+                if (resposta === null) return;
+
+                const sobra = Number(resposta.replace(',', '.'));
+                if (!Number.isFinite(sobra) || sobra < 0 || sobra > Number(reserva.quantidade)) {
+                    alert('Sobra inválida para ' + reserva.nome + '. A etapa não foi concluída.');
+                    return;
+                }
+                sobras[reserva.item_id] = sobra;
+            }
+        }
+
         const concluirEstoque = tudoConcluido
-            ? window.SITE.estoque.concluirReservasOP(opAtual.id)
+            ? window.SITE.estoque.concluirReservasOP(opAtual.id, sobras)
             : Promise.resolve();
 
         concluirEstoque.then(function() {

@@ -157,13 +157,13 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 
 ### `movimentacoes_estoque`
 
-**Função:** Histórico das reservas e futuras entradas, baixas, devoluções e ajustes do estoque.
+**Função:** Histórico das reservas, consumos, devoluções de sobras e futuros ajustes do estoque.
 
 ```json
 {
   "estoque_id": "docIdEstoque",
   "op_id": "docIdProducao",
-  "tipo": "consumo_etapa",
+  "tipo": "devolucao_sobra",
   "quantidade": 400,
   "unidade": "UN",
   "propriedade_item": "fornecedor",
@@ -171,6 +171,8 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
   "data_movimentacao": "timestamp"
 }
 ```
+
+**Tipos de movimentação:** `reserva_producao`, `consumo_etapa`, `consumo_reserva`, `devolucao_sobra` e `devolucao_cancelamento`.
 
 **Índice recomendado:** `categoria` + `nome`.
 
