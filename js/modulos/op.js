@@ -660,11 +660,17 @@ document.addEventListener('DOMContentLoaded', function() {
             updates.data_saida_producao = firebase.firestore.FieldValue.serverTimestamp();
         }
 
-        window.SITE.estoque.consumirInsumosEtapa(
+        const concluirEstoque = tudoConcluido
+            ? window.SITE.estoque.concluirReservasOP(opAtual.id)
+            : Promise.resolve();
+
+        concluirEstoque.then(function() {
+            return window.SITE.estoque.consumirInsumosEtapa(
             opAtual.id,
             etapa,
             opAtual.quantidade_total || 0
-        ).then(function() {
+            );
+        }).then(function() {
             return db.collection('producao').doc(opAtual.id).update(updates);
         }).then(function() {
             if (tudoConcluido) {
