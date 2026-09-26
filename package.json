@@ -5,9 +5,13 @@
   "description": "7Site ERP — confecção e tecnologia",
   "scripts": {
     "lint": "eslint js --ext .js",
-    "test": "node --test tests/expedicao.test.cjs tests/conferencia-expedicao.test.cjs tests/op-reenvio.test.cjs"
+    "test": "node --test tests/expedicao.test.cjs tests/conferencia-expedicao.test.cjs tests/op-reenvio.test.cjs",
+    "test:rules": "firebase emulators:exec --only firestore --project demo-7site-regras \"node --test tests/firestore-rules.test.cjs\""
   },
   "devDependencies": {
-    "eslint": "^8.57.0"
+    "@firebase/rules-unit-testing": "^5.0.2",
+    "eslint": "^8.57.0",
+    "firebase": "^12.19.0",
+    "firebase-tools": "^15.29.0"
   }
 }

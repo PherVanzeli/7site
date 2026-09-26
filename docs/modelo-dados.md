@@ -743,9 +743,10 @@ sessão do gestor. As exclusões existentes de estoque, operações, fluxogramas
 e financeiro continuam limitadas aos setores responsáveis. Não há regra
 genérica que libere coleções futuras.
 
-Antes de publicar estas regras, executar testes de permissão no emulador do
-Firestore com perfis de cada setor e conferir dados legados. O emulador requer
-Java; o ambiente atual não o possui.
+Antes de publicar mudanças nas regras, executar `npm run test:rules` com
+Java 21 disponível. A suíte usa o projeto isolado `demo-7site-regras` e cobre
+perfis, transições CDF/Expedição, autoria, quantidades e preservação do
+histórico. Os workflows de CI e deploy também executam essa suíte.
 
 ---
 
