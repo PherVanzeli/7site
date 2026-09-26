@@ -22,6 +22,11 @@ const cpfs = {
     semPerfil: '88888888888'
 };
 let ambiente;
+const janela = {};
+new Function('window', fs.readFileSync(
+    path.join(__dirname, '../js/core/conferencia-expedicao.js'), 'utf8'
+))(janela);
+const fluxo = janela.SITE.expedicao;
 
 function banco(cpf) {
     return ambiente.authenticatedContext(cpf, {
@@ -324,4 +329,110 @@ test('aprovação preserva histórico extenso de uma OP existente', async functi
         historico: [...atual.historico, evento(cpfs.administrativo, 'expedicao_aprovada')],
         data_despacho: serverTimestamp()
     }));
+});
+
+test('fluxo completo CDF, devolução, correção, reenvio e despacho', async function() {
+    await criarOP('em_producao');
+    const referenciaCDF = doc(banco(cpfs.cdf), 'producao/op-teste');
+    const referenciaExpedicao = doc(banco(cpfs.administrativo), 'producao/op-teste');
+
+    await assertSucceeds(updateDoc(referenciaCDF, {
+        status: 'aguardando_expedicao',
+        modulos_fluxograma: [],
+        data_fim_execucao: serverTimestamp(),
+        data_saida_producao: serverTimestamp()
+    }));
+    let atual = (await getDoc(referenciaExpedicao)).data();
+    assert.equal(atual.status, 'aguardando_expedicao');
+    assert.ok(atual.data_saida_producao);
+
+    const primeiroRascunho = fluxo.criarRascunho(atual, {
+        cpf: cpfs.administrativo, nome: 'CONFERENTE'
+    });
+    await assertSucceeds(updateDoc(referenciaExpedicao, {
+        status: 'em_conferencia',
+        conferencia_expedicao: { ...primeiroRascunho, data_inicio: serverTimestamp() }
+    }));
+    atual = (await getDoc(referenciaExpedicao)).data();
+    const parcial = fluxo.prepararRascunho(atual.conferencia_expedicao, {
+        quantidade_recebida: 8,
+        quantidade_aprovada: null,
+        quantidade_refugada: null,
+        observacoes: 'FALTAM DUAS PEÇAS',
+        motivo_devolucao: 'FALTAM DUAS PEÇAS'
+    });
+    await assertSucceeds(updateDoc(referenciaExpedicao, {
+        conferencia_expedicao: parcial
+    }));
+
+    const devolvida = {
+        ...parcial,
+        data_conclusao: new Date(),
+        resultado: 'devolvido_cdf'
+    };
+    await assertSucceeds(updateDoc(referenciaExpedicao, {
+        status: 'devolvido_cdf',
+        conferencia_expedicao: devolvida,
+        conferencias_expedicao: [devolvida],
+        historico: [evento(cpfs.administrativo, 'expedicao_devolvida')],
+        devolucao_cdf: {
+            motivo: devolvida.motivo_devolucao,
+            observacoes: devolvida.observacoes,
+            solicitado_por_cpf: cpfs.administrativo,
+            data_solicitacao: devolvida.data_conclusao,
+            resolucao: null,
+            resolvido_em: null
+        }
+    }));
+
+    atual = (await getDoc(referenciaCDF)).data();
+    const reenvio = fluxo.prepararReenvioCDF(
+        atual, cpfs.cdf, 'DUAS PEÇAS ENTREGUES', new Date()
+    );
+    await assertSucceeds(updateDoc(referenciaCDF, {
+        ...reenvio,
+        data_reenvio_expedicao: serverTimestamp()
+    }));
+    atual = (await getDoc(referenciaExpedicao)).data();
+    assert.equal(atual.status, 'aguardando_expedicao');
+    assert.equal(atual.conferencias_expedicao.length, 1);
+    assert.equal(atual.devolucao_cdf.resolucao, 'DUAS PEÇAS ENTREGUES');
+
+    const segundoRascunho = fluxo.criarRascunho(atual, {
+        cpf: cpfs.administrativo, nome: 'CONFERENTE'
+    });
+    await assertSucceeds(updateDoc(referenciaExpedicao, {
+        status: 'em_conferencia',
+        conferencia_expedicao: { ...segundoRascunho, data_inicio: serverTimestamp() }
+    }));
+    atual = (await getDoc(referenciaExpedicao)).data();
+    const aprovada = {
+        ...fluxo.validarConferencia(fluxo.prepararRascunho(
+            atual.conferencia_expedicao,
+            {
+                quantidade_recebida: 10,
+                quantidade_aprovada: 10,
+                quantidade_refugada: 0,
+                observacoes: '',
+                motivo_devolucao: ''
+            }
+        )),
+        data_conclusao: new Date(),
+        resultado: 'aprovado'
+    };
+    await assertSucceeds(updateDoc(referenciaExpedicao, {
+        status: 'finalizado',
+        conferencia_expedicao: aprovada,
+        conferencias_expedicao: [...atual.conferencias_expedicao, aprovada],
+        historico: [...atual.historico, evento(cpfs.administrativo, 'expedicao_aprovada')],
+        data_despacho: serverTimestamp()
+    }));
+    const finalizada = (await getDoc(referenciaCDF)).data();
+    assert.equal(finalizada.status, 'finalizado');
+    assert.equal(finalizada.conferencias_expedicao.length, 2);
+    assert.deepEqual(
+        finalizada.historico.map(function(item) { return item.acao; }),
+        ['expedicao_devolvida', 'cdf_reenviou_expedicao', 'expedicao_aprovada']
+    );
+    assert.ok(finalizada.data_despacho);
 });
