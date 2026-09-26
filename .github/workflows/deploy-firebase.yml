@@ -29,11 +29,23 @@ jobs:
           node-version: 20
           cache: npm
 
+      - name: Setup Java for Firestore emulator
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
       - name: Install project dependencies
         run: npm ci
 
       - name: Run lint
         run: npm run lint
+
+      - name: Run application tests
+        run: npm test
+
+      - name: Run Firestore rules tests
+        run: npm run test:rules
 
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v2
@@ -41,4 +53,4 @@ jobs:
           credentials_json: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
 
       - name: Deploy Hosting and Firestore Rules
-        run: npx --yes firebase-tools@latest deploy --only hosting,firestore:rules --project site-sistema-d6d2d --non-interactive
+        run: npx firebase deploy --only hosting,firestore:rules --project site-sistema-d6d2d --non-interactive
