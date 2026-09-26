@@ -18,12 +18,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 const d = doc.data();
                 total++;
                 if (d.status === 'em_producao') emProducao++;
-                else if (d.status === 'aguardando_expedicao' || d.status === 'finalizado') finalizadas++;
+                else if (['aguardando_expedicao', 'em_conferencia', 'finalizado'].includes(d.status)) finalizadas++;
 
                 const statusLabel = {
                     'aguardando_fluxograma': '🧠 Aguardando Fluxograma',
                     'em_producao': '⚙️ Em Produção',
                     'aguardando_expedicao': '📦 Aguardando Expedição',
+                    'em_conferencia': '📋 Em Conferência',
+                    'devolvido_cdf': '↩️ Devolvida ao CDF',
                     'finalizado': '✅ Finalizado'
                 }[d.status] || d.status;
 

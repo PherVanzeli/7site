@@ -374,6 +374,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let podeExecutarOP = false;
     let podeExecutarEtapa = false;
+    let podeReenviarExpedicao = false;
     let operadorLogado = null;
     let avisoPermissao = null;
 
@@ -392,22 +393,34 @@ document.addEventListener('DOMContentLoaded', function() {
                     podeExecutarEtapa = false;
                     avisoPermissao = 'Seu cadastro está incompleto ou inativo. Procure o RH para liberar a execução de etapas.';
                 } else {
-                    podeExecutarEtapa = true;
+                    podeExecutarEtapa = ['CDF', 'todos'].includes(u.setor);
                     avisoPermissao = null;
                     operadorLogado = { cpf: u.cpf || cpf, nome: maiusculo(u.nome) };
                 }
 
                 const setor = u && u.setor;
-                if (setor === 'CDF' || setor === 'Administrativo' || setor === 'todos') {
-                    document.getElementById('op-acoes-edicao').style.display = 'block';
-                    podeExecutarOP = true;
-                }
+                podeReenviarExpedicao = !!u && u.ativo !== false &&
+                    (setor === 'CDF' || setor === 'todos');
+                const podeEditar = ['CDF', 'Administrativo', 'todos'].includes(setor) &&
+                    ['aguardando_fluxograma', 'em_producao', 'devolvido_cdf'].includes(d.status);
+                document.getElementById('op-acoes-edicao').style.display =
+                    podeEditar ? 'block' : 'none';
+                podeExecutarOP = ['CDF', 'Administrativo', 'todos'].includes(setor);
 
                 // Re-renderiza para mostrar os botões de execução
                 if (opAtual) {
                     renderizarOP(opAtual, opAtual.id);
                 }
             });
+        });
+    }
+
+    function escaparHTML(valor) {
+        return String(valor || '').replace(/[&<>"']/g, function(caractere) {
+            return {
+                '&': '&amp;', '<': '&lt;', '>': '&gt;',
+                '"': '&quot;', "'": '&#39;'
+            }[caractere];
         });
     }
 
@@ -419,6 +432,8 @@ document.addEventListener('DOMContentLoaded', function() {
             'aguardando_fluxograma': '🧠 Aguardando Fluxograma',
             'em_producao': '⚙️ Em Produção',
             'aguardando_expedicao': '📦 Aguardando Expedição',
+            'em_conferencia': '📋 Em Conferência',
+            'devolvido_cdf': '↩️ Devolvida ao CDF',
             'finalizado': '✅ Finalizada',
             'cancelada': '⛔ Cancelada',
             'faturado': '💰 Faturada'
@@ -444,6 +459,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     <button type="button" class="btn-secundario" onclick="cancelarOrdemProducao('${id}')">⛔ Cancelar OP</button>
                 </div>`
                 : ''}
+            ${d.status === 'devolvido_cdf' ? `<div class="aviso-rh">
+                <strong>Devolvida pela Expedição.</strong>
+                <p>Motivo: ${escaparHTML(d.devolucao_cdf && d.devolucao_cdf.motivo)}</p>
+                ${podeReenviarExpedicao
+                    ? '<button type="button" class="btn-primario" onclick="reenviarOPExpedicao()">Registrar correção e reenviar</button>'
+                    : ''}
+            </div>` : ''}
             
             <h3 class="op-subtitulo">Recortes</h3>
             <table class="tabela-estoque">
@@ -547,8 +569,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     <ul class="historico-lista">
                         ${d.historico.map(h => {
                             const data = h.data && h.data.toDate ? new Date(h.data.toDate()).toLocaleString('pt-BR') : 'Data desconhecida';
-                            const aut = h.autorizacao ? ` — Autorizado por ${h.autorizacao.nome}` : '';
-                            return `<li><span class="historico-data">${data}</span>: ${detalhesHistorico(h)}${aut}</li>`;
+                            const aut = h.autorizacao
+                                ? ` — Autorizado por ${escaparHTML(h.autorizacao.nome)}` : '';
+                            return `<li><span class="historico-data">${data}</span>: ${escaparHTML(detalhesHistorico(h))}${aut}</li>`;
                         }).join('')}
                     </ul>
                 </div>
@@ -557,6 +580,55 @@ document.addEventListener('DOMContentLoaded', function() {
 
         opDocumento.innerHTML = html;
     }
+
+    window.reenviarOPExpedicao = function() {
+        if (!opAtual || opAtual.status !== 'devolvido_cdf') return;
+        const resposta = prompt('Descreva a correção realizada pelo CDF:');
+        if (resposta === null) return;
+        const resolucao = resposta.trim();
+        if (!resolucao) {
+            alert('Descreva a correção antes de reenviar a OP.');
+            return;
+        }
+        const usuario = auth.currentUser;
+        if (!usuario || !usuario.email) {
+            alert('Faça login para reenviar a OP.');
+            return;
+        }
+        const cpf = usuario.email.split('@')[0];
+        const ref = db.collection('producao').doc(opAtual.id);
+        return db.collection('usuarios').doc(cpf).get().then(function(docUsuario) {
+            const perfil = docUsuario.exists ? docUsuario.data() : null;
+            if (!perfil || perfil.ativo === false ||
+                !['CDF', 'todos'].includes(perfil.setor)) {
+                throw new Error('Seu setor não pode reenviar esta OP.');
+            }
+            return db.runTransaction(function(transaction) {
+                return transaction.get(ref).then(function(doc) {
+                    if (!doc.exists) throw new Error('OP não encontrada.');
+                    const dados = doc.data();
+                    window.SITE.expedicao.validarTransicao(
+                        dados.status, 'aguardando_expedicao'
+                    );
+                    if (auth.currentUser !== usuario) {
+                        throw new Error('A sessão mudou. Tente novamente.');
+                    }
+                    const atualizacao = window.SITE.expedicao.prepararReenvioCDF(
+                        dados, cpf, resolucao, new Date()
+                    );
+                    atualizacao.data_reenvio_expedicao =
+                        firebase.firestore.FieldValue.serverTimestamp();
+                    transaction.update(ref, atualizacao);
+                });
+            });
+        }).then(function() {
+            alert('OP reenviada à Expedição.');
+            window.location.reload();
+        }).catch(function(erro) {
+            console.error('Erro ao reenviar OP:', erro);
+            alert('Não foi possível reenviar a OP: ' + erro.message);
+        });
+    };
 
     window.cancelarOrdemProducao = function(opId) {
         const motivo = prompt('Informe o motivo do cancelamento da OP:');
@@ -879,7 +951,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
                         const fluxo = doc.data();
 
-                        const modulosOP = (fluxo.modulos || []).map(function(m) {
+                        const historico = opData.historico || [];
+                        historico.push({
+                            data: new Date(),
+                            usuario_cpf: firebase.auth().currentUser ? firebase.auth().currentUser.email.split('@')[0] : null,
+                            acao: 'vinculacao_fluxograma',
+                            detalhes: opData.fluxograma_id
+                                ? `Fluxograma trocado: "${opData.fluxograma_nome}" → "${fluxo.nome}"`
+                                : `Fluxograma vinculado: "${fluxo.nome}"`
+                        });
+
+                        const atualizacoesOP = {
+                            fluxograma_id: fluxogramaId,
+                            fluxograma_nome: fluxo.nome,
+                            modulos_fluxograma: [],
+                            progresso: 0,
+                            status: 'em_producao',
+                            data_entrada_producao: opData.data_entrada_producao || firebase.firestore.FieldValue.serverTimestamp(),
+                            historico: historico
+                        };
+
+                        const modulosOriginais = (fluxo.modulos || []).map(function(m) {
                             return {
                                 modulo_id: m.modulo_id,
                                 modulo_nome: m.modulo_nome,
@@ -901,30 +993,24 @@ document.addEventListener('DOMContentLoaded', function() {
                             };
                         });
 
-                        const historico = opData.historico || [];
-                        historico.push({
-                            data: new Date(),
-                            usuario_cpf: firebase.auth().currentUser ? firebase.auth().currentUser.email.split('@')[0] : null,
-                            acao: 'vinculacao_fluxograma',
-                            detalhes: opData.fluxograma_id 
-                                ? `Fluxograma trocado: "${opData.fluxograma_nome}" → "${fluxo.nome}"`
-                                : `Fluxograma vinculado: "${fluxo.nome}"`
+                        const etapas = [];
+                        modulosOriginais.forEach(function(modulo) {
+                            modulo.etapas.forEach(function(etapa) {
+                                etapas.push(etapa);
+                            });
                         });
 
-                        const atualizacoesOP = {
-                            fluxograma_id: fluxogramaId,
-                            fluxograma_nome: fluxo.nome,
-                            modulos_fluxograma: modulosOP,
-                            progresso: 0,
-                            status: 'em_producao',
-                            data_entrada_producao: opData.data_entrada_producao || firebase.firestore.FieldValue.serverTimestamp(),
-                            historico: historico
-                        };
-
-                        return window.SITE.estoque.reservarAviamentosOP(opId, opData)
-                            .then(function() {
-                                return db.collection('producao').doc(opId).update(atualizacoesOP);
-                            });
+                        return Promise.all(etapas.map(function(etapa) {
+                            return window.SITE.estoque.resolverInsumos(etapa.insumos)
+                                .then(function(insumos) {
+                                    etapa.insumos = insumos;
+                                });
+                        })).then(function() {
+                            atualizacoesOP.modulos_fluxograma = modulosOriginais;
+                            return db.collection('producao').doc(opId).update(atualizacoesOP);
+                        }).then(function() {
+                            return window.SITE.estoque.reservarAviamentosOP(opId, opData);
+                        });
                     })
                     .then(function() {
                         alert('✅ Fluxograma vinculado com sucesso!');

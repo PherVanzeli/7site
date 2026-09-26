@@ -1226,6 +1226,58 @@ body {
     font-size: 20px;
 }
 
+.exp-conferencia[hidden],
+.exp-erro[hidden] {
+    display: none;
+}
+
+.exp-campos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 14px;
+    margin: 18px 0;
+}
+
+.exp-conferencia label {
+    display: block;
+    font-weight: 600;
+    margin: 12px 0 6px;
+}
+
+.exp-conferencia input,
+.exp-conferencia textarea {
+    display: block;
+    width: 100%;
+    margin-top: 6px;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font: inherit;
+}
+
+.exp-conferencia input[readonly] {
+    background: #f1f3f5;
+}
+
+.exp-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.exp-aviso,
+.exp-erro {
+    color: #9a3412;
+    margin: 10px 0;
+}
+
+.exp-status-motivo {
+    display: block;
+    margin-top: 4px;
+    color: #6c757d;
+}
+
 .tabela-estoque {
     width: 100%;
     border-collapse: collapse;

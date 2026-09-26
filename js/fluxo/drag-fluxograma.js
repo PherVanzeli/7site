@@ -68,6 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     cacheDatalists.estoqueMap.push({
                         id: doc.id,
                         nome: nomeCompleto,
+                        nome_base: (d.nome || '').toUpperCase().trim(),
                         categoria: d.categoria
                     });
                 });
@@ -786,12 +787,27 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!tipo && !nome) continue;
             if (tipo && !nome) { alert('Informe o nome do insumo da linha ' + (i + 1) + '.'); return null; }
             if (tipo && qtd <= 0) { alert('Informe a quantidade do insumo da linha ' + (i + 1) + '.'); return null; }
-            const itemEstoque = (cacheDatalists.estoqueMap || []).find(function(item) {
-                return item.nome === nome;
+            const candidatos = (cacheDatalists.estoqueMap || []).filter(function(item) {
+                return item.nome === nome || item.nome_base === nome;
             });
+            if (tipo === 'aviamento' && candidatos.length > 1) {
+                alert(
+                    'O aviamento "' + nome +
+                    '" possui mais de um cadastro. Informe o nome completo com material, cor ou tamanho.'
+                );
+                return null;
+            }
+            const itemEstoque = candidatos[0];
+            if (tipo === 'aviamento' && !itemEstoque) {
+                alert(
+                    'O aviamento "' + nome +
+                    '" não foi encontrado no estoque. Selecione um item cadastrado na lista.'
+                );
+                return null;
+            }
             insumos.push({
                 tipo: tipo,
-                nome: nome,
+                nome: itemEstoque ? itemEstoque.nome : nome,
                 quantidade: qtd,
                 unidade: unidade,
                 item_id: itemEstoque ? itemEstoque.id : null,

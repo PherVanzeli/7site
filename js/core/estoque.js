@@ -10,6 +10,56 @@ window.SITE.estoque.propriedadePorCategoria = function(categoria) {
     return categoria === 'externo' ? 'fornecedor' : 'confeccao';
 };
 
+window.SITE.estoque.resolverInsumos = function(insumos) {
+    const lista = Array.isArray(insumos) ? insumos : [];
+    const pendentes = lista.filter(function(item) {
+        return item.tipo === 'aviamento' && !item.item_id;
+    });
+    if (pendentes.length === 0) {
+        return Promise.resolve(lista);
+    }
+
+    return db.collection('estoque').get().then(function(snapshot) {
+        const estoque = [];
+        snapshot.forEach(function(doc) {
+            const dados = doc.data();
+            estoque.push({
+                id: doc.id,
+                nome: [dados.nome, dados.material, dados.cor, dados.tamanho]
+                    .filter(function(valor) { return valor && valor !== 'N/A'; })
+                    .join(' ')
+                    .toUpperCase(),
+                nome_base: (dados.nome || '').toUpperCase().trim(),
+                categoria: dados.categoria
+            });
+        });
+
+        return lista.map(function(item) {
+            if (item.tipo !== 'aviamento' || item.item_id) return item;
+
+            const nome = (item.nome || '').toUpperCase().trim();
+            const candidatos = estoque.filter(function(candidato) {
+                return candidato.nome === nome || candidato.nome_base === nome;
+            });
+            if (candidatos.length === 0) {
+                throw new Error('Há aviamento sem cadastro no estoque: ' + item.nome);
+            }
+            if (candidatos.length > 1) {
+                throw new Error(
+                    'O aviamento "' + item.nome +
+                    '" possui mais de um cadastro. Informe material, cor ou tamanho.'
+                );
+            }
+
+            return Object.assign({}, item, {
+                item_id: candidatos[0].id,
+                nome: candidatos[0].nome,
+                estoque_categoria: candidatos[0].categoria
+            });
+        });
+    });
+};
+
 window.SITE.estoque.consumirInsumosEtapa = function(opId, etapa, quantidadePecas) {
     const itens = (Array.isArray(etapa.insumos) ? etapa.insumos : [])
         .filter(function(item) {

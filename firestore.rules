@@ -1,154 +1,278 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // ==========================================
-    // 7Site ERP — Regras de Segurança do Firestore
-    // Versão 9.0
-    //
-    // IMPORTANTE (limitação técnica):
-    // O RBAC por setor é aplicado na camada de frontend
-    // (js/script.js) pois o CPF do usuário (ID do documento)
-    // deriva do e-mail de login. A extração de substring do
-    // e-mail não é suportada pela linguagem de regras.
-    //
-    // Para proteção futura: migrar para Custom Claims
-    // (setor + tipo_usuario) via Admin SDK e validar aqui
-    // com request.auth.token.setor.
-    // ==========================================
-
-    function dominioValido() {
+    // O perfil associado ao e-mail CPF@7site.com.br define as permissões.
+    function cpfAtual() {
+      return request.auth.token.email.split('@')[0];
+    }
+    function temPerfil() {
       return request.auth != null
-        && request.auth.token.email.matches('.*@7site\\.com\\.br');
+        && request.auth.token.email is string
+        && request.auth.token.email.matches('^[0-9]{11}@7site[.]com[.]br$')
+        && exists(/databases/$(database)/documents/usuarios/$(cpfAtual()));
+    }
+    function perfil() {
+      return get(/databases/$(database)/documents/usuarios/$(cpfAtual())).data;
+    }
+    function ativo() {
+      return temPerfil() && perfil().get('ativo', true) == true;
+    }
+    function mestre() {
+      return ativo() && (perfil().get('setor', '') == 'todos'
+        || perfil().get('nivel', 0) in [4, '4']);
+    }
+    function rh() {
+      return ativo() && (mestre()
+        || (perfil().get('setor', '') == 'RH'
+          && perfil().get('tipo_usuario', '') == 'superior')
+        || perfil().get('nivel', 0) in [3, '3']);
+    }
+    function setor(nome) {
+      return ativo() && (mestre() || perfil().get('setor', '') == nome);
+    }
+    function opAcessivel() {
+      return setor('CDF') || setor('Administrativo') || setor('Financeiro');
+    }
+    function alterouApenas(campos) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(campos);
     }
 
-    function autenticado() {
-      return request.auth != null;
-    }
-
-    // ==========================================
-    // COLEÇÃO usuários
-    // ==========================================
     match /usuarios/{cpf} {
-      allow read: if autenticado();
-      allow create: if autenticado()
+      allow get: if ativo();
+      allow list: if rh();
+      allow create: if rh()
+        && cpf.matches('^[0-9]{11}$')
+        && request.resource.data.keys().hasOnly([
+          'nome', 'cpf', 'cargo', 'tipo_usuario', 'setor', 'ativo',
+          'criado_por', 'data_cadastro'
+        ])
         && request.resource.data.cpf == cpf
         && request.resource.data.nome is string
-        && request.resource.data.tipo_usuario in ['funcionario', 'subordinado', 'superior'];
-      allow update: if autenticado()
-        && request.resource.data.cpf == cpf;
-      allow delete: if autenticado();
+        && request.resource.data.tipo_usuario in ['funcionario', 'subordinado', 'superior']
+        && request.resource.data.ativo == true
+        && request.resource.data.criado_por == cpfAtual()
+        && request.resource.data.data_cadastro == request.time
+        && (mestre() || (request.resource.data.setor == 'RH'
+          && request.resource.data.tipo_usuario != 'superior')
+          || (request.resource.data.setor == null
+            && request.resource.data.tipo_usuario == 'funcionario'));
+      allow update: if mestre() && request.resource.data.cpf == cpf;
+      allow delete: if false;
     }
 
-    // ==========================================
-    // COLEÇÃO produção (OPs)
-    // ==========================================
     match /producao/{docId} {
-      allow read: if autenticado();
-      allow create, update: if autenticado();
-      allow delete: if autenticado();
+      allow read: if opAcessivel();
+      allow create: if setor('Administrativo')
+        && request.resource.data.status == 'aguardando_fluxograma'
+        && request.resource.data.get('conferencia_expedicao', null) == null;
+      allow update: if atualizarFluxo() || atualizarExpedicao();
+      allow delete: if false;
     }
 
-    // ==========================================
-    // COLEÇÕES DO ESTOQUE E EXPEDIÇÃO
-    // ==========================================
+    function atualizarFluxo() {
+      return (setor('CDF') || setor('Administrativo')) && (
+        (resource.data.status in [
+            'aguardando_fluxograma', 'em_producao', 'devolvido_cdf'
+          ]
+          && request.resource.data.status == resource.data.status
+          && alterouApenas([
+            'modulos_fluxograma', 'data_inicio_execucao', 'fluxograma_id',
+            'fluxograma_nome', 'progresso', 'data_entrada_producao',
+            'historico', 'aviamentos_externos', 'recortes',
+            'aviamentos_baixados', 'aviamentos_baixados_em',
+            'aviamentos_reservados', 'aviamentos_reservas_concluidas',
+            'aviamentos_reservas_concluidas_em', 'aviamentos_internos_reservados'
+          ]))
+        || (setor('CDF')
+          && resource.data.status == 'aguardando_fluxograma'
+          && request.resource.data.status == 'em_producao'
+          && alterouApenas([
+            'status', 'fluxograma_id', 'fluxograma_nome', 'modulos_fluxograma',
+            'progresso', 'data_entrada_producao', 'historico'
+          ]))
+        || (setor('CDF')
+          && resource.data.status == 'em_producao'
+          && request.resource.data.status == 'aguardando_expedicao'
+          && alterouApenas([
+            'status', 'modulos_fluxograma', 'data_fim_execucao', 'data_saida_producao'
+          ]))
+        || (setor('CDF')
+          && resource.data.status == 'em_producao'
+          && request.resource.data.status == 'aguardando_fluxograma'
+          && alterouApenas([
+            'status', 'fluxograma_id', 'fluxograma_nome', 'modulos_fluxograma',
+            'progresso', 'data_entrada_producao', 'historico'
+          ]))
+        || (setor('CDF')
+          && resource.data.status == 'devolvido_cdf'
+          && request.resource.data.status == 'aguardando_expedicao'
+          && alterouApenas([
+            'status', 'devolucao_cdf', 'data_reenvio_expedicao', 'historico'
+          ])
+          && request.resource.data.devolucao_cdf.resolvido_por_cpf == cpfAtual()
+          && request.resource.data.devolucao_cdf.resolucao is string
+          && request.resource.data.devolucao_cdf.resolucao.size() > 0
+          && request.resource.data.data_reenvio_expedicao == request.time
+          && historicoAcrescido('cdf_reenviou_expedicao'))
+        || ((setor('CDF') || setor('Administrativo'))
+          && resource.data.status in ['aguardando_fluxograma', 'em_producao']
+          && request.resource.data.status == 'cancelada'
+          && alterouApenas([
+            'status', 'motivo_cancelamento', 'data_cancelamento',
+            'aviamentos_reservas_liberadas', 'historico'
+          ]))
+      );
+    }
+
+    function conferenciaDoResponsavel() {
+      return resource.data.conferencia_expedicao.conferido_por_cpf == cpfAtual()
+        && request.resource.data.conferencia_expedicao.conferido_por_cpf == cpfAtual()
+        && request.resource.data.conferencia_expedicao.quantidade_prevista
+          == resource.data.quantidade_total
+        && request.resource.data.conferencia_expedicao.data_inicio
+          == resource.data.conferencia_expedicao.data_inicio
+        && request.resource.data.conferencia_expedicao.conferido_por_nome
+          == resource.data.conferencia_expedicao.conferido_por_nome;
+    }
+    function historicoAcrescido(acao) {
+      return request.resource.data.historico is list
+        && request.resource.data.historico.size()
+          == resource.data.get('historico', []).size() + 1
+        && request.resource.data.historico
+          == resource.data.get('historico', []).concat([
+            request.resource.data.historico[request.resource.data.historico.size() - 1]
+          ])
+        && request.resource.data.historico[request.resource.data.historico.size() - 1]
+          .usuario_cpf == cpfAtual()
+        && request.resource.data.historico[request.resource.data.historico.size() - 1]
+          .acao == acao;
+    }
+    function conferenciaArquivada() {
+      return request.resource.data.conferencias_expedicao
+        == resource.data.get('conferencias_expedicao', []).concat([
+          request.resource.data.conferencia_expedicao
+        ]);
+    }
+    function quantidadesValidas() {
+      return request.resource.data.conferencia_expedicao.quantidade_recebida is int
+        && request.resource.data.conferencia_expedicao.quantidade_aprovada is int
+        && request.resource.data.conferencia_expedicao.quantidade_refugada is int
+        && request.resource.data.conferencia_expedicao.quantidade_faltante is int
+        && request.resource.data.conferencia_expedicao.quantidade_recebida >= 0
+        && request.resource.data.conferencia_expedicao.quantidade_aprovada >= 0
+        && request.resource.data.conferencia_expedicao.quantidade_refugada >= 0
+        && request.resource.data.conferencia_expedicao.quantidade_faltante >= 0
+        && request.resource.data.conferencia_expedicao.quantidade_excedente == 0
+        && request.resource.data.conferencia_expedicao.quantidade_aprovada
+          + request.resource.data.conferencia_expedicao.quantidade_refugada
+          == request.resource.data.conferencia_expedicao.quantidade_recebida
+        && request.resource.data.conferencia_expedicao.quantidade_recebida
+          + request.resource.data.conferencia_expedicao.quantidade_faltante
+          == resource.data.quantidade_total
+        && ((request.resource.data.conferencia_expedicao.quantidade_faltante == 0
+            && request.resource.data.conferencia_expedicao.quantidade_refugada == 0)
+          || (request.resource.data.conferencia_expedicao.observacoes is string
+            && request.resource.data.conferencia_expedicao.observacoes.size() > 0));
+    }
+    function atualizarExpedicao() {
+      return setor('Administrativo') && (
+        (resource.data.status == 'aguardando_expedicao'
+          && request.resource.data.status == 'em_conferencia'
+          && alterouApenas(['status', 'conferencia_expedicao'])
+          && request.resource.data.conferencia_expedicao.conferido_por_cpf == cpfAtual()
+          && request.resource.data.conferencia_expedicao.quantidade_prevista
+            == resource.data.quantidade_total)
+        || (resource.data.status == 'em_conferencia'
+          && request.resource.data.status == 'em_conferencia'
+          && alterouApenas(['conferencia_expedicao'])
+          && conferenciaDoResponsavel()
+          && request.resource.data.conferencia_expedicao.resultado == null)
+        || (resource.data.status == 'em_conferencia'
+          && request.resource.data.status == 'finalizado'
+          && alterouApenas([
+            'status', 'conferencia_expedicao', 'conferencias_expedicao',
+            'historico', 'data_despacho'
+          ])
+          && conferenciaDoResponsavel()
+          && request.resource.data.conferencia_expedicao.resultado == 'aprovado'
+          && quantidadesValidas()
+          && conferenciaArquivada()
+          && historicoAcrescido('expedicao_aprovada')
+          && request.resource.data.data_despacho == request.time)
+        || (resource.data.status == 'em_conferencia'
+          && request.resource.data.status == 'devolvido_cdf'
+          && alterouApenas([
+            'status', 'conferencia_expedicao', 'conferencias_expedicao',
+            'historico', 'devolucao_cdf'
+          ])
+          && conferenciaDoResponsavel()
+          && request.resource.data.conferencia_expedicao.resultado == 'devolvido_cdf'
+          && conferenciaArquivada()
+          && historicoAcrescido('expedicao_devolvida')
+          && request.resource.data.devolucao_cdf.solicitado_por_cpf == cpfAtual()
+          && request.resource.data.devolucao_cdf.motivo is string
+          && request.resource.data.devolucao_cdf.motivo.size() > 0)
+      );
+    }
+
     match /estoque/{docId} {
-      allow read: if autenticado();
-      allow create, update: if autenticado();
-      allow delete: if autenticado();
+      allow read, create, update: if setor('Administrativo') || setor('CDF');
+      allow delete: if setor('Administrativo');
     }
-
+    match /movimentacoes_estoque/{docId} {
+      allow read, create: if setor('Administrativo') || setor('CDF');
+      allow update, delete: if false;
+    }
     match /entradas_corte/{docId} {
-      allow read: if autenticado();
-      allow create, update: if autenticado();
-      allow delete: if autenticado();
+      allow read, create, update: if setor('Administrativo');
+      allow delete: if false;
     }
-
-    // ==========================================
-    // COLEÇÕES DO CDF
-    // ==========================================
     match /operacoes/{docId} {
-      allow read: if autenticado();
-      allow create, update: if autenticado();
-      allow delete: if autenticado();
+      allow read, create, update: if setor('CDF');
+      allow delete: if setor('CDF');
     }
-
     match /modulos/{docId} {
-      allow read: if autenticado();
-      allow create, update: if autenticado();
-      allow delete: if autenticado();
+      allow read, create, update: if setor('CDF');
+      allow delete: if false;
     }
-
     match /fluxogramas/{docId} {
-      allow read: if autenticado();
-      allow create, update: if autenticado();
-      allow delete: if autenticado();
+      allow read: if opAcessivel();
+      allow create, update: if setor('CDF');
+      allow delete: if setor('CDF');
     }
-
     match /recortes/{docId} {
-      allow read: if autenticado();
-      allow create, update: if autenticado();
-      allow delete: if autenticado();
+      allow read: if setor('Administrativo') || setor('CDF');
+      allow create, update: if setor('Administrativo');
+      allow delete: if false;
     }
-
     match /maquinas/{docId} {
-      allow read: if autenticado();
-      allow create, update: if autenticado();
-      allow delete: if autenticado();
+      allow read, create, update: if setor('CDF');
+      allow delete: if false;
     }
-
     match /equipamentos/{docId} {
-      allow read: if autenticado();
-      allow create, update: if autenticado();
-      allow delete: if autenticado();
+      allow read, create, update: if setor('CDF');
+      allow delete: if false;
     }
-
     match /modos_execucao/{docId} {
-      allow read: if autenticado();
-      allow create, update: if autenticado();
-      allow delete: if autenticado();
+      allow read, create, update: if setor('CDF');
+      allow delete: if false;
     }
-
     match /setores_execucao/{docId} {
-      allow read: if autenticado();
-      allow create, update: if autenticado();
-      allow delete: if autenticado();
+      allow read, create, update: if setor('CDF');
+      allow delete: if false;
     }
-
-    // ==========================================
-    // COLEÇÃO FINANCEIRA
-    // ==========================================
     match /financeiro/{docId} {
-      allow read: if autenticado();
-      allow create, update: if autenticado();
-      allow delete: if autenticado();
+      allow read, create, update: if setor('Financeiro');
+      allow delete: if setor('Financeiro');
     }
-
-    // ==========================================
-    // PESSOAS (FÍSICAS/JURÍDICAS)
-    // ==========================================
     match /pessoas/{docId} {
-      allow read: if autenticado();
-      allow create, update: if autenticado();
-      allow delete: if autenticado();
+      allow read, create, update: if setor('Administrativo') || mestre();
+      allow delete: if false;
     }
-
-    // ==========================================
-    // CONFIGURAÇÕES
-    // ==========================================
     match /configuracoes/{docId} {
-      allow read: if autenticado();
-      allow create, update: if autenticado();
-      allow delete: if autenticado();
-    }
-
-    // ==========================================
-    // REGRA FALLBACK (qualquer outra coleção)
-    // ==========================================
-    match /{document=**} {
-      allow read: if autenticado();
-      allow create, update: if autenticado();
-      allow delete: if autenticado();
+      allow read: if ativo();
+      allow create, update: if mestre();
+      allow delete: if false;
     }
   }
 }

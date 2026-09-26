@@ -7,3 +7,9 @@
 - Mostre o diff da alteração diretamente, sem explicar antes.
 - Quando usar ferramentas, mostre apenas o resultado, não o processo.
 - Responda em português.
+
+# Convenções do 7Site
+- Textos de cadastro sempre em MAIÚSCULO
+- Coleções Firestore: minúsculas, sem acento, plural
+- Funções globais expostas via window.*
+- CSS: classes em português (btn-primario, card-indicador)

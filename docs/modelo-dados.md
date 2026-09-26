@@ -387,6 +387,9 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
   "progresso": 0,
   "encarregado": "",
   "status": "aguardando_fluxograma",
+  "conferencia_expedicao": null,
+  "conferencias_expedicao": [],
+  "devolucao_cdf": null,
   "data_entrada_producao": null,
   "data_inicio_execucao": null,
   "data_fim_execucao": null,
@@ -417,11 +420,15 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 | `progresso` | number | Progresso da OP |
 | `encarregado` | string | Encarregado responsável |
 | `status` | string | Status atual da OP |
+| `conferencia_expedicao` | object/null | Conferência atual ou última conferência encerrada |
+| `conferencias_expedicao` | array | Histórico completo das conferências encerradas |
+| `devolucao_cdf` | object/null | Motivo e resolução da devolução mais recente |
 | `data_entrada_producao` | timestamp/null | Início da produção (ao vincular fluxograma) |
 | `data_inicio_execucao` | timestamp/null | Primeira etapa iniciada |
 | `data_fim_execucao` | timestamp/null | Última etapa concluída |
 | `data_saida_producao` | timestamp/null | Fim da produção (quando o CDF conclui todas as etapas) |
 | `data_despacho` | timestamp/null | Saída da fábrica (quando a expedição autoriza) |
+| `data_reenvio_expedicao` | timestamp/null | Último reenvio do CDF após uma devolução |
 | `historico` | array | `{ data, usuario_cpf, acao, detalhes, autorizacao }` |
 
 > **Legado (gravado mas não lido):** `operacoes_executadas`, `quantidade_finalizada`, `quantidade_refugada`, `quantidade_sobra`.
@@ -431,11 +438,35 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 - `aguardando_fluxograma` — sem fluxograma vinculado
 - `em_producao` — CDF executando as etapas
 - `aguardando_expedicao` — produção concluída, aguardando despacho
+- `em_conferencia` — Expedição assumiu a OP e pode salvar um rascunho
+- `devolvido_cdf` — Expedição pediu correção ao CDF
 - `finalizado` — expedição autorizou a saída
 - `faturado` — financeiro faturou
 - `recebido_parcial` / `recebido_total` — recebimento
 
 **Índice recomendado:** `status` + `data_entrada_producao`.
+
+### Conferência da Expedição
+
+O campo opcional producao.conferencia_expedicao começa como null nas OPs novas. OPs antigas podem não ter o campo. Ao iniciar a conferência, o sistema cria um rascunho em uma transação que muda o status para em_conferencia:
+
+| Campo | Tipo | Regra |
+| :--- | :--- | :--- |
+| quantidade_prevista | inteiro positivo | Cópia de producao.quantidade_total |
+| quantidade_recebida | inteiro ou null | Peças entregues pelo CDF |
+| quantidade_aprovada | inteiro ou null | Peças aprovadas |
+| quantidade_refugada | inteiro ou null | Peças recebidas e rejeitadas |
+| quantidade_faltante | inteiro ou null | Prevista menos recebida |
+| quantidade_excedente | inteiro ou null | Reservado para regra futura; zero na validação atual |
+| observacoes | string | Obrigatória se há faltantes ou refugo |
+| motivo_devolucao | string | Obrigatório para devolver a OP ao CDF |
+| conferido_por_cpf / conferido_por_nome | string | Responsável pela conferência |
+| data_inicio / data_conclusao | timestamp ou null | Preenchidas nas ações |
+| resultado | string ou null | aprovado ou devolvido_cdf após a decisão |
+
+A validação exige recebida = aprovada + refugada, quantidades inteiras não negativas e recebida <= prevista. O rascunho mantém quantidades não conferidas como null. Uma OP com quantidade excedente exigirá uma regra específica de autorização.
+
+Ao aprovar, a Expedição valida todas as quantidades, grava a conferência em conferencias_expedicao, registra um evento no histórico e muda a OP para finalizado com data_despacho. A aprovação com faltantes ou refugos exige observações. Ao devolver, exige motivo, arquiva a conferência mesmo que as quantidades ainda estejam parciais e muda a OP para devolvido_cdf. O CDF registra a correção em devolucao_cdf.resolucao e reenviará a OP para aguardando_expedicao. Uma nova conferência cria um rascunho sem apagar as anteriores.
 
 **Etapa da OP (`modulos_fluxograma[].etapas[]`):**
 
@@ -695,23 +726,26 @@ O 7Site utiliza **Firestore** (Firebase), um banco NoSQL baseado em **coleções
 
 ## Regras de Segurança (Firestore Rules)
 
-Atualmente configuradas como:
+As regras em `firestore.rules` usam o CPF extraído do e-mail de autenticação
+(`CPF@7site.com.br`) para consultar `usuarios/{cpf}`. Apenas perfis ativos
+recebem acesso. O documento de perfil não pode ser criado ou alterado pelo
+próprio funcionário. O primeiro gestor precisa ser provisionado fora do
+cliente, pelo console/Admin SDK.
 
-```
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /{document=**} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null;
-      allow update: if request.auth != null;
-      allow delete: if autenticado();
-    }
-  }
-}
-```
+As OPs só podem avançar nas transições permitidas para CDF e Administrativo.
+Na Expedição, o mesmo CPF que iniciou a conferência deve salvá-la e concluí-la.
+Ao aprovar ou devolver, a rodada é acrescentada a
+`conferencias_expedicao` e a ação é acrescentada a `historico`.
+O CDF registra a resolução antes do reenvio.
 
-**Nota:** `delete` habilitado para usuários autenticados (consistente com os botões de exclusão do sistema).
+O cadastro no RH usa uma segunda instância de Firebase Auth para preservar a
+sessão do gestor. As exclusões existentes de estoque, operações, fluxogramas
+e financeiro continuam limitadas aos setores responsáveis. Não há regra
+genérica que libere coleções futuras.
+
+Antes de publicar estas regras, executar testes de permissão no emulador do
+Firestore com perfis de cada setor e conferir dados legados. O emulador requer
+Java; o ambiente atual não o possui.
 
 ---
 
