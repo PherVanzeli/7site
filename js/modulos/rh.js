@@ -68,8 +68,19 @@ document.addEventListener('DOMContentLoaded', function() {
             botao.textContent = 'Criando...';
             botao.disabled = true;
 
-            auth.createUserWithEmailAndPassword(`${cpf}@7site.com.br`, senha)
-                .then(function() {
+            // Uma instância secundária mantém a sessão do gestor durante o cadastro.
+            const appCadastro = firebase.initializeApp(
+                firebase.app().options,
+                'cadastro-rh-' + Date.now() + '-' + Math.random().toString(36).slice(2)
+            );
+            const authCadastro = appCadastro.auth();
+            const cpfGestor = auth.currentUser.email.split('@')[0];
+            let novoUsuario = null;
+            let perfilCriado = false;
+
+            authCadastro.createUserWithEmailAndPassword(`${cpf}@7site.com.br`, senha)
+                .then(function(credencial) {
+                    novoUsuario = credencial.user;
                     return db.collection('usuarios').doc(cpf).set({
                         nome: maiusculo(nome),
                         cpf: cpf,
@@ -77,11 +88,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         tipo_usuario: tipo,
                         setor: setor,
                         ativo: true,
-                        criado_por: window.usuarioLogado ? window.usuarioLogado.cpf : null,
+                        criado_por: cpfGestor,
                         data_cadastro: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 })
                 .then(function() {
+                    perfilCriado = true;
                     alert(`✅ Acesso criado para ${nome}!`);
                     formCadastro.reset();
                     document.getElementById('campo-setor').style.display = 'none';
@@ -90,10 +102,26 @@ document.addEventListener('DOMContentLoaded', function() {
                     listarFuncionarios();
                 })
                 .catch(function(erro) {
-                    console.error('Erro:', erro);
+                    // Se o perfil não foi salvo, remove a conta Auth recém-criada.
+                    const desfazer = novoUsuario && !perfilCriado
+                        ? novoUsuario.delete().catch(function(erroRemocao) {
+                            console.error('Não foi possível remover a conta sem perfil:', erroRemocao);
+                            throw new Error(erro.message +
+                                ' A conta de autenticação foi criada, mas precisa ser removida manualmente.');
+                        })
+                        : Promise.resolve();
+                    return desfazer.then(function() { throw erro; });
+                })
+                .catch(function(erro) {
+                    console.error('Erro no cadastro:', erro);
                     alert('❌ ' + erro.message);
+                })
+                .finally(function() {
                     botao.textContent = 'Criar Acesso';
                     botao.disabled = false;
+                    return authCadastro.signOut().catch(function() {
+                        // A conta pode já ter sido removida no tratamento de erro.
+                    }).then(function() { return appCadastro.delete(); });
                 });
         });
     }

@@ -4,7 +4,8 @@
   "private": true,
   "description": "7Site ERP — confecção e tecnologia",
   "scripts": {
-    "lint": "eslint js --ext .js"
+    "lint": "eslint js --ext .js",
+    "test": "node --test tests/expedicao.test.cjs tests/conferencia-expedicao.test.cjs tests/op-reenvio.test.cjs"
   },
   "devDependencies": {
     "eslint": "^8.57.0"

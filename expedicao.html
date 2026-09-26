@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Autorizar Saída | 7Site - Expedição</title>
+    <title>Conferência | 7Site - Expedição</title>
     <meta name="robots" content="noindex">
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -17,8 +17,8 @@
             <!-- Cabeçalho -->
             <div class="painel-cabecalho">
                 <div>
-                    <h1>Autorizar <strong class="texto-producao">Saída</strong> 🚚</h1>
-                    <p>Confira e despache o produto final das Ordens de Produção finalizadas.</p>
+                    <h1>Conferência de <strong class="texto-producao">Saída</strong> 🚚</h1>
+                    <p>Receba e confira os produtos concluídos pelo CDF.</p>
                 </div>
                 <button class="btn-sair" onclick="sairDoSistema()">Sair do Portal</button>
             </div>
@@ -27,15 +27,15 @@
             <div class="estoque-formulario">
                 <h2 class="titulo-producao">📌 Sobre este módulo</h2>
                 <p class="ajuda-form">
-                    Esta área centralizará a conferência e o despacho do produto final.
-                    Quando uma OP é finalizada no CDF, ela aparece aqui aguardando a
-                    conferência de quantidades (finalizadas, refugadas e sobras) e a
-                    autorização de saída.
+                    Quando o CDF conclui uma OP, ela aparece aqui para conferência.
+                    Registre as quantidades recebidas, aprovadas e refugadas.
+                    Você pode salvar um rascunho, aprovar a saída ou devolver a OP
+                    ao CDF para correção.
                 </p>
                 <div class="aviso-rh">
                     <strong>ℹ️ Como funciona:</strong>
                     quando todas as operações de uma OP são concluídas no CDF, ela entra em
-                    <strong>Aguardando Expedição</strong>. Aqui você confere e autoriza a saída.
+                    <strong>Aguardando Expedição</strong>. Inicie a conferência para assumir a OP.
                 </div>
             </div>
 
@@ -47,6 +47,16 @@
                     <p>Aguardando Expedição</p>
                 </div>
                 <div class="card-indicador card-indicador-producao">
+                    <span>📋</span>
+                    <h3 id="exp-total-conferencia">0</h3>
+                    <p>Em Conferência</p>
+                </div>
+                <div class="card-indicador card-indicador-producao">
+                    <span>↩️</span>
+                    <h3 id="exp-total-devolvidas">0</h3>
+                    <p>Devolvidas ao CDF</p>
+                </div>
+                <div class="card-indicador card-indicador-producao">
                     <span>✅</span>
                     <h3 id="exp-total-despachadas">0</h3>
                     <p>Despachadas</p>
@@ -55,11 +65,45 @@
 
             <!-- OPs prontas para expedição -->
             <div class="estoque-tabela">
-                <h2 class="titulo-producao">Ordens Prontas para Expedição</h2>
+                <h2 class="titulo-producao">Ordens na Expedição</h2>
+                <p id="exp-aviso" class="exp-aviso" role="status" aria-live="polite"></p>
                 <div id="lista-expedicao">
                     <p class="texto-placeholder">Nenhuma OP pronta para expedição no momento.</p>
                 </div>
             </div>
+
+            <section id="exp-conferencia" class="estoque-formulario exp-conferencia" hidden>
+                <h2 id="exp-conferencia-titulo" class="titulo-producao">Conferência da OP</h2>
+                <p id="exp-conferencia-resumo"></p>
+                <form id="exp-conferencia-form">
+                    <div class="exp-campos">
+                        <label>Quantidade prevista
+                            <input id="exp-prevista" type="number" readonly>
+                        </label>
+                        <label>Quantidade recebida
+                            <input id="exp-recebida" type="number" min="0" step="1" inputmode="numeric">
+                        </label>
+                        <label>Quantidade aprovada
+                            <input id="exp-aprovada" type="number" min="0" step="1" inputmode="numeric">
+                        </label>
+                        <label>Quantidade refugada
+                            <input id="exp-refugada" type="number" min="0" step="1" inputmode="numeric">
+                        </label>
+                    </div>
+                    <label for="exp-observacoes">Observações</label>
+                    <textarea id="exp-observacoes" rows="3"></textarea>
+                    <label for="exp-motivo-devolucao">Motivo para devolver ao CDF</label>
+                    <textarea id="exp-motivo-devolucao" rows="2" placeholder="Preencha se precisar devolver a OP"></textarea>
+                    <p id="exp-conferencia-calculo" aria-live="polite"></p>
+                    <p id="exp-conferencia-erro" class="exp-erro" role="alert" hidden></p>
+                    <div class="exp-acoes">
+                        <button id="exp-salvar" type="submit" class="btn-primario">Salvar rascunho</button>
+                        <button id="exp-aprovar" type="button" class="btn-primario">Aprovar saída</button>
+                        <button id="exp-devolver" type="button" class="btn-secundario">Devolver ao CDF</button>
+                        <button id="exp-fechar" type="button" class="btn-secundario">Fechar</button>
+                    </div>
+                </form>
+            </section>
 
         </div>
     </main>
@@ -75,6 +119,7 @@
     <script src="js/core/menu.js"></script>
     <script src="js/core/componentes.js"></script>
     <script src="js/core/guard.js"></script>
+    <script src="js/core/conferencia-expedicao.js"></script>
     <script src="js/modulos/expedicao.js"></script>
 </body>
 </html>
