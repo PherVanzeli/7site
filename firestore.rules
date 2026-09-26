@@ -65,13 +65,30 @@ service cloud.firestore {
       allow create: if setor('Administrativo')
         && request.resource.data.status == 'aguardando_fluxograma'
         && request.resource.data.get('conferencia_expedicao', null) == null;
-      allow update: if atualizarFluxo() || atualizarExpedicao();
+      allow update: if (
+        resource.data.status in ['aguardando_expedicao', 'em_conferencia']
+        && atualizarExpedicao()
+      ) || (
+        resource.data.status in ['aguardando_fluxograma', 'em_producao', 'devolvido_cdf']
+        && atualizarFluxo()
+      );
       allow delete: if false;
     }
 
     function atualizarFluxo() {
       return (setor('CDF') || setor('Administrativo')) && (
-        (resource.data.status in [
+        (setor('CDF')
+          && resource.data.status == 'devolvido_cdf'
+          && request.resource.data.status == 'aguardando_expedicao'
+          && alterouApenas([
+            'status', 'devolucao_cdf', 'data_reenvio_expedicao', 'historico'
+          ])
+          && request.resource.data.devolucao_cdf.resolvido_por_cpf == cpfAtual()
+          && request.resource.data.devolucao_cdf.resolucao is string
+          && request.resource.data.devolucao_cdf.resolucao.size() > 0
+          && request.resource.data.data_reenvio_expedicao == request.time
+          && historicoAcrescido('cdf_reenviou_expedicao'))
+        || (resource.data.status in [
             'aguardando_fluxograma', 'em_producao', 'devolvido_cdf'
           ]
           && request.resource.data.status == resource.data.status
@@ -103,17 +120,6 @@ service cloud.firestore {
             'status', 'fluxograma_id', 'fluxograma_nome', 'modulos_fluxograma',
             'progresso', 'data_entrada_producao', 'historico'
           ]))
-        || (setor('CDF')
-          && resource.data.status == 'devolvido_cdf'
-          && request.resource.data.status == 'aguardando_expedicao'
-          && alterouApenas([
-            'status', 'devolucao_cdf', 'data_reenvio_expedicao', 'historico'
-          ])
-          && request.resource.data.devolucao_cdf.resolvido_por_cpf == cpfAtual()
-          && request.resource.data.devolucao_cdf.resolucao is string
-          && request.resource.data.devolucao_cdf.resolucao.size() > 0
-          && request.resource.data.data_reenvio_expedicao == request.time
-          && historicoAcrescido('cdf_reenviou_expedicao'))
         || ((setor('CDF') || setor('Administrativo'))
           && resource.data.status in ['aguardando_fluxograma', 'em_producao']
           && request.resource.data.status == 'cancelada'
@@ -125,54 +131,49 @@ service cloud.firestore {
     }
 
     function conferenciaDoResponsavel() {
-      return resource.data.conferencia_expedicao.conferido_por_cpf == cpfAtual()
-        && request.resource.data.conferencia_expedicao.conferido_por_cpf == cpfAtual()
-        && request.resource.data.conferencia_expedicao.quantidade_prevista
-          == resource.data.quantidade_total
-        && request.resource.data.conferencia_expedicao.data_inicio
-          == resource.data.conferencia_expedicao.data_inicio
-        && request.resource.data.conferencia_expedicao.conferido_por_nome
-          == resource.data.conferencia_expedicao.conferido_por_nome;
+      let anterior = resource.data.conferencia_expedicao;
+      let nova = request.resource.data.conferencia_expedicao;
+      return anterior.conferido_por_cpf == cpfAtual()
+        && nova.conferido_por_cpf == cpfAtual()
+        && nova.quantidade_prevista == resource.data.quantidade_total
+        && nova.data_inicio == anterior.data_inicio
+        && nova.conferido_por_nome == anterior.conferido_por_nome;
     }
     function historicoAcrescido(acao) {
-      return request.resource.data.historico is list
-        && request.resource.data.historico.size()
-          == resource.data.get('historico', []).size() + 1
-        && request.resource.data.historico
-          == resource.data.get('historico', []).concat([
-            request.resource.data.historico[request.resource.data.historico.size() - 1]
-          ])
-        && request.resource.data.historico[request.resource.data.historico.size() - 1]
-          .usuario_cpf == cpfAtual()
-        && request.resource.data.historico[request.resource.data.historico.size() - 1]
-          .acao == acao;
+      let antigo = resource.data.get('historico', []);
+      let novo = request.resource.data.historico;
+      let ultimo = novo[novo.size() - 1];
+      return novo is list
+        && novo.size() == antigo.size() + 1
+        && novo == antigo.concat([ultimo])
+        && ultimo.usuario_cpf == cpfAtual()
+        && ultimo.acao == acao;
     }
     function conferenciaArquivada() {
+      let anteriores = resource.data.get('conferencias_expedicao', []);
+      let atual = request.resource.data.conferencia_expedicao;
       return request.resource.data.conferencias_expedicao
-        == resource.data.get('conferencias_expedicao', []).concat([
-          request.resource.data.conferencia_expedicao
-        ]);
+        == anteriores.concat([atual]);
     }
     function quantidadesValidas() {
-      return request.resource.data.conferencia_expedicao.quantidade_recebida is int
-        && request.resource.data.conferencia_expedicao.quantidade_aprovada is int
-        && request.resource.data.conferencia_expedicao.quantidade_refugada is int
-        && request.resource.data.conferencia_expedicao.quantidade_faltante is int
-        && request.resource.data.conferencia_expedicao.quantidade_recebida >= 0
-        && request.resource.data.conferencia_expedicao.quantidade_aprovada >= 0
-        && request.resource.data.conferencia_expedicao.quantidade_refugada >= 0
-        && request.resource.data.conferencia_expedicao.quantidade_faltante >= 0
-        && request.resource.data.conferencia_expedicao.quantidade_excedente == 0
-        && request.resource.data.conferencia_expedicao.quantidade_aprovada
-          + request.resource.data.conferencia_expedicao.quantidade_refugada
-          == request.resource.data.conferencia_expedicao.quantidade_recebida
-        && request.resource.data.conferencia_expedicao.quantidade_recebida
-          + request.resource.data.conferencia_expedicao.quantidade_faltante
+      let conf = request.resource.data.conferencia_expedicao;
+      return conf.quantidade_recebida is int
+        && conf.quantidade_aprovada is int
+        && conf.quantidade_refugada is int
+        && conf.quantidade_faltante is int
+        && conf.quantidade_recebida >= 0
+        && conf.quantidade_aprovada >= 0
+        && conf.quantidade_refugada >= 0
+        && conf.quantidade_faltante >= 0
+        && conf.quantidade_excedente == 0
+        && conf.quantidade_aprovada + conf.quantidade_refugada
+          == conf.quantidade_recebida
+        && conf.quantidade_recebida + conf.quantidade_faltante
           == resource.data.quantidade_total
-        && ((request.resource.data.conferencia_expedicao.quantidade_faltante == 0
-            && request.resource.data.conferencia_expedicao.quantidade_refugada == 0)
-          || (request.resource.data.conferencia_expedicao.observacoes is string
-            && request.resource.data.conferencia_expedicao.observacoes.size() > 0));
+        && ((conf.quantidade_faltante == 0
+            && conf.quantidade_refugada == 0)
+          || (conf.observacoes is string
+            && conf.observacoes.size() > 0));
     }
     function atualizarExpedicao() {
       return setor('Administrativo') && (
