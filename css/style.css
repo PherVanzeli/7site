@@ -53,17 +53,20 @@ body {
     flex-wrap: wrap;
 }
 
-.logo-texto {
-    font-family: var(--fonte-titulos);
-    font-weight: 800;
-    font-size: 24px;
-    color: #FFFFFF;
-    text-decoration: none;
-    letter-spacing: 1px;
+.logo-marca {
+    display: block;
+    width: 170px;
+    height: 64px;
+    overflow: hidden;
+    border-radius: 6px;
+    background: #f4ede3;
 }
 
-.logo-texto span {
-    color: var(--cor-destaque);
+.logo-marca img {
+    display: block;
+    width: 100%;
+    height: auto;
+    transform: translateY(-18%);
 }
 
 /* ========================================== */
@@ -230,6 +233,22 @@ body {
 
 .hero-imagem {
     flex: 1;
+}
+
+.hero-marca {
+    width: 100%;
+    max-width: 530px;
+    margin-inline: auto;
+    overflow: hidden;
+    border-radius: 14px;
+    background: #f4ede3;
+    box-shadow: 0 16px 36px rgba(11, 12, 16, 0.1);
+}
+
+.hero-marca img {
+    display: block;
+    width: 100%;
+    height: auto;
 }
 
 .placeholder-banner {
